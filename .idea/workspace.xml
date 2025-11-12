@@ -14,22 +14,13 @@
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-swing.jar" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/src/main/java/MainForm.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/src/main/java/MainForm.jfd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/ConexionBD.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/GameSwing.form" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/GameSwing.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/org/example/AppTest.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../demostracion/src/main/java/EjemploGame.form" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../demostracion/src/main/java/EjemploGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Codigos" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Hermosillo2.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +35,8 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="SYNC" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 2
@@ -63,6 +55,10 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Usuario/gaming_leagues",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "vcs.Git"
   }
 }]]></component>
