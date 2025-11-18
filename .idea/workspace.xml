@@ -14,6 +14,33 @@
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-swing.jar" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/src/main/java/MainForm.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/src/main/java/MainForm.jfd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/GameCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/GameLeagueCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/LeagueCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/MatchCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/PlayerCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/RankingPlayerGameCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/TeamCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/consultas/TeamPlayerCRUD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/Game.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/GameLeague.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/League.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/Match.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/Player.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/RankingPlayerGame.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/Team.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/tablas/TeamPlayer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/DesignConstants.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/GamesPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/LeagueGamesPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/LeaguesPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/MatchesPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/PantallaInicio.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/PlayersPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/RankingsPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/TeamPlayerPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/TeamsPanel.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/example/vistas/VentanaPrincipal.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../demostracion/src/main/java/EjemploGame.form" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../demostracion/src/main/java/EjemploGame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Codigos" beforeDir="false" />
@@ -21,6 +48,7 @@
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/basedatos/ConexionBD.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,9 +66,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="35N9BTASl3TgwqOSIF1ONOeq30k" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -50,15 +78,18 @@
   "keyToString": {
     "Application.ConexionBD.executor": "Run",
     "Application.GameSwing.executor": "Run",
+    "Application.MenuPrincipal.executor": "Run",
+    "Application.PantallaInicio.executor": "Run",
+    "Application.VentanaPrincipal.executor": "Run",
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Usuario/gaming_leagues",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
+    "last_opened_file_path": "C:/Users/Usuario/Downloads/jcalendar-1.4/lib/jcalendar-1.4.jar",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "vcs.Git"
   }
 }]]></component>
