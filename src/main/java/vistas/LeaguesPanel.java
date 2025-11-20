@@ -2,7 +2,6 @@ package vistas;
 
 import consultas.LeagueCRUD;
 import tablas.League;
-// Importar DesignConstants para usar el mismo estilo que GamesPanel
 import static vistas.DesignConstants.*;
 
 import javax.swing.*;
@@ -19,7 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-// Importación de JCalendar
 import com.toedter.calendar.JDateChooser;
 
 public class LeaguesPanel extends JPanel {
@@ -60,7 +58,6 @@ public class LeaguesPanel extends JPanel {
     private JLabel createErrorLabel() {
         JLabel label = new JLabel(" ");
         label.setForeground(ACCENT_DANGER);
-        // CORRECCIÓN: Usar getBoldFont en lugar del método getItalicFont que no existe.
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         return label;
     }
@@ -112,7 +109,6 @@ public class LeaguesPanel extends JPanel {
         lblErrorEnd = createErrorLabel();
         validationListener = createValidationListener();
 
-        // Panel de campos: 2 filas x 3 columnas (secciones)
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 3, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
 
@@ -131,7 +127,6 @@ public class LeaguesPanel extends JPanel {
         fieldsPanel.add(createValidatedFieldPanel("Detalles:", txtLeagueDetails, lblErrorDetails));
         fieldsPanel.add(createPrizePanel());
 
-        // SEGUNDA FILA: Reglas y Fechas (Se eliminó el panel vacío que causaba el espacio extra)
         fieldsPanel.add(createRulesPanel());
         fieldsPanel.add(createDatePanel("Fecha Inicio:", lblErrorStart, true));
         fieldsPanel.add(createDatePanel("Fecha Fin:", lblErrorEnd, false));
@@ -337,7 +332,6 @@ public class LeaguesPanel extends JPanel {
         table.setSelectionForeground(BG_DARK_PRIMARY);
         table.setShowVerticalLines(true);
 
-        // Aplicar el Custom Renderer a la cabecera
         table.getTableHeader().setFont(getBoldFont(FONT_SIZE_BODY));
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setDefaultRenderer(new CustomTableHeaderRenderer(BG_DARK_PRIMARY, Color.WHITE));
@@ -385,7 +379,6 @@ public class LeaguesPanel extends JPanel {
 
                 g2d.dispose();
             }
-            // Métodos placeholder asumidos en DesignConstants o una clase auxiliar
             private Color darken(Color color, float factor) { return color; }
             private Color brighten(Color color, float factor) { return color; }
         };
@@ -477,7 +470,6 @@ public class LeaguesPanel extends JPanel {
         try {
             List<League> leagues = leagueCRUD.getAllLeagues();
             for (League league : leagues) {
-                // Se removió la variable prizeDisplay que no se usa en el array Object[]
                 Object[] row = {
                         league.getLeagueId(),
                         league.getLeagueName(),
@@ -498,9 +490,7 @@ public class LeaguesPanel extends JPanel {
     private void loadSelectedLeague() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
-            // String leagueId = tableModel.getValueAt(selectedRow, 0).toString(); // Ya no se necesita el ID aquí
 
-            // Limpia el formato de premio (por si incluye comas) para usar el valor numérico
             String prizeAmountText = tableModel.getValueAt(selectedRow, 3).toString().replaceAll("[^0-9]", "");
             String currency = tableModel.getValueAt(selectedRow, 4).toString(); // Moneda
 
@@ -675,7 +665,6 @@ public class LeaguesPanel extends JPanel {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    // CLASE INTERNA PARA FORZAR EL ESTILO DE LA CABECERA (copiada de GamesPanel)
     private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
 
         private final Color backgroundColor;
@@ -703,9 +692,7 @@ public class LeaguesPanel extends JPanel {
             return this;
         }
 
-        // Método placeholder (asumimos que existe en DesignConstants o en la clase principal)
         private Font getBoldFont(int size) {
-            // Se usa una fuente de respaldo para que compile
             return new Font("Segoe UI", Font.BOLD, size);
         }
     }

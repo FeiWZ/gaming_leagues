@@ -194,7 +194,6 @@ public class GamesPanel extends JPanel {
 
                 g2d.dispose();
             }
-            // Métodos placeholder asumidos en DesignConstants o una clase auxiliar
             private Color darken(Color color, float factor) { return color; }
             private Color brighten(Color color, float factor) { return color; }
         };

@@ -20,36 +20,10 @@
       <change beforePath="$PROJECT_DIR$/../../Hermosillo2.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/GameSwing.form" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/GameSwing.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/basedatos/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/GameCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/GameCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/GameLeagueCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/GameLeagueCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/LeagueCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/LeagueCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/MatchCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/MatchCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/PlayerCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/PlayerCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/RankingPlayerGameCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/RankingPlayerGameCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/TeamCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/TeamCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/consultas/TeamPlayerCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/TeamPlayerCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/GameLeague.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/GameLeague.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/League.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/League.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/Match.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Match.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/RankingPlayerGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/RankingPlayerGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/Team.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Team.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/tablas/TeamPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/TeamPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/DesignConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/DesignConstants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/GamesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/LeagueGamesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/LeagueGamesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/LeaguesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/PantallaInicio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/PantallaInicio.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/PlayersPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/RankingsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/TeamPlayerPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamPlayerPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/TeamsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/vistas/VentanaPrincipal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/VentanaPrincipal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/VentanaPrincipal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/VentanaPrincipal.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,25 +49,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.ConexionBD.executor": "Run",
-    "Application.GameSwing.executor": "Run",
-    "Application.MenuPrincipal.executor": "Run",
-    "Application.PantallaInicio.executor": "Run",
-    "Application.VentanaPrincipal.executor": "Run",
-    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Usuario/Desktop/BASE_DE_DATOS/proyecto_final_bd/Gaming_Leagues/src/main/java",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "vcs.Git"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ConexionBD.executor&quot;: &quot;Run&quot;,
+    &quot;Application.GameSwing.executor&quot;: &quot;Run&quot;,
+    &quot;Application.MenuPrincipal.executor&quot;: &quot;Run&quot;,
+    &quot;Application.PantallaInicio.executor&quot;: &quot;Run&quot;,
+    &quot;Application.VentanaPrincipal.executor&quot;: &quot;Run&quot;,
+    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Usuario/Desktop/RNBD/gaming_leagues&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

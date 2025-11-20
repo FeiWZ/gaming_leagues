@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import static vistas.DesignConstants.*;
 
@@ -99,14 +101,44 @@ public class VentanaPrincipal extends JFrame {
         panelTitulos.add(panelTitulo);
         panelTitulos.add(etiquetaSubtitulo);
 
-        JPanel panelInfo = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel panelInfo = new JPanel();
+        panelInfo.setLayout(new BoxLayout(panelInfo, BoxLayout.Y_AXIS));
         panelInfo.setOpaque(false);
 
         JLabel estadoConexion = new JLabel("● Conectado");
         estadoConexion.setFont(getBoldFont(FONT_SIZE_SMALL + 1));
         estadoConexion.setForeground(ACCENT_SUCCESS);
+        estadoConexion.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        JButton botonSalir = new JButton(" SALIR ");
+
+        botonSalir.setFont(getBoldFont(FONT_SIZE_BODY + 2));
+
+        botonSalir.setForeground(Color.BLACK);
+        botonSalir.setBackground(Color.WHITE);
+
+        botonSalir.setFocusPainted(false);
+        botonSalir.setBorder(BorderFactory.createEmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD));
+        botonSalir.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        botonSalir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirmacion = JOptionPane.showConfirmDialog(VentanaPrincipal.this,
+                        "¿Estás seguro de que quieres cerrar la aplicación?",
+                        "Confirmar Salida",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE);
+
+                if (confirmacion == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+            }
+        });
 
         panelInfo.add(estadoConexion);
+        panelInfo.add(Box.createVerticalStrut(SPACING_XS));
+        panelInfo.add(botonSalir);
 
         panel.add(panelTitulos, BorderLayout.WEST);
         panel.add(panelInfo, BorderLayout.EAST);
@@ -198,7 +230,9 @@ public class VentanaPrincipal extends JFrame {
 
     public void actualizarEstadoConexion(boolean conectado) {
         SwingUtilities.invokeLater(() -> {
-            Component[] components = ((JPanel) panelEncabezado.getComponent(1)).getComponents();
+            JPanel panelInfo = (JPanel) panelEncabezado.getComponent(1);
+            Component[] components = panelInfo.getComponents();
+
             for (Component comp : components) {
                 if (comp instanceof JLabel) {
                     JLabel label = (JLabel) comp;
@@ -209,6 +243,7 @@ public class VentanaPrincipal extends JFrame {
                         label.setText("● Desconectado");
                         label.setForeground(ACCENT_DANGER);
                     }
+                    break;
                 }
             }
         });
