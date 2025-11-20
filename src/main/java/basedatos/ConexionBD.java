@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class ConexionBD {
     private static final String URL = "jdbc:postgresql://localhost:5432/BD_GameLeagues";
-    private static final String USER = "miusuario";
-    private static final String PASSWORD = "Uni2025";
+    private static final String USER = "Empleados";
+    private static final String PASSWORD = "hola123";
 
     public static Connection conectar() {
         Connection conexion = null;
