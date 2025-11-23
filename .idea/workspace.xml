@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="">
+    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Cambio en jdk">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -114,6 +114,19 @@
       <option name="presentableId" value="Default" />
       <updated>1762939527040</updated>
     </task>
+    <task id="LOCAL-00001" summary="Cambio en jdk">
+      <option name="closed" value="true" />
+      <created>1763681325759</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763681325759</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Cambio en jdk" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cambio en jdk" />
   </component>
 </project>
