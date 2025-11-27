@@ -66,7 +66,7 @@ public class RankingsPanel extends JPanel {
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
 
-        JPanel fieldsPanel = new JPanel(new GridLayout(1, 5, SPACING_MD, SPACING_LG));
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 3, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
 
         txtPlayerId = createStyledTextField();
@@ -239,13 +239,14 @@ public class RankingsPanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             txtPlayerId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-            txtGameName.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtPlayerName.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtGameName.setText(tableModel.getValueAt(selectedRow, 2).toString());
 
-            Object rankingValue = tableModel.getValueAt(selectedRow, 2);
+            Object rankingValue = tableModel.getValueAt(selectedRow, 3);
             txtRanking.setText(rankingValue != null ? rankingValue.toString() : "");
 
-            txtWins.setText(tableModel.getValueAt(selectedRow, 3).toString());
-            txtLosses.setText(tableModel.getValueAt(selectedRow, 4).toString());
+            txtWins.setText(tableModel.getValueAt(selectedRow, 4).toString());
+            txtLosses.setText(tableModel.getValueAt(selectedRow, 5).toString());
 
             txtPlayerId.setEditable(false);
             txtGameName.setEditable(false);
@@ -417,8 +418,9 @@ public class RankingsPanel extends JPanel {
             return false;
         }
 
+        // Validar que el jugador exista
         try {
-            if (!PlayerCRUD.playerExists(playerName)) {
+            if (!playerCRUD.playerExists(playerName)) {
                 showError("El jugador '" + playerName + "' no existe en la base de datos.", "Jugador No Encontrado");
                 txtPlayerName.requestFocus();
                 return false;
@@ -428,6 +430,7 @@ public class RankingsPanel extends JPanel {
             return false;
         }
 
+        // Validaciones numéricas
         try {
             int playerId = Integer.parseInt(idText);
             if (playerId <= 0) {
@@ -509,5 +512,34 @@ public class RankingsPanel extends JPanel {
         private Font getBoldFont(int size) {
             return new Font("Segoe UI", Font.BOLD, size);
         }
+    }
+
+    private Font getTitleFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getBoldFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getBodyFont(int size) {
+        return new Font("Segoe UI", Font.PLAIN, size);
+    }
+
+    // Métodos para oscurecer/aclarar colores (para los botones)
+    private Color darken(Color color, float factor) {
+        return new Color(
+                Math.max((int)(color.getRed() * factor), 0),
+                Math.max((int)(color.getGreen() * factor), 0),
+                Math.max((int)(color.getBlue() * factor), 0)
+        );
+    }
+
+    private Color brighten(Color color, float factor) {
+        return new Color(
+                Math.min((int)(color.getRed() * factor), 255),
+                Math.min((int)(color.getGreen() * factor), 255),
+                Math.min((int)(color.getBlue() * factor), 255)
+        );
     }
 }
