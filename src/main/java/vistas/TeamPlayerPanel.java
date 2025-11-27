@@ -1,6 +1,8 @@
 package vistas;
 
 import consultas.TeamPlayerCRUD;
+import consultas.PlayerCRUD;
+import consultas.TeamCRUD;
 import tablas.TeamPlayer;
 import static vistas.DesignConstants.*;
 
@@ -21,15 +23,16 @@ public class TeamPlayerPanel extends JPanel {
 
     private Connection connection;
     private TeamPlayerCRUD teamPlayerCRUD;
+    private PlayerCRUD playerCRUD;
+    private TeamCRUD teamCRUD;
 
     private final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 
     private JTable table;
     private DefaultTableModel tableModel;
 
-    private JTextField txtTeamId, txtPlayerId;
+    private JTextField txtTeamName, txtPlayerName;
     private JDateChooser dateChooserDateFrom, dateChooserDateTo;
-
     private JTextField txtRole;
 
     private DocumentListener validationListener;
@@ -39,6 +42,8 @@ public class TeamPlayerPanel extends JPanel {
     public TeamPlayerPanel(Connection connection) {
         this.connection = connection;
         this.teamPlayerCRUD = new TeamPlayerCRUD(connection);
+        this.playerCRUD = new PlayerCRUD(connection);
+        this.teamCRUD = new TeamCRUD(connection);
         SDF.setLenient(false);
         validationListener = createValidationListener();
         initComponents();
@@ -92,16 +97,16 @@ public class TeamPlayerPanel extends JPanel {
         JPanel fieldsPanel = new JPanel(new GridLayout(1, 5, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
 
-        txtTeamId = createStyledTextField();
-        txtPlayerId = createStyledTextField();
+        txtTeamName = createStyledTextField();
+        txtPlayerName = createStyledTextField();
         txtRole = createStyledTextField();
 
-        txtTeamId.getDocument().addDocumentListener(validationListener);
-        txtPlayerId.getDocument().addDocumentListener(validationListener);
+        txtTeamName.getDocument().addDocumentListener(validationListener);
+        txtPlayerName.getDocument().addDocumentListener(validationListener);
         txtRole.getDocument().addDocumentListener(validationListener);
 
-        fieldsPanel.add(createFieldPanel("ID Equipo:", txtTeamId));
-        fieldsPanel.add(createFieldPanel("ID Jugador:", txtPlayerId));
+        fieldsPanel.add(createFieldPanel("Equipo:", txtTeamName));
+        fieldsPanel.add(createFieldPanel("Jugador:", txtPlayerName));
         fieldsPanel.add(createDateChooserPanel("Fecha Desde:", dateChooserDateFrom));
         fieldsPanel.add(createDateChooserPanel("Fecha Hasta (Opcional):", dateChooserDateTo));
         fieldsPanel.add(createFieldPanel("Rol:", txtRole));
@@ -194,7 +199,7 @@ public class TeamPlayerPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        String[] columns = {"ID Equipo", "ID Jugador", "Desde", "Hasta", "Rol"};
+        String[] columns = {"Equipo", "Jugador", "Desde", "Hasta", "Rol"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -259,8 +264,6 @@ public class TeamPlayerPanel extends JPanel {
 
                 g2d.dispose();
             }
-            private Color darken(Color color, float factor) { return color; }
-            private Color brighten(Color color, float factor) { return color; }
         };
 
         button.setFont(getBoldFont(FONT_SIZE_BODY));
@@ -280,8 +283,8 @@ public class TeamPlayerPanel extends JPanel {
             List<TeamPlayer> teamPlayers = teamPlayerCRUD.getAllTeamPlayer();
             for (TeamPlayer teamPlayer : teamPlayers) {
                 Object[] row = {
-                        teamPlayer.getTeamId(),
-                        teamPlayer.getPlayerId(),
+                        teamPlayer.getTeamName(),
+                        teamPlayer.getPlayerName(),
                         teamPlayer.getDateFrom() != null ? SDF.format(teamPlayer.getDateFrom()) : "",
                         teamPlayer.getDateTo() != null ? SDF.format(teamPlayer.getDateTo()) : "",
                         teamPlayer.getRole()
@@ -296,15 +299,17 @@ public class TeamPlayerPanel extends JPanel {
     private void loadSelectedTeamPlayer() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
-            txtTeamId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-            txtPlayerId.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtTeamName.setText(tableModel.getValueAt(selectedRow, 0).toString());
+            txtPlayerName.setText(tableModel.getValueAt(selectedRow, 1).toString());
 
             try {
                 String dateFromStr = tableModel.getValueAt(selectedRow, 2).toString();
-                if (!dateFromStr.isEmpty()) dateChooserDateFrom.setDate(SDF.parse(dateFromStr)); else dateChooserDateFrom.setDate(null);
+                if (!dateFromStr.isEmpty()) dateChooserDateFrom.setDate(SDF.parse(dateFromStr));
+                else dateChooserDateFrom.setDate(null);
 
                 String dateToStr = tableModel.getValueAt(selectedRow, 3).toString();
-                if (!dateToStr.isEmpty()) dateChooserDateTo.setDate(SDF.parse(dateToStr)); else dateChooserDateTo.setDate(null);
+                if (!dateToStr.isEmpty()) dateChooserDateTo.setDate(SDF.parse(dateToStr));
+                else dateChooserDateTo.setDate(null);
             } catch (Exception e) {
                 dateChooserDateFrom.setDate(null);
                 dateChooserDateTo.setDate(null);
@@ -313,18 +318,18 @@ public class TeamPlayerPanel extends JPanel {
             String currentRole = tableModel.getValueAt(selectedRow, 4) != null ? tableModel.getValueAt(selectedRow, 4).toString() : "";
             txtRole.setText(currentRole);
 
-            txtTeamId.setEditable(false);
-            txtPlayerId.setEditable(false);
+            txtTeamName.setEditable(false);
+            txtPlayerName.setEditable(false);
             validateFields();
         }
     }
 
-
     private void addTeamPlayer() {
         Date dateFrom, dateTo;
 
+        // ✅ CAMBIO: Validar aquí en lugar de deshabilitar el botón
         if (!validateFields()) {
-            showError("Corrige los campos obligatorios antes de agregar: IDs, Fecha Desde y Rol.", "Validación Pendiente");
+            showError("Por favor completa todos los campos obligatorios: Equipo, Jugador, Fecha Desde y Rol.", "Campos Incompletos");
             return;
         }
 
@@ -336,14 +341,18 @@ public class TeamPlayerPanel extends JPanel {
             return;
         }
 
+        if (!validateTeamAndPlayerExist()) {
+            return;
+        }
+
         try {
-            int teamId = Integer.parseInt(txtTeamId.getText().trim());
-            int playerId = Integer.parseInt(txtPlayerId.getText().trim());
+            String teamName = txtTeamName.getText().trim();
+            String playerName = txtPlayerName.getText().trim();
             String role = txtRole.getText().trim();
 
             TeamPlayer teamPlayer = new TeamPlayer(
-                    teamId,
-                    playerId,
+                    teamName,
+                    playerName,
                     dateFrom,
                     dateTo,
                     role.isEmpty() ? null : role
@@ -359,31 +368,30 @@ public class TeamPlayerPanel extends JPanel {
         } catch (SQLException e) {
             String errorMessage = e.getMessage();
             if (errorMessage.contains("duplicate key value") && errorMessage.contains("team_player_pkey")) {
-                showError("Error: Ya existe esta relación (Equipo ID, Jugador ID). Esta combinación debe ser única.", "Error de Clave Compuesta");
+                showError("Error: Ya existe esta relación (Equipo, Jugador). Esta combinación debe ser única.", "Error de Clave Compuesta");
             } else if (errorMessage.contains("violates foreign key constraint")) {
-                if (errorMessage.contains("team_id")) {
-                    showError("Error de Equipo: El ID de Equipo ingresado no existe en la tabla de Equipos.", "Error de Clave Foránea");
-                } else if (errorMessage.contains("player_id")) {
-                    showError("Error de Jugador: El ID de Jugador ingresado no existe en la tabla de Jugadores.", "Error de Clave Foránea");
+                if (errorMessage.contains("team_name")) {
+                    showError("Error de Equipo: El nombre de equipo ingresado no existe en la tabla de Equipos.", "Error de Clave Foránea");
+                } else if (errorMessage.contains("player_name")) {
+                    showError("Error de Jugador: El nombre de jugador ingresado no existe en la tabla de Jugadores.", "Error de Clave Foránea");
                 } else {
-                    showError("Error de Clave Foránea: Asegúrate de que el ID de Equipo y el ID de Jugador existan.", "Error de Clave Foránea");
+                    showError("Error de Clave Foránea: Asegúrate de que el nombre de equipo y el nombre de jugador existan.", "Error de Clave Foránea");
                 }
             } else {
                 showError("Error al agregar: " + errorMessage, "Error SQL");
             }
-        } catch (NumberFormatException e) {
-            showError("ID Equipo e ID Jugador deben ser números enteros positivos.", "Error de Formato");
         }
     }
 
     private void updateTeamPlayer() {
-        if (txtTeamId.isEditable()) {
+        if (txtTeamName.isEditable()) {
             showError("Selecciona una relación de la tabla para actualizar.", "Error de Selección");
             return;
         }
 
+        // ✅ CAMBIO: Validar aquí en lugar de deshabilitar el botón
         if (!validateFields()) {
-            showError("Corrige los campos obligatorios antes de actualizar: Fecha Desde y Rol.", "Validación Pendiente");
+            showError("Por favor completa todos los campos obligatorios: Equipo, Jugador, Fecha Desde y Rol.", "Campos Incompletos");
             return;
         }
 
@@ -395,14 +403,18 @@ public class TeamPlayerPanel extends JPanel {
             return;
         }
 
+        if (!validateTeamAndPlayerExist()) {
+            return;
+        }
+
         try {
-            int teamId = Integer.parseInt(txtTeamId.getText().trim());
-            int playerId = Integer.parseInt(txtPlayerId.getText().trim());
+            String teamName = txtTeamName.getText().trim();
+            String playerName = txtPlayerName.getText().trim();
             String role = txtRole.getText().trim();
 
             TeamPlayer teamPlayer = new TeamPlayer(
-                    teamId,
-                    playerId,
+                    teamName,
+                    playerName,
                     dateFrom,
                     dateTo,
                     role.isEmpty() ? null : role
@@ -421,32 +433,30 @@ public class TeamPlayerPanel extends JPanel {
     }
 
     private void deleteTeamPlayer() {
-        if (txtTeamId.isEditable()) {
-            showError("Selecciona una relación de la tabla para eliminar.", "Error de Selección");
+        if (txtTeamName.getText().trim().isEmpty()) {
+            showError("Selecciona una relación de la tabla para eliminar.", "Error");
             return;
         }
 
-        int teamId;
-        int playerId;
-        try {
-            teamId = Integer.parseInt(txtTeamId.getText().trim());
-            playerId = Integer.parseInt(txtPlayerId.getText().trim());
-        } catch (NumberFormatException e) {
-            showError("Los IDs deben ser números válidos.", "Error de Formato");
+        String teamName = txtTeamName.getText().trim();
+        String playerName = txtPlayerName.getText().trim();
+
+        if (teamName.isEmpty() || playerName.isEmpty()) {
+            showError("Los nombres deben ser válidos.", "Error de Formato");
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(
                 this,
                 "¿Estás seguro de eliminar esta relación?",
-                "Confirmar eliminacion",
+                "Confirmar eliminación",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
             try {
-                if (teamPlayerCRUD.deleteTeamPlayer(teamId, playerId)) {
+                if (teamPlayerCRUD.deleteTeamPlayer(teamName, playerName)) {
                     showSuccess("Relación eliminada exitosamente!");
                     clearFields();
                     loadTeamPlayers();
@@ -460,39 +470,26 @@ public class TeamPlayerPanel extends JPanel {
     }
 
     private void clearFields() {
-        txtTeamId.setText("");
-        txtPlayerId.setText("");
+        txtTeamName.setText("");
+        txtPlayerName.setText("");
         dateChooserDateFrom.setDate(null);
         dateChooserDateTo.setDate(null);
-
         txtRole.setText("");
 
-        txtTeamId.setEditable(true);
-        txtPlayerId.setEditable(true);
+        txtTeamName.setEditable(true);
+        txtPlayerName.setEditable(true);
         table.clearSelection();
         validateFields();
     }
 
     private boolean validateFields() {
-        String teamIdText = txtTeamId.getText().trim();
-        String playerIdText = txtPlayerId.getText().trim();
+        String teamNameText = txtTeamName.getText().trim();
+        String playerNameText = txtPlayerName.getText().trim();
         String role = txtRole.getText().trim();
+
         boolean isValid = true;
 
-        if (teamIdText.isEmpty() || playerIdText.isEmpty() || role.isEmpty()) {
-            isValid = false;
-        }
-
-        try {
-            if (!teamIdText.isEmpty()) {
-                int teamId = Integer.parseInt(teamIdText);
-                if (teamId <= 0) isValid = false;
-            }
-            if (!playerIdText.isEmpty()) {
-                int playerId = Integer.parseInt(playerIdText);
-                if (playerId <= 0) isValid = false;
-            }
-        } catch (NumberFormatException e) {
+        if (teamNameText.isEmpty() || playerNameText.isEmpty() || role.isEmpty()) {
             isValid = false;
         }
 
@@ -500,13 +497,37 @@ public class TeamPlayerPanel extends JPanel {
             isValid = false;
         }
 
-        boolean isSelected = !txtTeamId.isEditable();
+        boolean isSelected = !txtTeamName.isEditable();
 
-        btnAdd.setEnabled(isValid && !isSelected);
-        btnUpdate.setEnabled(isValid && isSelected);
-        btnDelete.setEnabled(isSelected);
+        btnAdd.setEnabled(true);
+        btnUpdate.setEnabled(true);
+        btnDelete.setEnabled(true);
 
         return isValid;
+    }
+
+    private boolean validateTeamAndPlayerExist() {
+        String teamName = txtTeamName.getText().trim();
+        String playerName = txtPlayerName.getText().trim();
+
+        try {
+            if (!teamCRUD.teamExists(teamName)) {
+                showError("El equipo '" + teamName + "' no existe en la base de datos.", "Equipo No Encontrado");
+                txtTeamName.requestFocus();
+                return false;
+            }
+
+            if (!playerCRUD.playerExists(playerName)) {
+                showError("El jugador '" + playerName + "' no existe en la base de datos.", "Jugador No Encontrado");
+                txtPlayerName.requestFocus();
+                return false;
+            }
+        } catch (SQLException e) {
+            showError("Error al verificar en la base de datos: " + e.getMessage(), "Error de BD");
+            return false;
+        }
+
+        return true;
     }
 
     private void showSuccess(String message) {
@@ -543,9 +564,34 @@ public class TeamPlayerPanel extends JPanel {
             setText(value == null ? "" : value.toString());
             return this;
         }
+    }
 
-        private Font getBoldFont(int size) {
-            return new Font("Segoe UI", Font.BOLD, size);
-        }
+    // Métodos de utilidad para fonts y colores
+    private Font getTitleFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getBoldFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getBodyFont(int size) {
+        return new Font("Segoe UI", Font.PLAIN, size);
+    }
+
+    private Color darken(Color color, float factor) {
+        return new Color(
+                Math.max((int)(color.getRed() * factor), 0),
+                Math.max((int)(color.getGreen() * factor), 0),
+                Math.max((int)(color.getBlue() * factor), 0)
+        );
+    }
+
+    private Color brighten(Color color, float factor) {
+        return new Color(
+                Math.min((int)(color.getRed() * factor), 255),
+                Math.min((int)(color.getGreen() * factor), 255),
+                Math.min((int)(color.getBlue() * factor), 255)
+        );
     }
 }

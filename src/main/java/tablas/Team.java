@@ -8,15 +8,15 @@ public class Team {
     private Date dateCreated;
     private Date dateDisbanded;
     private int idCoach;
-    private int createdByPlayerId;
+    private String createdByPlayer;
 
-    public Team(int teamId, String teamName, Date dateCreated, Date dateDisbanded, int idCoach, int createdByPlayerId) {
+    public Team(int teamId, String teamName, Date dateCreated, Date dateDisbanded, int idCoach, String createdByPlayer) {
         this.teamId = teamId;
         this.teamName = teamName;
         this.dateCreated = dateCreated;
         this.dateDisbanded = dateDisbanded;
         this.idCoach = idCoach;
-        this.createdByPlayerId = createdByPlayerId;
+        this.createdByPlayer = createdByPlayer;
     }
 
     // Getters y setters
@@ -35,8 +35,8 @@ public class Team {
     public int getIdCoach() { return idCoach; }
     public void setIdCoach(int idCoach) { this.idCoach = idCoach; }
 
-    public int getCreatedByPlayerId() { return createdByPlayerId; }
-    public void setCreatedByPlayerId(int createdByPlayerId) { this.createdByPlayerId = createdByPlayerId; }
+    public String getCreatedByPlayer() { return createdByPlayer; }
+    public void setCreatedByPlayer(String createdByPlayer) { this.createdByPlayer = createdByPlayer; }
 
     @Override
     public String toString() {
@@ -46,7 +46,7 @@ public class Team {
                 ", dateCreated=" + dateCreated +
                 ", dateDisbanded=" + dateDisbanded +
                 ", idCoach=" + idCoach +
-                ", createdByPlayerId=" + createdByPlayerId +
+                ", createdByPlayer=" + createdByPlayer +
                 '}';
     }
 }

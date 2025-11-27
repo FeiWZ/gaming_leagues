@@ -3,34 +3,33 @@ package tablas;
 import java.util.Date;
 
 public class TeamPlayer {
-    private int teamId;
-    private int playerId;
+    private String teamName;
+    private String playerName;
     private Date dateFrom;
     private Date dateTo;
     private String role;
 
-    public TeamPlayer(int teamId, int playerId, Date dateFrom, Date dateTo, String role) {
-        this.teamId = teamId;
-        this.playerId = playerId;
+    public TeamPlayer(String teamName, String playerName, Date dateFrom, Date dateTo, String role) {
+        this.teamName = teamName;
+        this.playerName = playerName;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.role = role;
     }
 
-    public int getTeamId() {
-        return teamId;
+    public String getTeamName() {
+        return teamName;
     }
 
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
-    public int getPlayerId() {
-        return playerId;
+    public String getPlayerName() {
+        return playerName;
     }
 
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
+    public void setPlayerName(String playerName) { this.playerName = playerName;
     }
 
     public Date getDateFrom() {
@@ -60,8 +59,8 @@ public class TeamPlayer {
     @Override
     public String toString() {
         return "TeamPlayers{" +
-                "teamId=" + teamId +
-                ", playerId=" + playerId +
+                "teamName=" + teamName +
+                ", playerName=" + playerName +
                 ", role='" + role + '\'' +
                 '}';
     }

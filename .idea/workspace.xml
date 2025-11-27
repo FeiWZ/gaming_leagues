@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)">
+    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/RankingPlayerGameCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/RankingPlayerGameCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/TeamCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/TeamCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/TeamPlayerCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/TeamPlayerCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tablas/Team.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Team.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tablas/TeamPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/TeamPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamPlayerPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamPlayerPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +144,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764233829685</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Tabla Matches y Ranking corregidos">
+      <option name="closed" value="true" />
+      <created>1764275464666</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764275464666</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -157,6 +169,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Cambio en jdk" />
     <MESSAGE value="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)" />
+    <MESSAGE value="Tabla Matches y Ranking corregidos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tabla Matches y Ranking corregidos" />
   </component>
 </project>
