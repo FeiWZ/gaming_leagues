@@ -2,14 +2,16 @@ package tablas;
 
 public class RankingPlayerGame {
     private int playerId;
-    private String gameCode;
+    private String playerName;
+    private String gameName;
     private Integer ranking;
     private int wins;
     private int losses;
 
-    public RankingPlayerGame(int playerId, String gameCode, Integer ranking, int wins, int losses) {
+    public RankingPlayerGame(int playerId, String playerName, String gameName, Integer ranking, int wins, int losses) {
         this.playerId = playerId;
-        this.gameCode = gameCode;
+        this.playerName = playerName;
+        this.gameName = gameName;
         this.ranking = ranking;
         this.wins = wins;
         this.losses = losses;
@@ -23,12 +25,20 @@ public class RankingPlayerGame {
         this.playerId = playerId;
     }
 
-    public String getGameCode() {
-        return gameCode;
+    public String getPlayerName() {
+        return playerName;
     }
 
-    public void setGameCode(String gameCode) {
-        this.gameCode = gameCode;
+    public void setPlayerName(String gameCode) {
+        this.playerName = playerName;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameCode) {
+        this.gameName = gameName;
     }
 
     public Integer getRanking() {
@@ -59,7 +69,8 @@ public class RankingPlayerGame {
     public String toString() {
         return "PlayersGamesRanking{" +
                 "playerId=" + playerId +
-                ", gameCode='" + gameCode + '\'' +
+                ", playerName='" + playerName + '\'' +
+                ", gameName='" + gameName + '\'' +
                 ", ranking=" + ranking +
                 ", wins=" + wins +
                 ", losses=" + losses +

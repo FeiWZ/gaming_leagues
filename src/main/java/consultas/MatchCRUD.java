@@ -22,13 +22,13 @@ public class MatchCRUD {
                 "m.match_date, " +
                 "m.result, " +
                 "m.match_type, " +
-                "g.name AS game_name, " +
-                "p1.player_name AS player1_name, " +
-                "p2.player_name AS player2_name " +
+                "g.game_name, " +
+                "p1.first_name AS player1_name, " +
+                "p2.first_name AS player2_name " +
                 "FROM matches m " +
-                "JOIN players p1 ON m.player_id_1 = p1.player_id " +
-                "JOIN players p2 ON m.player_id_2 = p2.player_id " +
-                "JOIN games g ON m.game_code = g.game_code " +
+                "JOIN players p1 ON m.player_name_1 = p1.first_name " +
+                "JOIN players p2 ON m.player_name_2 = p2.first_name " +
+                "JOIN games g ON m.game_name = g.game_name " +
                 "ORDER BY m.match_date DESC";
 
         try (PreparedStatement pstmt = connection.prepareStatement(SQL);
@@ -41,8 +41,8 @@ public class MatchCRUD {
                         rs.getString("result"),
                         rs.getString("match_type"),
                         rs.getString("game_name"),
-                        rs.getString("player1_name"),
-                        rs.getString("player2_name")
+                        rs.getString("player_name_1"),
+                        rs.getString("player_name_2")
                 };
                 data.add(row);
             }

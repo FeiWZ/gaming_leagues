@@ -38,9 +38,9 @@ public class MatchesPanel extends JPanel {
     private JTextField txtMatchId;
     private JTextField txtTimeValue;
     private JComboBox<String> cmbAmPm;
-    private JTextField txtPlayerId1, txtPlayerId2;
+    private JTextField txtPlayer1, txtPlayer2;
     private JDateChooser dateChooserMatch;
-    private JComboBox<String> cmbMatchType, cmbResult, cmbGameCode;
+    private JComboBox<String> cmbMatchType, cmbResult, cmbGameName;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
     private Font getBodyFont(int size) { return new Font("Roboto", Font.PLAIN, size); }
@@ -94,9 +94,9 @@ public class MatchesPanel extends JPanel {
         JPanel timeInputPanel = createStyledTimeInput();
         cmbMatchType = createStyledComboBox(new String[]{"Oficial", "Amistoso"});
 
-        txtPlayerId1 = createStyledTextField();
-        txtPlayerId2 = createStyledTextField();
-        cmbGameCode = createGameCodeComboBox();
+        txtPlayer1 = createStyledTextField();
+        txtPlayer2 = createStyledTextField();
+        cmbGameName = createGameNameComboBox();
         cmbResult = createStyledComboBox(new String[]{"N/A", "Gana Jugador 1", "Gana Jugador 2", "Empate"});
 
 
@@ -112,9 +112,9 @@ public class MatchesPanel extends JPanel {
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("ID Jugador 1:", txtPlayerId1), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("ID Jugador 2:", txtPlayerId2), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Código Juego:", cmbGameCode), gbc);
+        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre del Jugador 1:", txtPlayer1), gbc);
+        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Nombre del Jugador 2:", txtPlayer2), gbc);
+        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Nombre del Juego:", cmbGameName), gbc);
         gbc.gridx = 3;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
         fieldsContainer.add(createFieldPanel("Resultado:", cmbResult), gbc);
@@ -246,15 +246,15 @@ public class MatchesPanel extends JPanel {
         return cmb;
     }
 
-    private JComboBox<String> createGameCodeComboBox() {
+    private JComboBox<String> createGameNameComboBox() {
         JComboBox<String> cmb = createStyledComboBox(new String[]{});
         try {
-            List<String> gameCodes = gameCRUD.getAllGameCodes();
-            for (String code : gameCodes) {
-                cmb.addItem(code);
+            List<String> gameNames = gameCRUD.getAllGameNames();
+            for (String name : gameNames) {
+                cmb.addItem(name);
             }
         } catch (SQLException e) {
-            showError("Error al cargar códigos de juego: " + e.getMessage(), "Error");
+            showError("Error al cargar nombres de juego: " + e.getMessage(), "Error");
         }
         return cmb;
     }
@@ -360,8 +360,8 @@ public class MatchesPanel extends JPanel {
                         match.getMatchDate(),
                         match.getResult(),
                         match.getMatchType(),
-                        match.getPlayerId1(),
-                        match.getPlayerId2(),
+                        match.getPlayer1(),
+                        match.getPlayer2(),
                         match.getGameCode()
                 };
                 tableModel.addRow(row);
@@ -395,9 +395,9 @@ public class MatchesPanel extends JPanel {
 
             cmbResult.setSelectedItem(tableModel.getValueAt(selectedRow, 2).toString());
             cmbMatchType.setSelectedItem(tableModel.getValueAt(selectedRow, 3).toString());
-            txtPlayerId1.setText(tableModel.getValueAt(selectedRow, 4).toString());
-            txtPlayerId2.setText(tableModel.getValueAt(selectedRow, 5).toString());
-            cmbGameCode.setSelectedItem(tableModel.getValueAt(selectedRow, 6).toString());
+            txtPlayer1.setText(tableModel.getValueAt(selectedRow, 4).toString());
+            txtPlayer2.setText(tableModel.getValueAt(selectedRow, 5).toString());
+            cmbGameName.setSelectedItem(tableModel.getValueAt(selectedRow, 6).toString());
 
             txtMatchId.setEditable(false);
         }
@@ -418,9 +418,9 @@ public class MatchesPanel extends JPanel {
                     matchDate,
                     cmbResult.getSelectedItem().toString(),
                     cmbMatchType.getSelectedItem().toString(),
-                    Integer.parseInt(txtPlayerId1.getText().trim()),
-                    Integer.parseInt(txtPlayerId2.getText().trim()),
-                    cmbGameCode.getSelectedItem().toString()
+                    txtPlayer1.getText().trim(),
+                    txtPlayer2.getText().trim(),
+                    cmbGameName.getSelectedItem().toString()
             );
 
             if (matchCRUD.createMatch(match)) {
@@ -454,9 +454,9 @@ public class MatchesPanel extends JPanel {
                     matchDate,
                     cmbResult.getSelectedItem().toString(),
                     cmbMatchType.getSelectedItem().toString(),
-                    Integer.parseInt(txtPlayerId1.getText().trim()),
-                    Integer.parseInt(txtPlayerId2.getText().trim()),
-                    cmbGameCode.getSelectedItem().toString()
+                    txtPlayer1.getText().trim(),
+                    txtPlayer2.getText().trim(),
+                    cmbGameName.getSelectedItem().toString()
             );
 
             if (matchCRUD.updateMatch(match)) {
@@ -505,18 +505,18 @@ public class MatchesPanel extends JPanel {
         cmbAmPm.setSelectedItem("AM");
         cmbResult.setSelectedIndex(0);
         cmbMatchType.setSelectedIndex(0);
-        txtPlayerId1.setText("");
-        txtPlayerId2.setText("");
-        if (cmbGameCode.getItemCount() > 0) cmbGameCode.setSelectedIndex(0);
+        txtPlayer1.setText("");
+        txtPlayer2.setText("");
+        if (cmbGameName.getItemCount() > 0) cmbGameName.setSelectedIndex(0);
         txtMatchId.setEditable(true);
         table.clearSelection();
     }
 
     private boolean validateFields() {
         if (txtMatchId.getText().trim().isEmpty() ||
-                txtPlayerId1.getText().trim().isEmpty() ||
-                txtPlayerId2.getText().trim().isEmpty()) {
-            showError("Todos los campos ID son obligatorios.", "Error");
+                txtPlayer1.getText().trim().isEmpty() ||
+                txtPlayer2.getText().trim().isEmpty()) {
+            showError("Todos los campos nombre son obligatorios.", "Error");
             return false;
         }
 
@@ -542,18 +542,27 @@ public class MatchesPanel extends JPanel {
 
 
         try {
-            int id1 = Integer.parseInt(txtPlayerId1.getText().trim());
-            int id2 = Integer.parseInt(txtPlayerId2.getText().trim());
-            if (id1 <= 0 || id2 <= 0) {
-                showError("Los IDs deben ser números positivos.", "Error");
+            String player1 = txtPlayer1.getText().trim();  // ← Solo getText(), sin parseInt
+            String player2 = txtPlayer2.getText().trim();  // ← Solo getText(), sin parseInt
+
+            if (player1.isEmpty() || player2.isEmpty()) {
+                showError("Los nombres de jugadores no pueden estar vacíos.", "Error");
                 return false;
             }
-            if (id1 == id2) {
-                showError("Los IDs de los jugadores deben ser diferentes.", "Error");
+
+            if (player1.equalsIgnoreCase(player2)) {
+                showError("Los nombres de los jugadores deben ser diferentes.", "Error");
                 return false;
             }
-        } catch (NumberFormatException e) {
-            showError("Los IDs deben ser números válidos.", "Error");
+
+            // También puedes agregar validación de longitud si quieres
+            if (player1.length() < 3 || player2.length() < 3) {
+                showError("Los nombres deben tener al menos 3 caracteres.", "Error");
+                return false;
+            }
+
+        } catch (Exception e) {
+            showError("Error al procesar los nombres: " + e.getMessage(), "Error");
             return false;
         }
 
@@ -595,9 +604,9 @@ public class MatchesPanel extends JPanel {
     private void handleSQLException(SQLException e) {
         String msg = e.getMessage();
         if (msg.contains("duplicate key")) {
-            showError("Ya existe un partido con ese ID.", "Error");
+            showError("Ya existe un partido con ese nombre.", "Error");
         } else if (msg.contains("foreign key")) {
-            showError("IDs de jugador o código de juego no válidos.", "Error");
+            showError("Nombre del jugador o juego no válidos.", "Error");
         } else {
             showError("Error SQL: " + msg, "Error");
         }

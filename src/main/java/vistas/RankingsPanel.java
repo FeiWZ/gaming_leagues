@@ -1,5 +1,6 @@
 package vistas;
 
+import consultas.PlayerCRUD;
 import consultas.RankingPlayerGameCRUD;
 import tablas.RankingPlayerGame;
 import static vistas.DesignConstants.*;
@@ -17,15 +18,17 @@ public class RankingsPanel extends JPanel {
 
     private Connection connection;
     private RankingPlayerGameCRUD rankingCRUD;
+    private PlayerCRUD playerCRUD;
 
     private JTable table;
     private DefaultTableModel tableModel;
-    private JTextField txtPlayerId, txtGameCode, txtRanking, txtWins, txtLosses;
+    private JTextField txtPlayerId, txtPlayerName, txtGameName, txtRanking, txtWins, txtLosses;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
     public RankingsPanel(Connection connection) {
         this.connection = connection;
         this.rankingCRUD = new RankingPlayerGameCRUD(connection);
+        this.playerCRUD = new PlayerCRUD(connection);
         initComponents();
         loadRankings();
     }
@@ -67,13 +70,15 @@ public class RankingsPanel extends JPanel {
         fieldsPanel.setBackground(BG_CARD);
 
         txtPlayerId = createStyledTextField();
-        txtGameCode = createStyledTextField();
+        txtPlayerName = createStyledTextField();
+        txtGameName = createStyledTextField();
         txtRanking = createStyledTextField();
         txtWins = createStyledTextField();
         txtLosses = createStyledTextField();
 
         fieldsPanel.add(createFieldPanel("ID Jugador:", txtPlayerId));
-        fieldsPanel.add(createFieldPanel("Código Juego:", txtGameCode));
+        fieldsPanel.add(createFieldPanel("Nombre del Jugador:", txtPlayerName));
+        fieldsPanel.add(createFieldPanel("Nombre del Juego:", txtGameName));
         fieldsPanel.add(createFieldPanel("Ranking (Opcional):", txtRanking));
         fieldsPanel.add(createFieldPanel("Victorias:", txtWins));
         fieldsPanel.add(createFieldPanel("Derrotas:", txtLosses));
@@ -130,7 +135,7 @@ public class RankingsPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        String[] columns = {"ID Jugador", "Código Juego", "Ranking", "Victorias", "Derrotas"};
+        String[] columns = {"ID Jugador", "Nombre Jugador", "Nombre Juego", "Ranking", "Victorias", "Derrotas"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -217,7 +222,8 @@ public class RankingsPanel extends JPanel {
             for (RankingPlayerGame ranking : rankings) {
                 Object[] row = {
                         ranking.getPlayerId(),
-                        ranking.getGameCode(),
+                        ranking.getPlayerName(),
+                        ranking.getGameName(),
                         ranking.getRanking(),
                         ranking.getWins(),
                         ranking.getLosses()
@@ -233,7 +239,7 @@ public class RankingsPanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             txtPlayerId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-            txtGameCode.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtGameName.setText(tableModel.getValueAt(selectedRow, 1).toString());
 
             Object rankingValue = tableModel.getValueAt(selectedRow, 2);
             txtRanking.setText(rankingValue != null ? rankingValue.toString() : "");
@@ -242,7 +248,7 @@ public class RankingsPanel extends JPanel {
             txtLosses.setText(tableModel.getValueAt(selectedRow, 4).toString());
 
             txtPlayerId.setEditable(false);
-            txtGameCode.setEditable(false);
+            txtGameName.setEditable(false);
 
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
@@ -265,7 +271,8 @@ public class RankingsPanel extends JPanel {
 
             RankingPlayerGame rankingPlayerGame = new RankingPlayerGame(
                     playerId,
-                    txtGameCode.getText().trim(),
+                    txtPlayerName.getText().trim(),
+                    txtGameName.getText().trim(),
                     ranking,
                     wins,
                     losses
@@ -282,14 +289,14 @@ public class RankingsPanel extends JPanel {
             String errorMessage = e.getMessage();
 
             if (errorMessage.contains("duplicate key value") && errorMessage.contains("ranking_player_game_pkey")) {
-                showError("Error: Ya existe un ranking para el par (Jugador ID, Código Juego). Esta combinación debe ser única.", "Error de Clave Compuesta");
+                showError("Error: Ya existe un ranking para el par (Jugador ID, Nombre Juego). Esta combinación debe ser única.", "Error de Clave Compuesta");
             } else if (errorMessage.contains("violates foreign key constraint")) {
                 if (errorMessage.contains("player_id")) {
                     showError("Error de Jugador: El ID de Jugador ingresado no existe en la tabla de Jugadores.", "Error de Clave Foránea");
-                } else if (errorMessage.contains("game_code")) {
-                    showError("Error de Juego: El Código de Juego ingresado no existe en la tabla de Juegos.", "Error de Clave Foránea");
+                } else if (errorMessage.contains("game_name")) {
+                    showError("Error de Juego: El Nombre de Juego ingresado no existe en la tabla de Juegos.", "Error de Clave Foránea");
                 } else {
-                    showError("Error de Clave Foránea: Asegúrate de que el ID de Jugador y el Código de Juego existan.", "Error de Clave Foránea");
+                    showError("Error de Clave Foránea: Asegúrate de que el ID de Jugador y el Nombre de Juego existan.", "Error de Clave Foránea");
                 }
             } else if (errorMessage.contains("violates check constraint")) {
                 showError("Error de Validación: Victorias, Derrotas y Ranking deben ser números positivos o cero.", "Error de Restricción");
@@ -300,7 +307,7 @@ public class RankingsPanel extends JPanel {
     }
 
     private void updateRanking() {
-        if (txtPlayerId.getText().trim().isEmpty() || txtGameCode.getText().trim().isEmpty()) {
+        if (txtPlayerId.getText().trim().isEmpty() || txtGameName.getText().trim().isEmpty()) {
             showError("Selecciona un ranking de la tabla para actualizar.", "Error de Selección");
             return;
         }
@@ -319,7 +326,8 @@ public class RankingsPanel extends JPanel {
 
             RankingPlayerGame rankingPlayerGame = new RankingPlayerGame(
                     playerId,
-                    txtGameCode.getText().trim(),
+                    txtPlayerName.getText().trim(),
+                    txtGameName.getText().trim(),
                     ranking,
                     wins,
                     losses
@@ -343,7 +351,7 @@ public class RankingsPanel extends JPanel {
     }
 
     private void deleteRanking() {
-        if (txtPlayerId.getText().trim().isEmpty() || txtGameCode.getText().trim().isEmpty()) {
+        if (txtPlayerId.getText().trim().isEmpty() || txtGameName.getText().trim().isEmpty()) {
             showError("Selecciona un ranking de la tabla para eliminar.", "Error de Selección");
             return;
         }
@@ -367,7 +375,7 @@ public class RankingsPanel extends JPanel {
             try {
                 if (rankingCRUD.deleteRankingPlayerGame(
                         Integer.parseInt(txtPlayerId.getText().trim()),
-                        txtGameCode.getText().trim())) {
+                        txtGameName.getText().trim())) {
                     showSuccess("Ranking eliminado exitosamente!");
                     clearFields();
                     loadRankings();
@@ -382,12 +390,13 @@ public class RankingsPanel extends JPanel {
 
     private void clearFields() {
         txtPlayerId.setText("");
-        txtGameCode.setText("");
+        txtPlayerName.setText("");
+        txtGameName.setText("");
         txtRanking.setText("");
         txtWins.setText("");
         txtLosses.setText("");
         txtPlayerId.setEditable(true);
-        txtGameCode.setEditable(true);
+        txtGameName.setEditable(true);
         table.clearSelection();
 
         btnAdd.setEnabled(true);
@@ -397,13 +406,25 @@ public class RankingsPanel extends JPanel {
 
     private boolean validateFields(boolean isAdd) {
         String idText = txtPlayerId.getText().trim();
-        String gameCode = txtGameCode.getText().trim();
+        String playerName = txtPlayerName.getText().trim();
+        String gameName = txtGameName.getText().trim();
         String rankingText = txtRanking.getText().trim();
         String winsText = txtWins.getText().trim();
         String lossesText = txtLosses.getText().trim();
 
-        if (idText.isEmpty() || gameCode.isEmpty() || winsText.isEmpty() || lossesText.isEmpty()) {
-            showError("ID Jugador, Código Juego, Victorias y Derrotas son obligatorios.", "Campos Incompletos");
+        if (idText.isEmpty() || playerName.isEmpty() || gameName.isEmpty() || winsText.isEmpty() || lossesText.isEmpty()) {
+            showError("ID Jugador, Nombre Jugador, Nombre Juego, Victorias y Derrotas son obligatorios.", "Campos Incompletos");
+            return false;
+        }
+
+        try {
+            if (!PlayerCRUD.playerExists(playerName)) {
+                showError("El jugador '" + playerName + "' no existe en la base de datos.", "Jugador No Encontrado");
+                txtPlayerName.requestFocus();
+                return false;
+            }
+        } catch (SQLException e) {
+            showError("Error al verificar el jugador en la base de datos: " + e.getMessage(), "Error de BD");
             return false;
         }
 

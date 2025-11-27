@@ -28,6 +28,20 @@ public class GameCRUD {
         return codes;
     }
 
+    public List<String> getAllGameNames() throws SQLException {
+        List<String> names = new ArrayList<>();
+        String sql = "SELECT game_name FROM games";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+
+            while (resultSet.next()) {
+                names.add(resultSet.getString("game_name"));
+            }
+        }
+        return names;
+    }
+
     public List<Game> getAllGames() throws SQLException {
         List<Game> games = new ArrayList<>();
         String sql = "SELECT game_code, game_name, game_description, game_genres FROM games";
