@@ -71,4 +71,12 @@ public class GameLeagueCRUD {
             return rowsDeleted > 0;
         }
     }
+
+    public boolean deleteAllLeaguesGames() throws SQLException {
+        String sql = "DELETE FROM leagues_games";
+        try (Statement statement = connection.createStatement()) {
+            int rowsDeleted = statement.executeUpdate(sql);
+            return rowsDeleted >= 0; // Debe ser >= 0 porque 0 filas borradas es éxito si la tabla ya estaba vacía
+        }
+    }
 }

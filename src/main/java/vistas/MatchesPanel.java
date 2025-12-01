@@ -87,7 +87,6 @@ public class MatchesPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
-        gbc.weightx = 1.0;
 
         txtMatchId = createStyledTextField();
         dateChooserMatch = createStyledDateChooser();
@@ -101,21 +100,23 @@ public class MatchesPanel extends JPanel {
 
 
         gbc.gridy = 0;
+        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("ID del Partido:", txtMatchId), gbc);
+        gbc.gridx = 1; gbc.weightx = 2.0; fieldsContainer.add(createFieldPanel("Fecha:", dateChooserMatch), gbc);
+        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Hora (hh:mm):", timeInputPanel), gbc);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("ID del Partido:", txtMatchId), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Fecha:", dateChooserMatch), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Hora (hh:mm):", timeInputPanel), gbc);
         gbc.gridx = 3;
-        gbc.insets = new Insets(0, 0, SPACING_MD, 0);
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, SPACING_MD, 0); // Eliminamos el insets derecho para esta columna
         fieldsContainer.add(createFieldPanel("Tipo:", cmbMatchType), gbc);
 
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre del Jugador 1:", txtPlayer1), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Nombre del Jugador 2:", txtPlayer2), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Nombre del Juego:", cmbGameName), gbc);
+        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Nombre del Jugador 1:", txtPlayer1), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.5; fieldsContainer.add(createFieldPanel("Nombre del Jugador 2:", txtPlayer2), gbc); // Mantener el peso de la columna para la simetría si lo deseas
+        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Nombre del Juego:", cmbGameName), gbc);
         gbc.gridx = 3;
+        gbc.weightx = 1.0;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
         fieldsContainer.add(createFieldPanel("Resultado:", cmbResult), gbc);
 
@@ -131,7 +132,7 @@ public class MatchesPanel extends JPanel {
         btnAdd.addActionListener(e -> addMatch());
         btnUpdate.addActionListener(e -> updateMatch());
         btnDelete.addActionListener(e -> deleteMatch());
-        btnClear.addActionListener(e -> clearFields());
+        btnClear.addActionListener(e -> clearFieldsWithConfirmation());
 
         buttonsPanel.add(btnAdd);
         buttonsPanel.add(btnUpdate);
@@ -192,6 +193,7 @@ public class MatchesPanel extends JPanel {
         dateChooser.setDateFormatString("yyyy-MM-dd");
 
         JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
+        dateEditor.setColumns(10);
         dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
         dateEditor.setForeground(TEXT_PRIMARY);
         dateEditor.setBackground(BG_INPUT);
@@ -202,9 +204,10 @@ public class MatchesPanel extends JPanel {
         ));
 
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
-        dateChooser.getJCalendar().setBackground(BG_INPUT);
-        dateChooser.getJCalendar().setForeground(TEXT_PRIMARY);
-
+        dateChooser.getJCalendar().setBackground(Color.WHITE);
+        dateChooser.getJCalendar().setForeground(BG_DARK_PRIMARY);
+        dateChooser.getJCalendar().setWeekdayForeground(Color.BLACK);
+        dateChooser.getJCalendar().setSundayForeground(Color.BLACK);
         return dateChooser;
     }
 
@@ -413,11 +416,14 @@ public class MatchesPanel extends JPanel {
         }
 
         try {
+            // Se asume que txtMatchId debe ser el ID autogenerado o un ID válido ingresado por el usuario.
+            // Si el ID debe ser autoincremental en la DB, el campo txtMatchId no debería llenarse para la inserción.
+            // Aquí se usa el valor ingresado en txtMatchId para mantener la estructura de tu código.
             Match match = new Match(
                     Integer.parseInt(txtMatchId.getText().trim()),
                     matchDate,
                     cmbResult.getSelectedItem().toString(),
-                    cmbMatchType.getSelectedItem().toString(),
+                    cmbMatchType.getSelectedItem().toString().toLowerCase(),
                     txtPlayer1.getText().trim(),
                     txtPlayer2.getText().trim(),
                     cmbGameName.getSelectedItem().toString()
@@ -453,7 +459,7 @@ public class MatchesPanel extends JPanel {
                     Integer.parseInt(txtMatchId.getText().trim()),
                     matchDate,
                     cmbResult.getSelectedItem().toString(),
-                    cmbMatchType.getSelectedItem().toString(),
+                    cmbMatchType.getSelectedItem().toString().toLowerCase(),
                     txtPlayer1.getText().trim(),
                     txtPlayer2.getText().trim(),
                     cmbGameName.getSelectedItem().toString()
@@ -477,6 +483,7 @@ public class MatchesPanel extends JPanel {
             return;
         }
 
+        // 🟢 LÓGICA EXISTENTE: Muestra el mensaje de corroboración
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Estás seguro de eliminar este partido?",
                 "Confirmar eliminación",
@@ -495,6 +502,35 @@ public class MatchesPanel extends JPanel {
             } catch (SQLException e) {
                 showError("Error al eliminar: " + e.getMessage(), "Error");
             }
+        }
+    }
+
+    // 🟢 MÉTODO AÑADIDO: Maneja la confirmación de limpieza antes de llamar a clearFields()
+    private void clearFieldsWithConfirmation() {
+        // Opcional: Si todos los campos ya están en su estado inicial, simplemente limpiamos la selección
+        if (txtMatchId.getText().trim().isEmpty() &&
+                dateChooserMatch.getDate() == null &&
+                txtTimeValue.getText().trim().equals("12:00") &&
+                cmbAmPm.getSelectedItem().equals("AM") &&
+                cmbResult.getSelectedIndex() == 0 &&
+                cmbMatchType.getSelectedIndex() == 0 &&
+                txtPlayer1.getText().trim().isEmpty() &&
+                txtPlayer2.getText().trim().isEmpty()) {
+
+            table.clearSelection();
+            txtMatchId.setEditable(true);
+            return;
+        }
+
+        // Mostrar el mensaje de corroboración
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "¿Estás seguro de limpiar todos los campos del formulario?",
+                "Confirmar limpieza",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            clearFields();
         }
     }
 
@@ -542,8 +578,8 @@ public class MatchesPanel extends JPanel {
 
 
         try {
-            String player1 = txtPlayer1.getText().trim();  // ← Solo getText(), sin parseInt
-            String player2 = txtPlayer2.getText().trim();  // ← Solo getText(), sin parseInt
+            String player1 = txtPlayer1.getText().trim();
+            String player2 = txtPlayer2.getText().trim();
 
             if (player1.isEmpty() || player2.isEmpty()) {
                 showError("Los nombres de jugadores no pueden estar vacíos.", "Error");
@@ -555,7 +591,6 @@ public class MatchesPanel extends JPanel {
                 return false;
             }
 
-            // También puedes agregar validación de longitud si quieres
             if (player1.length() < 3 || player2.length() < 3) {
                 showError("Los nombres deben tener al menos 3 caracteres.", "Error");
                 return false;
@@ -606,7 +641,7 @@ public class MatchesPanel extends JPanel {
         if (msg.contains("duplicate key")) {
             showError("Ya existe un partido con ese nombre.", "Error");
         } else if (msg.contains("foreign key")) {
-            showError("Nombre del jugador o juego no válidos.", "Error");
+            showError("Nombre del jugador o juego no válidos. Asegúrate de que existen en la base de datos.", "Error");
         } else {
             showError("Error SQL: " + msg, "Error");
         }
