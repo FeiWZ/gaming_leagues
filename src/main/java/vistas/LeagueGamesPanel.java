@@ -13,6 +13,7 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.awt.event.ActionListener; // Necesario para el Listener del botón
 
 public class LeagueGamesPanel extends JPanel {
 
@@ -104,9 +105,13 @@ public class LeagueGamesPanel extends JPanel {
         btnClear = createStyledButton("Limpiar", ACCENT_PRIMARY);
         btnRefresh = createStyledButton("Refrescar", ACCENT_PRIMARY);
 
+        // Conexión del botón Asociar a la lógica de inserción y refresh.
         btnAdd.addActionListener(e -> addLeagueGame());
+        // Conexión del botón Eliminar a la lógica de eliminación y confirmación.
         btnDelete.addActionListener(e -> deleteLeagueGame());
-        btnClear.addActionListener(e -> clearFields());
+        // LÍNEA MODIFICADA: Conexión del botón Limpiar a la lógica de pregunta/limpieza total.
+        btnClear.addActionListener(e -> handleClearButton());
+        // Conexión del botón Refrescar a la lógica de recarga de tabla.
         btnRefresh.addActionListener(e -> loadLeagueGames());
 
         buttonsPanel.add(btnAdd);
@@ -151,6 +156,7 @@ public class LeagueGamesPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
+        // Columnas originales (solo ID y Código)
         String[] columns = {"ID Liga", "Código del Juego"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -231,10 +237,13 @@ public class LeagueGamesPanel extends JPanel {
         return button;
     }
 
-
+    /**
+     * MÉTODO MODIFICADO: Ahora carga los datos simples (ID y Código) usando el método getAllLeaguesGames().
+     */
     private void loadLeagueGames() {
         tableModel.setRowCount(0);
         try {
+            // Usa el método que devuelve List<GameLeague> con solo ID y Código
             List<GameLeague> leagueGames = leagueGameCRUD.getAllLeaguesGames();
             for (GameLeague lg : leagueGames) {
                 Object[] row = {
@@ -257,11 +266,82 @@ public class LeagueGamesPanel extends JPanel {
         }
     }
 
+    /**
+     * MÉTODO MODIFICADO: Implementa la lógica de inserción y llama a loadLeagueGames() para refrescar la tabla.
+     */
     private void addLeagueGame() {
         if (!validateAndShowErrors()) return;
+
+        try {
+            int leagueId = Integer.parseInt(txtLeagueId.getText().trim());
+            String gameCode = txtGameCode.getText().trim();
+
+            GameLeague newAssociation = new GameLeague(leagueId, gameCode);
+
+            // 1. Insertar en la base de datos
+            boolean success = leagueGameCRUD.createLeaguesGames(newAssociation);
+
+            if (success) {
+                showSuccess("Asociación creada exitosamente.");
+
+                // 2. Limpiar campos y RECARGAR la tabla
+                clearFields();
+                loadLeagueGames();
+
+            } else {
+                showError("No se pudo crear la asociación.");
+            }
+
+        } catch (SQLException e) {
+            showError("Error al insertar la asociación: " + e.getMessage(), "Error SQL");
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            showError("El ID de la Liga debe ser un número entero válido.", "Error de Formato");
+        }
     }
 
     private void deleteLeagueGame() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            showError("Debe seleccionar una asociación para poder eliminarla.", "Error de Selección");
+            return;
+        }
+
+        // 1. Obtener ID y Código de la fila seleccionada
+        try {
+            // Los valores se obtienen de las columnas 0 y 1 del modelo
+            int leagueId = (int) tableModel.getValueAt(selectedRow, 0);
+            String gameCode = (String) tableModel.getValueAt(selectedRow, 1);
+
+            // 2. Pedir confirmación
+            int confirm = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Está seguro de que desea eliminar la asociación de Liga " + leagueId + " con el Juego " + gameCode + "?",
+                    "Confirmar Eliminación",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (confirm == JOptionPane.YES_OPTION) {
+                // 3. Llamar al CRUD
+                boolean success = leagueGameCRUD.deleteLeaguesGames(leagueId, gameCode);
+
+                if (success) {
+                    showSuccess("Asociación eliminada exitosamente.");
+                    // 4. Refrescar la tabla
+                    loadLeagueGames();
+                    clearFields(); // Limpia los campos de texto
+                } else {
+                    showError("No se pudo eliminar la asociación. Puede que ya no exista.", "Error de BD");
+                }
+            }
+        } catch (SQLException e) {
+            showError("Error al eliminar la asociación: " + e.getMessage(), "Error SQL");
+            e.printStackTrace();
+        } catch (ClassCastException e) {
+            // Esto ayuda a atrapar si los tipos de datos no son int y String
+            showError("Error interno al leer datos de la tabla.", "Error de Datos");
+        }
     }
 
     private void clearFields() {
@@ -274,6 +354,33 @@ public class LeagueGamesPanel extends JPanel {
         updateButtonStates();
     }
 
+    private void handleClearButton() {
+        // 1. Preguntar si desea borrar TODA la tabla de la BD
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "¿Desea limpiar TODOS los datos de la tabla 'Juegos Asociados a Ligas' en la base de datos?",
+                "Confirmar Limpieza Total",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // Borrar de la base de datos
+                leagueGameCRUD.deleteAllLeaguesGames();
+                showSuccess("Todos los registros han sido eliminados de la base de datos.");
+
+                // Refrescar la tabla (quedará vacía)
+                loadLeagueGames();
+            } catch (SQLException e) {
+                showError("Error al limpiar todos los datos: " + e.getMessage(), "Error SQL");
+                e.printStackTrace();
+            }
+        } else {
+            // Si dice NO, solo limpiamos los campos de texto
+            clearFields();
+        }
+    }
 
     private boolean validateAndShowErrors() {
         String leagueIdText = txtLeagueId.getText().trim();
@@ -318,8 +425,11 @@ public class LeagueGamesPanel extends JPanel {
         boolean isSelected = table.getSelectedRow() != -1;
 
         btnAdd.setEnabled(fieldsAreValid && !isSelected);
+        // CÓDIGO MODIFICADO: Eliminar (btnDelete) solo se activa si hay una fila seleccionada.
         btnDelete.setEnabled(isSelected);
         btnRefresh.setEnabled(true);
+        // Limpiar (btnClear) siempre está habilitado (por defecto, no requiere estado de fila/campo)
+        btnClear.setEnabled(true);
     }
 
 

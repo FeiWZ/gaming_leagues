@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/TeamCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/TeamCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/TeamPlayerCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/TeamPlayerCRUD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tablas/Team.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Team.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tablas/TeamPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/TeamPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamPlayerPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamPlayerPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/GameLeagueCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/GameLeagueCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/consultas/MatchCRUD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/consultas/MatchCRUD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tablas/Match.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tablas/Match.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/LeagueGamesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/LeagueGamesPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +40,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/FeiWZ/gaming_leagues.git&quot;,
-    &quot;accountId&quot;: &quot;9805ea51-0160-4df6-89e9-23852a719c46&quot;
+    &quot;accountId&quot;: &quot;3987c8bc-3f29-4aa0-b9be-7c7c95b10f2f&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
