@@ -14,20 +14,6 @@ public class GameCRUD {
         this.connection = connection;
     }
 
-    public List<String> getAllGameCodes() throws SQLException {
-        List<String> codes = new ArrayList<>();
-        String sql = "SELECT game_code FROM games";
-
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-
-            while (resultSet.next()) {
-                codes.add(resultSet.getString("game_code"));
-            }
-        }
-        return codes;
-    }
-
     public List<String> getAllGameNames() throws SQLException {
         List<String> names = new ArrayList<>();
         String sql = "SELECT game_name FROM games";
@@ -60,24 +46,6 @@ public class GameCRUD {
             }
         }
         return games;
-    }
-
-    public Game getGameByCode(String gameCode) throws SQLException {
-        String sql = "SELECT game_code, game_name, game_description, game_genres FROM games WHERE game_code = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, gameCode);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return new Game(
-                            resultSet.getString("game_code"),
-                            resultSet.getString("game_name"),
-                            resultSet.getString("game_description"),
-                            resultSet.getString("game_genres")
-                    );
-                }
-            }
-        }
-        return null;
     }
 
     public boolean createGame(Game game) throws SQLException {
