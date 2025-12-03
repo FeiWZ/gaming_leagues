@@ -16,7 +16,7 @@ public class RankingPlayerGameCRUD {
 
     public List<RankingPlayerGame> getAllRankingPlayerGame() throws SQLException {
         List<RankingPlayerGame> rankingPlayerGameList = new ArrayList<>();
-        String sql = "SELECT player_id, game_code, ranking, wins, losses FROM players_games_ranking";
+        String sql = "SELECT player_id, player_name, game_name, ranking, wins, losses FROM players_games_ranking";
 
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -24,8 +24,9 @@ public class RankingPlayerGameCRUD {
             while (resultSet.next()) {
                 RankingPlayerGame rankingPlayerGame = new RankingPlayerGame(
                         resultSet.getInt("player_id"),
-                        resultSet.getString("game_code"),
-                        resultSet.getObject("ranking", Integer.class), // Usar getObject para Integer
+                        resultSet.getString("player_name"),
+                        resultSet.getString("game_name"),
+                        resultSet.getObject("ranking") != null ? resultSet.getInt("ranking") : null, // Usar getObject para Integer
                         resultSet.getInt("wins"),
                         resultSet.getInt("losses")
                 );
@@ -35,17 +36,18 @@ public class RankingPlayerGameCRUD {
         return rankingPlayerGameList;
     }
 
-    public RankingPlayerGame getRankingPlayerGame(int playerId, String gameCode) throws SQLException {
-        String sql = "SELECT player_id, game_code, ranking, wins, losses FROM players_games_ranking WHERE player_id = ? AND game_code = ?";
+    public RankingPlayerGame getRankingPlayerGame(int playerId, String gameName) throws SQLException {
+        String sql = "SELECT player_id, first_name, game_name, ranking, wins, losses FROM players_games_ranking WHERE player_id = ? AND game_name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, playerId);
-            preparedStatement.setString(2, gameCode);
+            preparedStatement.setString(2, gameName);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return new RankingPlayerGame(
                             resultSet.getInt("player_id"),
-                            resultSet.getString("game_code"),
-                            resultSet.getObject("ranking", Integer.class), // Usar getObject para Integer
+                            resultSet.getString("player_name"),
+                            resultSet.getString("game_name"),
+                            resultSet.getObject("ranking") != null ? resultSet.getInt("ranking") : null, // Usar getObject para Integer
                             resultSet.getInt("wins"),
                             resultSet.getInt("losses")
                     );
@@ -56,13 +58,20 @@ public class RankingPlayerGameCRUD {
     }
 
     public boolean createRankingPlayerGame(RankingPlayerGame rankingPlayerGame) throws SQLException {
-        String sql = "INSERT INTO players_games_ranking (player_id, game_code, ranking, wins, losses) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO players_games_ranking (player_id, player_name, game_name, ranking, wins, losses) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, rankingPlayerGame.getPlayerId());
-            preparedStatement.setString(2, rankingPlayerGame.getGameCode());
-            preparedStatement.setObject(3, rankingPlayerGame.getRanking(), Types.INTEGER); // Usar setObject para Integer
-            preparedStatement.setInt(4, rankingPlayerGame.getWins());
-            preparedStatement.setInt(5, rankingPlayerGame.getLosses());
+            preparedStatement.setString(2, rankingPlayerGame.getPlayerName());
+            preparedStatement.setString(3, rankingPlayerGame.getGameName());
+
+            if (rankingPlayerGame.getRanking() != null) {
+                preparedStatement.setInt(4, rankingPlayerGame.getRanking());
+            } else {
+                preparedStatement.setNull(4, Types.INTEGER);
+            }
+
+            preparedStatement.setInt(5, rankingPlayerGame.getWins());
+            preparedStatement.setInt(6, rankingPlayerGame.getLosses());
 
             int rowsInserted = preparedStatement.executeUpdate();
             return rowsInserted > 0;
@@ -70,24 +79,31 @@ public class RankingPlayerGameCRUD {
     }
 
     public boolean updateRankingPlayerGame(RankingPlayerGame rankingPlayerGame) throws SQLException {
-        String sql = "UPDATE players_games_ranking SET ranking = ?, wins = ?, losses = ? WHERE player_id = ? AND game_code = ?";
+        String sql = "UPDATE players_games_ranking SET player_name = ?, ranking = ?, wins = ?, losses = ? WHERE player_id = ? AND game_name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setObject(1, rankingPlayerGame.getRanking(), Types.INTEGER); // Usar setObject para Integer
-            preparedStatement.setInt(2, rankingPlayerGame.getWins());
-            preparedStatement.setInt(3, rankingPlayerGame.getLosses());
-            preparedStatement.setInt(4, rankingPlayerGame.getPlayerId());
-            preparedStatement.setString(5, rankingPlayerGame.getGameCode());
+            preparedStatement.setString(1, rankingPlayerGame.getPlayerName());
+
+            if (rankingPlayerGame.getRanking() != null) {
+                preparedStatement.setInt(2, rankingPlayerGame.getRanking());
+            } else {
+                preparedStatement.setNull(2, Types.INTEGER);
+            }
+
+            preparedStatement.setInt(3, rankingPlayerGame.getWins());
+            preparedStatement.setInt(4, rankingPlayerGame.getLosses());
+            preparedStatement.setInt(5, rankingPlayerGame.getPlayerId());
+            preparedStatement.setString(6, rankingPlayerGame.getGameName());
 
             int rowsUpdated = preparedStatement.executeUpdate();
             return rowsUpdated > 0;
         }
     }
 
-    public boolean deleteRankingPlayerGame(int playerId, String gameCode) throws SQLException {
-        String sql = "DELETE FROM players_games_ranking WHERE player_id = ? AND game_code = ?";
+    public boolean deleteRankingPlayerGame(int playerId, String gameName) throws SQLException {
+        String sql = "DELETE FROM players_games_ranking WHERE player_id = ? AND game_name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, playerId);
-            preparedStatement.setString(2, gameCode);
+            preparedStatement.setString(2, gameName);
 
             int rowsDeleted = preparedStatement.executeUpdate();
             return rowsDeleted > 0;

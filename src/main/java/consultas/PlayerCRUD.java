@@ -38,6 +38,21 @@ public class PlayerCRUD {
         return players;
     }
 
+    public boolean playerExists(String playerName) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM players WHERE first_name = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, playerName);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0; // Retorna true si encuentra al menos 1 jugador
+                }
+            }
+        }
+        return false;
+    }
+
     public Player getPlayerById(int playerId) throws SQLException {
         String sql = "SELECT player_id, first_name, last_name, gender, address, nationality, birthdate, email FROM players WHERE player_id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {

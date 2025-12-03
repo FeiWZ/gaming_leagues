@@ -1,3 +1,4 @@
+
 package tablas;
 
 import java.sql.Timestamp;
@@ -7,17 +8,17 @@ public class Match {
     private Timestamp matchDate;
     private String result;
     private String matchType;
-    private int playerId1;
-    private int playerId2;
+    private String player1;
+    private String player2;
     private String gameCode;
 
-    public Match(int matchId, Timestamp matchDate, String result, String matchType, int playerId1, int playerId2, String gameCode) {
+    public Match(int matchId, Timestamp matchDate, String result, String matchType, String player1, String player2, String gameCode) {
         this.matchId = matchId;
         this.matchDate = matchDate;
         this.result = result;
         this.matchType = matchType;
-        this.playerId1 = playerId1;
-        this.playerId2 = playerId2;
+        this.player1 = player1;
+        this.player2 = player2;
         this.gameCode = gameCode;
     }
 
@@ -34,11 +35,11 @@ public class Match {
     public String getMatchType() { return matchType; }
     public void setMatchType(String matchType) { this.matchType = matchType; }
 
-    public int getPlayerId1() { return playerId1; }
-    public void setPlayerId1(int playerId1) { this.playerId1 = playerId1; }
+    public String getPlayer1() { return player1; }
+    public void setPlayer1(String playerId1) { this.player1 = player1; }
 
-    public int getPlayerId2() { return playerId2; }
-    public void setPlayerId2(int playerId2) { this.playerId2 = playerId2; }
+    public String getPlayer2() { return player2; }
+    public void setPlayer2(String player2) { this.player2 = player2; }
 
     public String getGameCode() { return gameCode; }
     public void setGameCode(String gameCode) { this.gameCode = gameCode; }

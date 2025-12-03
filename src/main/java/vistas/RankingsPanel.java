@@ -1,5 +1,6 @@
 package vistas;
 
+import consultas.PlayerCRUD;
 import consultas.RankingPlayerGameCRUD;
 import tablas.RankingPlayerGame;
 import static vistas.DesignConstants.*;
@@ -8,6 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,17 +19,53 @@ public class RankingsPanel extends JPanel {
 
     private Connection connection;
     private RankingPlayerGameCRUD rankingCRUD;
+    private PlayerCRUD playerCRUD;
 
     private JTable table;
     private DefaultTableModel tableModel;
-    private JTextField txtPlayerId, txtGameCode, txtRanking, txtWins, txtLosses;
+    private JTextField txtPlayerId, txtPlayerName, txtGameName, txtRanking, txtWins, txtLosses;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
+
+    // Declaración de JLabels para los mensajes de validación
+    private JLabel lblErrorPlayerId, lblErrorPlayerName, lblErrorGameName;
+    private JLabel lblErrorRanking, lblErrorWins, lblErrorLosses;
 
     public RankingsPanel(Connection connection) {
         this.connection = connection;
         this.rankingCRUD = new RankingPlayerGameCRUD(connection);
+        this.playerCRUD = new PlayerCRUD(connection);
+
+        // Inicializar componentes de la tabla ANTES de crear el formulario
+        initializeTableComponents();
         initComponents();
         loadRankings();
+
+        // Validar el estado inicial de los botones
+        validateFields(true);
+    }
+
+    // Método auxiliar para crear el JLabel de error con estilo rojo
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setBorder(new EmptyBorder(2, 0, 0, 0));
+        return label;
+    }
+
+    private CaretListener createCaretListener() {
+        return e -> validateFields();
+    }
+
+    private void initializeTableComponents() {
+        String[] columns = {"ID Jugador", "Nombre Jugador", "Nombre Juego", "Ranking", "Victorias", "Derrotas"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table = new JTable(tableModel);
     }
 
     private void initComponents() {
@@ -63,20 +101,41 @@ public class RankingsPanel extends JPanel {
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
 
-        JPanel fieldsPanel = new JPanel(new GridLayout(1, 5, SPACING_MD, SPACING_LG));
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 3, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
 
         txtPlayerId = createStyledTextField();
-        txtGameCode = createStyledTextField();
+        txtPlayerName = createStyledTextField();
+        txtGameName = createStyledTextField();
         txtRanking = createStyledTextField();
         txtWins = createStyledTextField();
         txtLosses = createStyledTextField();
 
-        fieldsPanel.add(createFieldPanel("ID Jugador:", txtPlayerId));
-        fieldsPanel.add(createFieldPanel("Código Juego:", txtGameCode));
-        fieldsPanel.add(createFieldPanel("Ranking (Opcional):", txtRanking));
-        fieldsPanel.add(createFieldPanel("Victorias:", txtWins));
-        fieldsPanel.add(createFieldPanel("Derrotas:", txtLosses));
+        // Inicializar JLabels de error
+        lblErrorPlayerId = createErrorLabel();
+        lblErrorPlayerName = createErrorLabel();
+        lblErrorGameName = createErrorLabel();
+        lblErrorRanking = createErrorLabel();
+        lblErrorWins = createErrorLabel();
+        lblErrorLosses = createErrorLabel();
+
+        // Asignar listeners
+        CaretListener listener = createCaretListener();
+        txtPlayerId.addCaretListener(listener);
+        txtPlayerName.addCaretListener(listener);
+        txtGameName.addCaretListener(listener);
+        txtRanking.addCaretListener(listener);
+        txtWins.addCaretListener(listener);
+        txtLosses.addCaretListener(listener);
+
+
+        // Usar el nuevo createFieldPanel con validación
+        fieldsPanel.add(createValidatedFieldPanel("ID Jugador:", txtPlayerId, lblErrorPlayerId));
+        fieldsPanel.add(createValidatedFieldPanel("Nombre del Jugador:", txtPlayerName, lblErrorPlayerName));
+        fieldsPanel.add(createValidatedFieldPanel("Nombre del Juego:", txtGameName, lblErrorGameName));
+        fieldsPanel.add(createValidatedFieldPanel("Ranking (Opcional):", txtRanking, lblErrorRanking));
+        fieldsPanel.add(createValidatedFieldPanel("Victorias:", txtWins, lblErrorWins));
+        fieldsPanel.add(createValidatedFieldPanel("Derrotas:", txtLosses, lblErrorLosses));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -103,7 +162,8 @@ public class RankingsPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JTextField textField) {
+    // Nuevo método para campos de texto con validación
+    private JPanel createValidatedFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -111,10 +171,20 @@ public class RankingsPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(textField, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(textField, BorderLayout.CENTER);
+        panel.add(contentPanel, BorderLayout.CENTER);
 
         return panel;
+    }
+
+    private JPanel createFieldPanel(String labelText, JTextField textField) {
+        // Mantenemos esta versión como alias por si se usa en otro contexto, pero ahora llamamos a createValidatedFieldPanel
+        return createValidatedFieldPanel(labelText, textField, new JLabel(" ")); // Usar un label vacío si no se necesita validación roja
     }
 
     private JPanel createTablePanel() {
@@ -130,15 +200,7 @@ public class RankingsPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        String[] columns = {"ID Jugador", "Código Juego", "Ranking", "Victorias", "Derrotas"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        table = new JTable(tableModel);
+        // JTable y tableModel inicializados en initializeTableComponents
         table.setFont(getBodyFont(FONT_SIZE_BODY));
         table.setForeground(TEXT_PRIMARY);
         table.setBackground(BG_INPUT);
@@ -217,7 +279,8 @@ public class RankingsPanel extends JPanel {
             for (RankingPlayerGame ranking : rankings) {
                 Object[] row = {
                         ranking.getPlayerId(),
-                        ranking.getGameCode(),
+                        ranking.getPlayerName(),
+                        ranking.getGameName(),
                         ranking.getRanking(),
                         ranking.getWins(),
                         ranking.getLosses()
@@ -233,20 +296,20 @@ public class RankingsPanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             txtPlayerId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-            txtGameCode.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtPlayerName.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtGameName.setText(tableModel.getValueAt(selectedRow, 2).toString());
 
-            Object rankingValue = tableModel.getValueAt(selectedRow, 2);
+            Object rankingValue = tableModel.getValueAt(selectedRow, 3);
             txtRanking.setText(rankingValue != null ? rankingValue.toString() : "");
 
-            txtWins.setText(tableModel.getValueAt(selectedRow, 3).toString());
-            txtLosses.setText(tableModel.getValueAt(selectedRow, 4).toString());
+            txtWins.setText(tableModel.getValueAt(selectedRow, 4).toString());
+            txtLosses.setText(tableModel.getValueAt(selectedRow, 5).toString());
 
             txtPlayerId.setEditable(false);
-            txtGameCode.setEditable(false);
+            txtGameName.setEditable(false);
 
-            btnUpdate.setEnabled(true);
-            btnDelete.setEnabled(true);
-            btnAdd.setEnabled(false);
+            clearErrorMessages();
+            validateFields(false); // Validar en modo Actualizar
         }
     }
 
@@ -265,7 +328,8 @@ public class RankingsPanel extends JPanel {
 
             RankingPlayerGame rankingPlayerGame = new RankingPlayerGame(
                     playerId,
-                    txtGameCode.getText().trim(),
+                    txtPlayerName.getText().trim(),
+                    txtGameName.getText().trim(),
                     ranking,
                     wins,
                     losses
@@ -278,29 +342,15 @@ public class RankingsPanel extends JPanel {
             } else {
                 showError("No se pudo agregar el ranking.", "Error de Inserción");
             }
+        } catch (NumberFormatException e) {
+            showError("Error de formato: ID Jugador, Ranking, Victorias y Derrotas deben ser números enteros válidos.", "Error de Formato");
         } catch (SQLException e) {
-            String errorMessage = e.getMessage();
-
-            if (errorMessage.contains("duplicate key value") && errorMessage.contains("ranking_player_game_pkey")) {
-                showError("Error: Ya existe un ranking para el par (Jugador ID, Código Juego). Esta combinación debe ser única.", "Error de Clave Compuesta");
-            } else if (errorMessage.contains("violates foreign key constraint")) {
-                if (errorMessage.contains("player_id")) {
-                    showError("Error de Jugador: El ID de Jugador ingresado no existe en la tabla de Jugadores.", "Error de Clave Foránea");
-                } else if (errorMessage.contains("game_code")) {
-                    showError("Error de Juego: El Código de Juego ingresado no existe en la tabla de Juegos.", "Error de Clave Foránea");
-                } else {
-                    showError("Error de Clave Foránea: Asegúrate de que el ID de Jugador y el Código de Juego existan.", "Error de Clave Foránea");
-                }
-            } else if (errorMessage.contains("violates check constraint")) {
-                showError("Error de Validación: Victorias, Derrotas y Ranking deben ser números positivos o cero.", "Error de Restricción");
-            } else {
-                showError("Error al agregar: " + errorMessage, "Error SQL");
-            }
+            handleSQLError(e);
         }
     }
 
     private void updateRanking() {
-        if (txtPlayerId.getText().trim().isEmpty() || txtGameCode.getText().trim().isEmpty()) {
+        if (txtPlayerId.getText().trim().isEmpty() || txtGameName.getText().trim().isEmpty()) {
             showError("Selecciona un ranking de la tabla para actualizar.", "Error de Selección");
             return;
         }
@@ -319,7 +369,8 @@ public class RankingsPanel extends JPanel {
 
             RankingPlayerGame rankingPlayerGame = new RankingPlayerGame(
                     playerId,
-                    txtGameCode.getText().trim(),
+                    txtPlayerName.getText().trim(),
+                    txtGameName.getText().trim(),
                     ranking,
                     wins,
                     losses
@@ -332,18 +383,15 @@ public class RankingsPanel extends JPanel {
             } else {
                 showError("No se pudo actualizar el ranking.", "Error de Actualización");
             }
+        } catch (NumberFormatException e) {
+            showError("Error de formato: Ranking, Victorias y Derrotas deben ser números enteros válidos.", "Error de Formato");
         } catch (SQLException e) {
-            String errorMessage = e.getMessage();
-            if (errorMessage.contains("violates check constraint")) {
-                showError("Error de Validación: Victorias, Derrotas y Ranking deben ser números positivos o cero.", "Error de Restricción");
-            } else {
-                showError("Error al actualizar: " + errorMessage, "Error SQL");
-            }
+            handleSQLError(e);
         }
     }
 
     private void deleteRanking() {
-        if (txtPlayerId.getText().trim().isEmpty() || txtGameCode.getText().trim().isEmpty()) {
+        if (txtPlayerId.getText().trim().isEmpty() || txtGameName.getText().trim().isEmpty()) {
             showError("Selecciona un ranking de la tabla para eliminar.", "Error de Selección");
             return;
         }
@@ -367,7 +415,7 @@ public class RankingsPanel extends JPanel {
             try {
                 if (rankingCRUD.deleteRankingPlayerGame(
                         Integer.parseInt(txtPlayerId.getText().trim()),
-                        txtGameCode.getText().trim())) {
+                        txtGameName.getText().trim())) {
                     showSuccess("Ranking eliminado exitosamente!");
                     clearFields();
                     loadRankings();
@@ -380,74 +428,168 @@ public class RankingsPanel extends JPanel {
         }
     }
 
+    private void clearErrorMessages() {
+        lblErrorPlayerId.setText(" ");
+        lblErrorPlayerName.setText(" ");
+        lblErrorGameName.setText(" ");
+        lblErrorRanking.setText(" ");
+        lblErrorWins.setText(" ");
+        lblErrorLosses.setText(" ");
+    }
+
     private void clearFields() {
         txtPlayerId.setText("");
-        txtGameCode.setText("");
+        txtPlayerName.setText("");
+        txtGameName.setText("");
         txtRanking.setText("");
         txtWins.setText("");
         txtLosses.setText("");
         txtPlayerId.setEditable(true);
-        txtGameCode.setEditable(true);
+        txtGameName.setEditable(true);
         table.clearSelection();
 
-        btnAdd.setEnabled(true);
-        btnUpdate.setEnabled(false);
-        btnDelete.setEnabled(false);
+        clearErrorMessages();
+        validateFields(true); // Validar en modo Agregar
     }
 
-    private boolean validateFields(boolean isAdd) {
+    // Sobrecarga del método de validación para llamar desde listeners
+    private boolean validateFields() {
+        // Si el ID del jugador y el Nombre del Juego son editables, asumimos modo Agregar.
+        boolean isAdding = txtPlayerId.isEditable() && txtGameName.isEditable();
+        return validateFields(isAdding);
+    }
+
+
+    private boolean validateFields(boolean isAdding) {
+        boolean isValid = true;
+
         String idText = txtPlayerId.getText().trim();
-        String gameCode = txtGameCode.getText().trim();
+        String playerName = txtPlayerName.getText().trim();
+        String gameName = txtGameName.getText().trim();
         String rankingText = txtRanking.getText().trim();
         String winsText = txtWins.getText().trim();
         String lossesText = txtLosses.getText().trim();
 
-        if (idText.isEmpty() || gameCode.isEmpty() || winsText.isEmpty() || lossesText.isEmpty()) {
-            showError("ID Jugador, Código Juego, Victorias y Derrotas son obligatorios.", "Campos Incompletos");
-            return false;
+        // --- 1. ID Jugador (NOT NULL + Numérico > 0) ---
+        if (idText.isEmpty()) {
+            lblErrorPlayerId.setText("ID obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int playerId = Integer.parseInt(idText);
+                if (playerId <= 0) {
+                    lblErrorPlayerId.setText("Debe ser un número entero positivo.");
+                    isValid = false;
+                } else {
+                    lblErrorPlayerId.setText(" ");
+                }
+            } catch (NumberFormatException e) {
+                lblErrorPlayerId.setText("Debe ser un número entero válido.");
+                isValid = false;
+            }
         }
 
-        try {
-            int playerId = Integer.parseInt(idText);
-            if (playerId <= 0) {
-                showError("El ID del Jugador debe ser un número entero positivo.", "Error de Formato");
-                txtPlayerId.requestFocus();
-                return false;
-            }
+        // --- 2. Nombre del Jugador (NOT NULL) ---
+        if (playerName.isEmpty()) {
+            lblErrorPlayerName.setText("Nombre obligatorio.");
+            isValid = false;
+        } else {
+            lblErrorPlayerName.setText(" ");
+            // Nota: La validación de existencia del jugador se hace solo en addRanking/updateRanking
+        }
 
-            int wins = Integer.parseInt(winsText);
-            if (wins < 0) {
-                showError("Victorias debe ser un número entero mayor o igual a cero.", "Error de Formato");
-                txtWins.requestFocus();
-                return false;
-            }
+        // --- 3. Nombre del Juego (NOT NULL) ---
+        if (gameName.isEmpty()) {
+            lblErrorGameName.setText("Juego obligatorio.");
+            isValid = false;
+        } else {
+            lblErrorGameName.setText(" ");
+        }
 
-            int losses = Integer.parseInt(lossesText);
-            if (losses < 0) {
-                showError("Derrotas debe ser un número entero mayor o igual a cero.", "Error de Formato");
-                txtLosses.requestFocus();
-                return false;
+        // --- 4. Victorias (NOT NULL + CHECK >= 0) ---
+        if (winsText.isEmpty()) {
+            lblErrorWins.setText("Victorias obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int wins = Integer.parseInt(winsText);
+                if (wins < 0) {
+                    lblErrorWins.setText("Debe ser $\\geq 0$.");
+                    isValid = false;
+                } else {
+                    lblErrorWins.setText(" ");
+                }
+            } catch (NumberFormatException e) {
+                lblErrorWins.setText("Debe ser un número entero válido.");
+                isValid = false;
             }
+        }
 
-            if (!rankingText.isEmpty()) {
+        // --- 5. Derrotas (NOT NULL + CHECK >= 0) ---
+        if (lossesText.isEmpty()) {
+            lblErrorLosses.setText("Derrotas obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int losses = Integer.parseInt(lossesText);
+                if (losses < 0) {
+                    lblErrorLosses.setText("Debe ser $\\geq 0$.");
+                    isValid = false;
+                } else {
+                    lblErrorLosses.setText(" ");
+                }
+            } catch (NumberFormatException e) {
+                lblErrorLosses.setText("Debe ser un número entero válido.");
+                isValid = false;
+            }
+        }
+
+        // --- 6. Ranking (Opcional, si se ingresa debe ser numérico > 0) ---
+        if (!rankingText.isEmpty()) {
+            try {
                 int ranking = Integer.parseInt(rankingText);
                 if (ranking <= 0) {
-                    showError("Ranking, si se ingresa, debe ser un número entero positivo.", "Error de Formato");
-                    txtRanking.requestFocus();
-                    return false;
+                    lblErrorRanking.setText("Si se ingresa, debe ser positivo.");
+                    isValid = false;
+                } else {
+                    lblErrorRanking.setText(" ");
                 }
+            } catch (NumberFormatException e) {
+                lblErrorRanking.setText("Debe ser un número entero válido.");
+                isValid = false;
             }
-
-        } catch (NumberFormatException e) {
-            showError("ID Jugador, Ranking, Victorias y Derrotas deben ser números enteros válidos.", "Error de Formato");
-            if (!idText.matches("\\d+")) txtPlayerId.requestFocus();
-            else if (!winsText.matches("\\d+")) txtWins.requestFocus();
-            else if (!lossesText.matches("\\d+")) txtLosses.requestFocus();
-            else if (!rankingText.isEmpty() && !rankingText.matches("\\d+")) txtRanking.requestFocus();
-            return false;
+        } else {
+            lblErrorRanking.setText(" "); // Limpiar si está vacío
         }
 
-        return true;
+        // Control de botones
+        boolean rowSelected = table.getSelectedRow() != -1;
+        btnAdd.setEnabled(isValid && isAdding);
+        btnUpdate.setEnabled(isValid && !isAdding && rowSelected);
+        btnDelete.setEnabled(rowSelected);
+
+        return isValid;
+    }
+
+
+    private void handleSQLError(SQLException e) {
+        String errorMessage = e.getMessage();
+
+        if (errorMessage.contains("duplicate key value") && errorMessage.contains("ranking_player_game_pkey")) {
+            showError("Error: Ya existe un ranking para el par (Jugador ID, Nombre Juego). Esta combinación debe ser única.", "Error de Clave Compuesta");
+        } else if (errorMessage.contains("violates foreign key constraint")) {
+            if (errorMessage.contains("player_id")) {
+                showError("Error de Jugador: El ID de Jugador ingresado no existe en la tabla de Jugadores.", "Error de Clave Foránea");
+            } else if (errorMessage.contains("game_name")) {
+                showError("Error de Juego: El Nombre de Juego ingresado no existe en la tabla de Juegos.", "Error de Clave Foránea");
+            } else {
+                showError("Error de Clave Foránea: Asegúrate de que el ID de Jugador y el Nombre de Juego existan.", "Error de Clave Foránea");
+            }
+        } else if (errorMessage.contains("violates check constraint")) {
+            showError("Error de Validación: Victorias, Derrotas y Ranking deben ser números positivos o cero.", "Error de Restricción");
+        } else {
+            showError("Error de BD: " + errorMessage, "Error SQL");
+        }
     }
 
     private void showSuccess(String message) {
@@ -458,10 +600,16 @@ public class RankingsPanel extends JPanel {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
+    private void showError(String message) {
+        showError(message, "Error");
+    }
 
+    private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
+        // ... (Clase CustomTableHeaderRenderer)
         private final Color backgroundColor;
         private final Color foregroundColor;
+        private static final int RADIUS_SM = 8;
+
 
         public CustomTableHeaderRenderer(Color backgroundColor, Color foregroundColor) {
             this.backgroundColor = backgroundColor;
@@ -486,7 +634,36 @@ public class RankingsPanel extends JPanel {
         }
 
         private Font getBoldFont(int size) {
-            return new Font("Segoe UI", Font.BOLD, size);
+            return RankingsPanel.this.getBoldFont(size);
         }
+    }
+
+    // Métodos utilitarios de fuente y color (asumimos que existen o se toman de DesignConstants)
+    private Font getTitleFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getBoldFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getBodyFont(int size) {
+        return new Font("Segoe UI", Font.PLAIN, size);
+    }
+
+    private Color darken(Color color, float factor) {
+        return new Color(
+                Math.max((int)(color.getRed() * factor), 0),
+                Math.max((int)(color.getGreen() * factor), 0),
+                Math.max((int)(color.getBlue() * factor), 0)
+        );
+    }
+
+    private Color brighten(Color color, float factor) {
+        return new Color(
+                Math.min((int)(color.getRed() * factor), 255),
+                Math.min((int)(color.getGreen() * factor), 255),
+                Math.min((int)(color.getBlue() * factor), 255)
+        );
     }
 }

@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/.idea/vcs.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-core-javadoc.jar" afterDir="false" />
@@ -20,6 +21,16 @@
       <change beforePath="$PROJECT_DIR$/../../Hermosillo2.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../HermosilloCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.java" afterDir="false" />
+=======
+    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" afterDir="false" />
+>>>>>>> 7fda5034c9bf6d2ab2d5854a32daaa9088a6f55e
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +47,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="ROOT_SYNC" value="SYNC" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;FeiWZ&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/FeiWZ/gaming_leagues.git",
+    "accountId": "3987c8bc-3f29-4aa0-b9be-7c7c95b10f2f"
+  }
+}]]></component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -54,6 +80,7 @@
     &quot;Application.VentanaPrincipal.executor&quot;: &quot;Run&quot;,
     &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+<<<<<<< HEAD
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
@@ -64,6 +91,61 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
   }
 }</component>
+=======
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/feife/Downloads/gaming_leagues&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Application.PantallaInicio">
+    <configuration name="ConexionBD" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="basedatos.ConexionBD" />
+      <module name="Gaming_Leagues" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="basedatos.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PantallaInicio" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="vistas.PantallaInicio" />
+      <module name="Gaming_Leagues" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="vistas.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.PantallaInicio" />
+        <item itemvalue="Application.ConexionBD" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409" />
+      </set>
+    </attachedChunks>
+  </component>
+>>>>>>> 7fda5034c9bf6d2ab2d5854a32daaa9088a6f55e
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -73,6 +155,56 @@
       <option name="presentableId" value="Default" />
       <updated>1762939527040</updated>
     </task>
+    <task id="LOCAL-00001" summary="Cambio en jdk">
+      <option name="closed" value="true" />
+      <created>1763681325759</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763681325759</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Cambio en jdk">
+      <option name="closed" value="true" />
+      <created>1763875999017</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1763875999017</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)">
+      <option name="closed" value="true" />
+      <created>1764233829685</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1764233829685</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Tabla Matches y Ranking corregidos">
+      <option name="closed" value="true" />
+      <created>1764275464666</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1764275464666</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Cambio en jdk" />
+    <MESSAGE value="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)" />
+    <MESSAGE value="Tabla Matches y Ranking corregidos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tabla Matches y Ranking corregidos" />
   </component>
 </project>

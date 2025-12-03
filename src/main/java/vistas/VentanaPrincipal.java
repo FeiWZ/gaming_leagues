@@ -208,18 +208,14 @@ public class VentanaPrincipal extends JFrame {
         LeaguesPanel leaguesPanel = new LeaguesPanel(connection);
         PlayersPanel playersPanel = new PlayersPanel(connection);
         RankingsPanel rankingsPanel = new RankingsPanel(connection);
-        TeamPlayerPanel teamPlayerPanel = new TeamPlayerPanel(connection);
         TeamsPanel teamsPanel = new TeamsPanel(connection);
-        LeagueGamesPanel leagueGamesPanel = new LeagueGamesPanel(connection);
         MatchesPanel matchesPanel = new MatchesPanel(connection, this.gameCRUD);
 
         tabbedPane.addTab(" Games", gamesPanel);
         tabbedPane.addTab(" Leagues", leaguesPanel);
         tabbedPane.addTab(" Players", playersPanel);
         tabbedPane.addTab(" Rankings", rankingsPanel);
-        tabbedPane.addTab(" Teams_Players", teamPlayerPanel);
         tabbedPane.addTab(" Teams", teamsPanel);
-        tabbedPane.addTab(" Leagues_Games", leagueGamesPanel);
         tabbedPane.addTab(" Matches", matchesPanel);
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {

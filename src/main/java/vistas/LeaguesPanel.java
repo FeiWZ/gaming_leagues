@@ -28,7 +28,7 @@ public class LeaguesPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
 
-    private JTextField txtLeagueName, txtLeagueDetails;
+    private JTextField txtLeagueName, txtLeagueDetails, txtGameName;
     private JTextArea txtRules;
 
     private JTextField txtPrizeAmount;
@@ -39,7 +39,7 @@ public class LeaguesPanel extends JPanel {
 
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
-    private JLabel lblErrorName, lblErrorDetails, lblErrorPrize, lblErrorRules, lblErrorStart, lblErrorEnd;
+    private JLabel lblErrorName, lblErrorDetails, lblErrorPrize, lblErrorRules, lblErrorStart, lblErrorEnd, lblErrorGame;
     private DocumentListener validationListener;
 
     private final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
@@ -103,28 +103,37 @@ public class LeaguesPanel extends JPanel {
 
         lblErrorName = createErrorLabel();
         lblErrorDetails = createErrorLabel();
+        lblErrorGame = createErrorLabel();
         lblErrorPrize = createErrorLabel();
         lblErrorRules = createErrorLabel();
         lblErrorStart = createErrorLabel();
         lblErrorEnd = createErrorLabel();
         validationListener = createValidationListener();
 
+<<<<<<< HEAD
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 3, SPACING_MD, SPACING_LG));
+=======
+        // Panel de campos: 2 filas x 3 columnas (secciones)
+        JPanel fieldsPanel = new JPanel(new GridLayout(2, 4, SPACING_MD, SPACING_LG));
+>>>>>>> 7fda5034c9bf6d2ab2d5854a32daaa9088a6f55e
         fieldsPanel.setBackground(BG_CARD);
 
         txtLeagueName = createStyledTextField();
         txtLeagueDetails = createStyledTextField();
+        txtGameName = createStyledTextField();
         txtPrizeAmount = createStyledTextField();
         txtRules = createStyledTextArea(2, 20); // Usar JTextArea con el estilo dark
 
         txtLeagueName.getDocument().addDocumentListener(validationListener);
         txtLeagueDetails.getDocument().addDocumentListener(validationListener);
+        txtGameName.getDocument().addDocumentListener(validationListener);
         txtPrizeAmount.getDocument().addDocumentListener(validationListener);
         txtRules.getDocument().addDocumentListener(validationListener);
 
 
         fieldsPanel.add(createValidatedFieldPanel("Nombre:", txtLeagueName, lblErrorName));
         fieldsPanel.add(createValidatedFieldPanel("Detalles:", txtLeagueDetails, lblErrorDetails));
+        fieldsPanel.add(createValidatedFieldPanel("Juego:", txtGameName, lblErrorGame));
         fieldsPanel.add(createPrizePanel());
 
         fieldsPanel.add(createRulesPanel());
@@ -314,7 +323,7 @@ public class LeaguesPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        String[] columns = {"ID", "Nombre", "Detalles", "Premio", "Moneda", "Reglas", "Inicio", "Fin"};
+        String[] columns = {"ID", "Nombre", "Detalles", "Juego", "Premio", "Moneda", "Reglas", "Inicio", "Fin"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -408,6 +417,25 @@ public class LeaguesPanel extends JPanel {
             lblErrorName.setText(" ");
         }
 
+        String details = txtLeagueDetails.getText().trim();
+        if (details.isEmpty()) {
+            lblErrorDetails.setText("Los detalles son obligatorios.");
+            isValid = false;
+        } else if (details.length() < 10) { // Según tu BD, mínimo 10 caracteres
+            lblErrorDetails.setText("Mínimo 10 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorDetails.setText(" ");
+        }
+
+        String gameNameText = txtGameName.getText().trim();
+        if (gameNameText.isEmpty()) {
+            lblErrorGame.setText("El juego es obligatorio.");
+            isValid = false;
+        } else {
+            lblErrorGame.setText(" ");
+        }
+
         String prizeAmountText = txtPrizeAmount.getText().trim();
         if (prizeAmountText.isEmpty()) {
             lblErrorPrize.setText("El monto del premio es obligatorio.");
@@ -474,6 +502,7 @@ public class LeaguesPanel extends JPanel {
                         league.getLeagueId(),
                         league.getLeagueName(),
                         league.getLeagueDetails(),
+                        league.getGameName(),
                         prizeFormat.format(league.getPrizePool()),
                         "USD",
                         league.getRules(),
@@ -491,18 +520,25 @@ public class LeaguesPanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
 
+<<<<<<< HEAD
             String prizeAmountText = tableModel.getValueAt(selectedRow, 3).toString().replaceAll("[^0-9]", "");
             String currency = tableModel.getValueAt(selectedRow, 4).toString(); // Moneda
+=======
+            // Limpia el formato de premio (por si incluye comas) para usar el valor numérico
+            String prizeAmountText = tableModel.getValueAt(selectedRow, 4).toString().replaceAll("[^0-9]", "");
+            String currency = tableModel.getValueAt(selectedRow, 5).toString(); // Moneda
+>>>>>>> 7fda5034c9bf6d2ab2d5854a32daaa9088a6f55e
 
             txtLeagueName.setText(tableModel.getValueAt(selectedRow, 1).toString());
             txtLeagueDetails.setText(tableModel.getValueAt(selectedRow, 2).toString());
+            txtGameName.setText(tableModel.getValueAt(selectedRow, 3).toString());
             txtPrizeAmount.setText(prizeAmountText);
             cmbPrizeCurrency.setSelectedItem(currency);
-            txtRules.setText(tableModel.getValueAt(selectedRow, 5).toString());
+            txtRules.setText(tableModel.getValueAt(selectedRow, 6).toString());
 
             try {
-                Date startDate = SDF.parse(tableModel.getValueAt(selectedRow, 6).toString());
-                Date endDate = SDF.parse(tableModel.getValueAt(selectedRow, 7).toString());
+                Date startDate = SDF.parse(tableModel.getValueAt(selectedRow, 7).toString());
+                Date endDate = SDF.parse(tableModel.getValueAt(selectedRow, 8).toString());
                 dateChooserStartedDate.setDate(startDate);
                 dateChooserEndDate.setDate(endDate);
             } catch (ParseException | NullPointerException e) {
@@ -531,6 +567,7 @@ public class LeaguesPanel extends JPanel {
                     -1,
                     txtLeagueName.getText().trim(),
                     txtLeagueDetails.getText().trim(),
+                    txtGameName.getText().trim(),
                     prizePool,
                     txtRules.getText().trim(),
                     startDate,
@@ -578,6 +615,7 @@ public class LeaguesPanel extends JPanel {
                     leagueId,
                     txtLeagueName.getText().trim(),
                     txtLeagueDetails.getText().trim(),
+                    txtGameName.getText().trim(),
                     prizePool,
                     txtRules.getText().trim(),
                     startDate,
@@ -639,6 +677,7 @@ public class LeaguesPanel extends JPanel {
     private void clearFields() {
         txtLeagueName.setText("");
         txtLeagueDetails.setText("");
+        txtGameName.setText("");
         txtPrizeAmount.setText("");
         txtRules.setText("");
         cmbPrizeCurrency.setSelectedIndex(0);

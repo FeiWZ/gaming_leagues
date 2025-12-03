@@ -6,15 +6,17 @@ public class League {
     private int leagueId;
     private String leagueName;
     private String leagueDetails;
+    private String gameName;
     private int prizePool;
     private String rules;
     private Date startedDate;
     private Date endDate;
 
-    public League(int leagueId, String leagueName, String leagueDetails, int prizePool, String rules, Date startedDate, Date endDate) {
+    public League(int leagueId, String leagueName, String leagueDetails, String gameName, int prizePool, String rules, Date startedDate, Date endDate) {
         this.leagueId = leagueId;
         this.leagueName = leagueName;
         this.leagueDetails = leagueDetails;
+        this.gameName = gameName;
         this.prizePool = prizePool;
         this.rules = rules;
         this.startedDate = startedDate;
@@ -30,6 +32,9 @@ public class League {
 
     public String getLeagueDetails() { return leagueDetails; }
     public void setLeagueDetails(String leagueDetails) { this.leagueDetails = leagueDetails; }
+
+    public String getGameName() { return gameName; }
+    public void setGameName(String gameName) { this.gameName = gameName; }
 
     public int getPrizePool() { return prizePool; }
     public void setPrizePool(int prizePool) { this.prizePool = prizePool; }
@@ -48,6 +53,7 @@ public class League {
         return "League{" +
                 "leagueId=" + leagueId +
                 ", leagueName='" + leagueName + '\'' +
+                ", gameName='" + gameName + '\'' +
                 '}';
     }
 }
