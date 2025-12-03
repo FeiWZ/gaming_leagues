@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.awt.event.ActionListener;
 
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
@@ -35,13 +37,22 @@ public class MatchesPanel extends JPanel {
 
     private JTable table;
     private DefaultTableModel tableModel;
+
+    // Campos de entrada
     private JTextField txtMatchId;
     private JTextField txtTimeValue;
     private JComboBox<String> cmbAmPm;
     private JTextField txtPlayer1, txtPlayer2;
     private JDateChooser dateChooserMatch;
     private JComboBox<String> cmbMatchType, cmbResult, cmbGameName;
+
+    // Botones
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
+
+    // Etiquetas de error
+    private JLabel lblErrorMatchId, lblErrorDate, lblErrorTime, lblErrorType, lblErrorPlayer1, lblErrorPlayer2, lblErrorGame, lblErrorResult;
+    private DocumentListener validationListener;
+
 
     private Font getBodyFont(int size) { return new Font("Roboto", Font.PLAIN, size); }
     private Font getTitleFont(int size) { return new Font("Roboto Slab", Font.BOLD, size); }
@@ -57,8 +68,31 @@ public class MatchesPanel extends JPanel {
         this.gameCRUD = gameCRUD;
         SDF_TIMESTAMP.setLenient(false);
 
+        validationListener = createValidationListener();
+
         initComponents();
         loadMatches();
+        validateAllFields();
+    }
+
+    // --- MÉTODOS DE UTILIDAD Y ESTILO ---
+
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        return label;
+    }
+
+    private DocumentListener createValidationListener() {
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+        };
     }
 
     private void initComponents() {
@@ -81,6 +115,17 @@ public class MatchesPanel extends JPanel {
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
 
+        // Inicializar etiquetas de error
+        lblErrorMatchId = createErrorLabel();
+        lblErrorDate = createErrorLabel();
+        lblErrorTime = createErrorLabel();
+        lblErrorType = createErrorLabel();
+        lblErrorPlayer1 = createErrorLabel();
+        lblErrorPlayer2 = createErrorLabel();
+        lblErrorGame = createErrorLabel();
+        lblErrorResult = createErrorLabel();
+
+
         JPanel fieldsContainer = new JPanel(new GridBagLayout());
         fieldsContainer.setBackground(BG_CARD);
 
@@ -88,37 +133,63 @@ public class MatchesPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
+        // --- FILA 1 ---
         txtMatchId = createStyledTextField();
         dateChooserMatch = createStyledDateChooser();
         JPanel timeInputPanel = createStyledTimeInput();
-        cmbMatchType = createStyledComboBox(new String[]{"Oficial", "Amistoso"});
 
-        txtPlayer1 = createStyledTextField();
-        txtPlayer2 = createStyledTextField();
-        cmbGameName = createGameNameComboBox();
-        cmbResult = createStyledComboBox(new String[]{"N/A", "Gana Jugador 1", "Gana Jugador 2", "Empate"});
+        // CORRECCIÓN: Inicializar con opción vacía
+        cmbMatchType = createStyledComboBox(new String[]{"", "Oficial", "Amistoso"});
 
+        // Listeners para campos de texto
+        txtMatchId.getDocument().addDocumentListener(validationListener);
+        // txtTimeValue está en createStyledTimeInput y también se le añade listener.
+
+        // Listener para JDateChooser
+        dateChooserMatch.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) validateAllFields();
+        });
+
+        // Listener para ComboBoxes
+        ActionListener cmbListener = e -> validateAllFields();
+        // cmbAmPm.addActionListener(cmbListener); // Se añade en createStyledTimeInput
 
         gbc.gridy = 0;
-        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("ID del Partido:", txtMatchId), gbc);
-        gbc.gridx = 1; gbc.weightx = 2.0; fieldsContainer.add(createFieldPanel("Fecha:", dateChooserMatch), gbc);
-        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Hora (hh:mm):", timeInputPanel), gbc);
+        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("ID del Partido:", txtMatchId, lblErrorMatchId), gbc);
+        gbc.gridx = 1; gbc.weightx = 2.0; fieldsContainer.add(createValidatedDatePanel("Fecha:", dateChooserMatch, lblErrorDate), gbc);
+        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createValidatedTimePanel("Hora (hh:mm):", timeInputPanel, lblErrorTime), gbc);
 
-        gbc.gridx = 3;
-        gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 0, SPACING_MD, 0); // Eliminamos el insets derecho para esta columna
-        fieldsContainer.add(createFieldPanel("Tipo:", cmbMatchType), gbc);
-
-        gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
-
-        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Nombre del Jugador 1:", txtPlayer1), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.5; fieldsContainer.add(createFieldPanel("Nombre del Jugador 2:", txtPlayer2), gbc); // Mantener el peso de la columna para la simetría si lo deseas
-        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Nombre del Juego:", cmbGameName), gbc);
         gbc.gridx = 3;
         gbc.weightx = 1.0;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
-        fieldsContainer.add(createFieldPanel("Resultado:", cmbResult), gbc);
+        fieldsContainer.add(createValidatedComboBoxPanel("Tipo:", cmbMatchType, lblErrorType), gbc);
+
+        // --- FILA 2 ---
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
+
+        txtPlayer1 = createStyledTextField();
+        txtPlayer2 = createStyledTextField();
+
+        // CORRECCIÓN: cmbGameName inicializado con opción vacía
+        cmbGameName = createGameNameComboBox(true);
+
+        // CORRECCIÓN: cmbResult inicializado con opción vacía
+        cmbResult = createStyledComboBox(new String[]{"", "N/A", "Gana Jugador 1", "Gana Jugador 2", "Empate"});
+
+        txtPlayer1.getDocument().addDocumentListener(validationListener);
+        txtPlayer2.getDocument().addDocumentListener(validationListener);
+        cmbGameName.addActionListener(cmbListener);
+        cmbMatchType.addActionListener(cmbListener);
+        cmbResult.addActionListener(cmbListener);
+
+        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("Nombre del Jugador 1:", txtPlayer1, lblErrorPlayer1), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.5; fieldsContainer.add(createValidatedFieldPanel("Nombre del Jugador 2:", txtPlayer2, lblErrorPlayer2), gbc);
+        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createValidatedComboBoxPanel("Nombre del Juego:", cmbGameName, lblErrorGame), gbc);
+        gbc.gridx = 3;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(0, 0, SPACING_MD, 0);
+        fieldsContainer.add(createValidatedComboBoxPanel("Resultado:", cmbResult, lblErrorResult), gbc);
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -145,7 +216,8 @@ public class MatchesPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JComponent component) {
+    /** Crea un panel para JTextField que incluye label y error. */
+    private JPanel createValidatedFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -153,8 +225,73 @@ public class MatchesPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(textField, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(component, BorderLayout.CENTER);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    /** Crea un panel para JComboBox que incluye label y error. */
+    private JPanel createValidatedComboBoxPanel(String labelText, JComboBox<String> comboBox, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(comboBox, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    /** Crea un panel para JDateChooser que incluye label y error. */
+    private JPanel createValidatedDatePanel(String labelText, JDateChooser dateChooser, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(dateChooser, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    /** Crea un panel para la entrada de Hora (compuesto) que incluye label y error. */
+    private JPanel createValidatedTimePanel(String labelText, JPanel timeInputPanel, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(timeInputPanel, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
 
         return panel;
     }
@@ -177,10 +314,16 @@ public class MatchesPanel extends JPanel {
         panel.setBackground(BG_CARD);
 
         txtTimeValue = createStyledTextField();
-        txtTimeValue.setText("12:00");
+        // CORRECCIÓN: Inicializar sin valor por defecto
+        txtTimeValue.setText("");
+
+        // Listener añadido aquí para que esté disponible cuando se inicializa
+        txtTimeValue.getDocument().addDocumentListener(validationListener);
+
 
         cmbAmPm = createStyledComboBox(new String[]{"AM", "PM"});
         cmbAmPm.setMaximumSize(new Dimension(80, cmbAmPm.getPreferredSize().height));
+        cmbAmPm.addActionListener(e -> validateAllFields()); // Añadir listener
 
         panel.add(txtTimeValue, BorderLayout.CENTER);
         panel.add(cmbAmPm, BorderLayout.EAST);
@@ -249,8 +392,11 @@ public class MatchesPanel extends JPanel {
         return cmb;
     }
 
-    private JComboBox<String> createGameNameComboBox() {
+    private JComboBox<String> createGameNameComboBox(boolean includeEmptyOption) {
         JComboBox<String> cmb = createStyledComboBox(new String[]{});
+        if (includeEmptyOption) {
+            cmb.addItem(""); // Opción vacía inicial
+        }
         try {
             List<String> gameNames = gameCRUD.getAllGameNames();
             for (String name : gameNames) {
@@ -300,8 +446,9 @@ public class MatchesPanel extends JPanel {
         table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT_PRIMARY));
 
         table.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+            if (table != null && !e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
                 loadSelectedMatch();
+                validateAllFields();
             }
         });
 
@@ -353,6 +500,127 @@ public class MatchesPanel extends JPanel {
         return button;
     }
 
+    // --- LÓGICA DE VALIDACIÓN Y DATOS ---
+
+    private void validateAllFields() {
+        if (btnAdd == null || btnUpdate == null) return;
+
+        boolean isValid = true;
+
+        String matchIdText = txtMatchId.getText().trim();
+        String player1Text = txtPlayer1.getText().trim();
+        String player2Text = txtPlayer2.getText().trim();
+        String timeValueText = txtTimeValue.getText().trim();
+
+        // 1. ID del Partido (Solo requerido para Agregar)
+        lblErrorMatchId.setText(" ");
+        if (matchIdText.isEmpty()) {
+            lblErrorMatchId.setText("El ID es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                if (Integer.parseInt(matchIdText) <= 0) {
+                    lblErrorMatchId.setText("Debe ser un número positivo.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorMatchId.setText("Debe ser un número entero válido.");
+                isValid = false;
+            }
+        }
+
+        // 2. Fecha (obligatoria)
+        lblErrorDate.setText(" ");
+        if (dateChooserMatch.getDate() == null) {
+            lblErrorDate.setText("La fecha es obligatoria.");
+            isValid = false;
+        }
+
+        // 3. Hora (obligatoria y formato)
+        lblErrorTime.setText(" ");
+        if (timeValueText.isEmpty()) {
+            lblErrorTime.setText("La hora es obligatoria.");
+            isValid = false;
+        } else if (!timeValueText.matches("\\d{2}:\\d{2}")) {
+            lblErrorTime.setText("Formato: hh:mm (ej: 03:30).");
+            isValid = false;
+        } else {
+            try {
+                Date timeTest = SDF_TIME_HHMM.parse(timeValueText);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(timeTest);
+                int hour = cal.get(Calendar.HOUR);
+                if (hour < 1 || hour > 12) {
+                    lblErrorTime.setText("La hora debe ser entre 01 y 12.");
+                    isValid = false;
+                }
+            } catch (ParseException e) {
+                lblErrorTime.setText("Hora inválida.");
+                isValid = false;
+            }
+        }
+
+        // 4. Tipo (obligatorio)
+        lblErrorType.setText(" ");
+        if (cmbMatchType.getSelectedItem() == null || cmbMatchType.getSelectedItem().toString().isEmpty()) {
+            lblErrorType.setText("El tipo es obligatorio.");
+            isValid = false;
+        }
+
+        // 5. Jugador 1
+        lblErrorPlayer1.setText(" ");
+        if (player1Text.isEmpty()) {
+            lblErrorPlayer1.setText("El jugador 1 es obligatorio.");
+            isValid = false;
+        } else if (player1Text.length() < 3) {
+            lblErrorPlayer1.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        }
+
+        // 6. Jugador 2
+        lblErrorPlayer2.setText(" ");
+        if (player2Text.isEmpty()) {
+            lblErrorPlayer2.setText("El jugador 2 es obligatorio.");
+            isValid = false;
+        } else if (player2Text.length() < 3) {
+            lblErrorPlayer2.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else if (player1Text.equalsIgnoreCase(player2Text)) {
+            lblErrorPlayer2.setText("Deben ser jugadores diferentes.");
+            isValid = false;
+        }
+
+        // 7. Nombre del Juego
+        lblErrorGame.setText(" ");
+        if (cmbGameName.getSelectedItem() == null || cmbGameName.getSelectedItem().toString().isEmpty()) {
+            lblErrorGame.setText("El juego es obligatorio.");
+            isValid = false;
+        }
+
+        // 8. Resultado
+        lblErrorResult.setText(" ");
+        if (cmbResult.getSelectedItem() == null || cmbResult.getSelectedItem().toString().isEmpty()) {
+            lblErrorResult.setText("El resultado es obligatorio.");
+            isValid = false;
+        }
+
+        // 9. Lógica de Timestamp (Comprobamos si el timestamp completo es válido)
+        if (isValid && getFullTimestamp() == null) {
+            lblErrorTime.setText("Hora o Fecha forman un Timestamp inválido.");
+            isValid = false;
+        }
+
+        // Estado de botones
+        boolean isRowSelected = (table != null && table.getSelectedRow() != -1);
+
+        btnAdd.setEnabled(isValid && !isRowSelected);
+        btnUpdate.setEnabled(isValid && isRowSelected);
+        btnDelete.setEnabled(isRowSelected);
+
+        // El ID solo es editable si estamos en modo Agregar
+        txtMatchId.setEditable(!isRowSelected);
+    }
+
     private void loadMatches() {
         tableModel.setRowCount(0);
         try {
@@ -369,12 +637,15 @@ public class MatchesPanel extends JPanel {
                 };
                 tableModel.addRow(row);
             }
+            clearFields(); // Limpiar campos y deseleccionar la tabla
         } catch (SQLException e) {
             showError("Error al cargar partidos: " + e.getMessage(), "Error");
         }
     }
 
     private void loadSelectedMatch() {
+        if (table == null) return;
+
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             txtMatchId.setText(tableModel.getValueAt(selectedRow, 0).toString());
@@ -392,7 +663,7 @@ public class MatchesPanel extends JPanel {
 
             } catch (ParseException e) {
                 dateChooserMatch.setDate(null);
-                txtTimeValue.setText("12:00");
+                txtTimeValue.setText("");
                 cmbAmPm.setSelectedItem("AM");
             }
 
@@ -403,22 +674,19 @@ public class MatchesPanel extends JPanel {
             cmbGameName.setSelectedItem(tableModel.getValueAt(selectedRow, 6).toString());
 
             txtMatchId.setEditable(false);
+            validateAllFields();
         }
     }
 
     private void addMatch() {
-        if (!validateFields()) return;
-
-        Timestamp matchDate = getFullTimestamp();
-        if (matchDate == null) {
-            showError("Fecha u hora inválidas. Formato de hora requerido: hh:mm.", "Error");
+        if (!btnAdd.isEnabled()) {
+            showError("Corrige los errores en los campos antes de agregar.", "Validación Pendiente");
             return;
         }
 
+        Timestamp matchDate = getFullTimestamp();
+
         try {
-            // Se asume que txtMatchId debe ser el ID autogenerado o un ID válido ingresado por el usuario.
-            // Si el ID debe ser autoincremental en la DB, el campo txtMatchId no debería llenarse para la inserción.
-            // Aquí se usa el valor ingresado en txtMatchId para mantener la estructura de tu código.
             Match match = new Match(
                     Integer.parseInt(txtMatchId.getText().trim()),
                     matchDate,
@@ -438,21 +706,18 @@ public class MatchesPanel extends JPanel {
             }
         } catch (SQLException e) {
             handleSQLException(e);
+        } catch (NumberFormatException e) {
+            showError("Error de formato numérico: ID o campos vacíos.", "Error");
         }
     }
 
     private void updateMatch() {
-        if (txtMatchId.getText().trim().isEmpty()) {
-            showError("Selecciona un partido de la tabla para actualizar.", "Error");
+        if (!btnUpdate.isEnabled()) {
+            showError("Selecciona un partido y corrige los errores antes de actualizar.", "Validación Pendiente");
             return;
         }
-        if (!validateFields()) return;
 
         Timestamp matchDate = getFullTimestamp();
-        if (matchDate == null) {
-            showError("Fecha u hora inválidas. Formato de hora requerido: hh:mm.", "Error");
-            return;
-        }
 
         try {
             Match match = new Match(
@@ -474,16 +739,17 @@ public class MatchesPanel extends JPanel {
             }
         } catch (SQLException e) {
             handleSQLException(e);
+        } catch (NumberFormatException e) {
+            showError("Error de formato numérico: ID o campos vacíos.", "Error");
         }
     }
 
     private void deleteMatch() {
-        if (txtMatchId.getText().trim().isEmpty()) {
-            showError("Selecciona un partido de la tabla para eliminar.", "Error");
+        if (!btnDelete.isEnabled()) {
+            showError("Selecciona un partido de la tabla para eliminar.", "Error de Selección");
             return;
         }
 
-        // 🟢 LÓGICA EXISTENTE: Muestra el mensaje de corroboración
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Estás seguro de eliminar este partido?",
                 "Confirmar eliminación",
@@ -501,115 +767,69 @@ public class MatchesPanel extends JPanel {
                 }
             } catch (SQLException e) {
                 showError("Error al eliminar: " + e.getMessage(), "Error");
+            } catch (NumberFormatException e) {
+                showError("Error de formato: ID de partido inválido.", "Error");
             }
         }
     }
 
-    // 🟢 MÉTODO AÑADIDO: Maneja la confirmación de limpieza antes de llamar a clearFields()
     private void clearFieldsWithConfirmation() {
-        // Opcional: Si todos los campos ya están en su estado inicial, simplemente limpiamos la selección
-        if (txtMatchId.getText().trim().isEmpty() &&
-                dateChooserMatch.getDate() == null &&
-                txtTimeValue.getText().trim().equals("12:00") &&
-                cmbAmPm.getSelectedItem().equals("AM") &&
-                cmbResult.getSelectedIndex() == 0 &&
-                cmbMatchType.getSelectedIndex() == 0 &&
-                txtPlayer1.getText().trim().isEmpty() &&
-                txtPlayer2.getText().trim().isEmpty()) {
+        // Mostrar el mensaje de corroboración solo si hay datos ingresados o seleccionados.
+        boolean isSelected = (table != null && table.getSelectedRow() != -1);
+        boolean hasInput = !txtMatchId.getText().isEmpty() || !txtPlayer1.getText().isEmpty() || !txtPlayer2.getText().isEmpty();
 
-            table.clearSelection();
-            txtMatchId.setEditable(true);
-            return;
-        }
+        if (isSelected || hasInput) {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "¿Estás seguro de limpiar todos los campos del formulario?",
+                    "Confirmar limpieza",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
 
-        // Mostrar el mensaje de corroboración
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "¿Estás seguro de limpiar todos los campos del formulario?",
-                "Confirmar limpieza",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            clearFields();
+            if (confirm == JOptionPane.YES_OPTION) {
+                clearFields();
+            }
+        } else {
+            // Si no hay nada que limpiar, simplemente limpiamos la selección por si acaso
+            if (table != null) table.clearSelection();
+            validateAllFields();
         }
     }
 
     private void clearFields() {
         txtMatchId.setText("");
         dateChooserMatch.setDate(null);
-        txtTimeValue.setText("12:00");
-        cmbAmPm.setSelectedItem("AM");
-        cmbResult.setSelectedIndex(0);
-        cmbMatchType.setSelectedIndex(0);
+        txtTimeValue.setText("");
+
+        // Seleccionamos el primer ítem, que ahora es la opción vacía
+        if (cmbResult.getItemCount() > 0) cmbResult.setSelectedIndex(0);
+        if (cmbMatchType.getItemCount() > 0) cmbMatchType.setSelectedIndex(0);
+        if (cmbGameName.getItemCount() > 0) cmbGameName.setSelectedIndex(0);
+
+        cmbAmPm.setSelectedItem("AM"); // Mantenemos un valor de AM/PM
         txtPlayer1.setText("");
         txtPlayer2.setText("");
-        if (cmbGameName.getItemCount() > 0) cmbGameName.setSelectedIndex(0);
+
+        // Limpiamos errores
+        lblErrorMatchId.setText(" ");
+        lblErrorDate.setText(" ");
+        lblErrorTime.setText(" ");
+        lblErrorType.setText(" ");
+        lblErrorPlayer1.setText(" ");
+        lblErrorPlayer2.setText(" ");
+        lblErrorGame.setText(" ");
+        lblErrorResult.setText(" ");
+
         txtMatchId.setEditable(true);
-        table.clearSelection();
-    }
-
-    private boolean validateFields() {
-        if (txtMatchId.getText().trim().isEmpty() ||
-                txtPlayer1.getText().trim().isEmpty() ||
-                txtPlayer2.getText().trim().isEmpty()) {
-            showError("Todos los campos nombre son obligatorios.", "Error");
-            return false;
-        }
-
-        String timeStr = txtTimeValue.getText().trim();
-        if (timeStr.isEmpty() || !timeStr.matches("\\d{2}:\\d{2}")) {
-            showError("El formato de hora debe ser hh:mm (ej: 03:30).", "Error de Formato");
-            return false;
-        }
-
-        try {
-            Date timeTest = SDF_TIME_HHMM.parse(timeStr);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(timeTest);
-            int hour = cal.get(Calendar.HOUR);
-            if (hour < 1 || hour > 12) {
-                showError("La hora debe estar entre 01 y 12.", "Error de Rango");
-                return false;
-            }
-        } catch (ParseException e) {
-            showError("La hora no es válida. Asegúrate de usar hh:mm (ej: 03:30).", "Error de Formato");
-            return false;
-        }
-
-
-        try {
-            String player1 = txtPlayer1.getText().trim();
-            String player2 = txtPlayer2.getText().trim();
-
-            if (player1.isEmpty() || player2.isEmpty()) {
-                showError("Los nombres de jugadores no pueden estar vacíos.", "Error");
-                return false;
-            }
-
-            if (player1.equalsIgnoreCase(player2)) {
-                showError("Los nombres de los jugadores deben ser diferentes.", "Error");
-                return false;
-            }
-
-            if (player1.length() < 3 || player2.length() < 3) {
-                showError("Los nombres deben tener al menos 3 caracteres.", "Error");
-                return false;
-            }
-
-        } catch (Exception e) {
-            showError("Error al procesar los nombres: " + e.getMessage(), "Error");
-            return false;
-        }
-
-        return true;
+        if (table != null) table.clearSelection();
+        validateAllFields();
     }
 
     private Timestamp getFullTimestamp() {
         Date datePart = dateChooserMatch.getDate();
         String timeValueStr = txtTimeValue.getText().trim();
-        String amPmStr = cmbAmPm.getSelectedItem().toString();
+        String amPmStr = cmbAmPm.getSelectedItem() != null ? cmbAmPm.getSelectedItem().toString() : "AM";
 
-        if (datePart == null || timeValueStr.isEmpty()) {
+        if (datePart == null || timeValueStr.isEmpty() || !timeValueStr.matches("\\d{2}:\\d{2}")) {
             return null;
         }
 
@@ -639,9 +859,9 @@ public class MatchesPanel extends JPanel {
     private void handleSQLException(SQLException e) {
         String msg = e.getMessage();
         if (msg.contains("duplicate key")) {
-            showError("Ya existe un partido con ese nombre.", "Error");
+            showError("Ya existe un partido con ese ID.", "Error");
         } else if (msg.contains("foreign key")) {
-            showError("Nombre del jugador o juego no válidos. Asegúrate de que existen en la base de datos.", "Error");
+            showError("El jugador o el juego asociado no existen en la base de datos.", "Error de Clave Foránea");
         } else {
             showError("Error SQL: " + msg, "Error");
         }

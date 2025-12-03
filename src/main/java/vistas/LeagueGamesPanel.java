@@ -13,7 +13,8 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.awt.event.ActionListener; // Necesario para el Listener del botón
+import java.awt.event.ActionListener;
+import javax.swing.event.DocumentListener; // CAMBIO: Usaremos DocumentListener para una mejor validación en tiempo real
 
 public class LeagueGamesPanel extends JPanel {
 
@@ -24,10 +25,15 @@ public class LeagueGamesPanel extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtLeagueId, txtGameCode;
 
-    private CaretListener validationListener;
+    // Se mantiene CaretListener o se cambia a DocumentListener, lo cambiamos para consistencia con otras pestañas.
+    private DocumentListener validationListener;
+
+    // CAMBIO: Etiquetas de error
+    private JLabel lblErrorLeagueId, lblErrorGameCode;
 
     private JButton btnAdd, btnDelete, btnClear, btnRefresh;
 
+    // Métodos de Font originales (asumiendo que están disponibles en DesignConstants o en la clase)
     private Font getBodyFont(int size) { return new Font("Roboto", Font.PLAIN, size); }
     private Font getTitleFont(int size) { return new Font("Roboto Slab", Font.BOLD, size); }
     private Font getBoldFont(int size) { return new Font("Roboto", Font.BOLD, size); }
@@ -37,16 +43,35 @@ public class LeagueGamesPanel extends JPanel {
         this.connection = connection;
         this.leagueGameCRUD = new GameLeagueCRUD(connection);
 
-        validationListener = e -> updateButtonStates();
+        // Creamos el validationListener como DocumentListener para ser más robustos
+        validationListener = createValidationListener();
 
         initComponents();
+        loadLeagueGames(); // CAMBIO CLAVE: Cargar datos inmediatamente
     }
 
-    public void initializePanelData() {
-        loadLeagueGames();
-        updateButtonStates();
+    // Se elimina initializePanelData() ya que loadLeagueGames() se llama en el constructor.
+
+
+    // --- MÉTODOS DE UTILIDAD PARA VALIDACIÓN ---
+
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        return label;
     }
 
+    private DocumentListener createValidationListener() {
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+        };
+    }
 
     private JTextField createStyledTextField() {
         JTextField textField = new JTextField();
@@ -60,6 +85,27 @@ public class LeagueGamesPanel extends JPanel {
         ));
         return textField;
     }
+
+    private JPanel createValidatedFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(textField, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // --- COMPONENTES ---
 
     private void initComponents() {
         setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
@@ -82,7 +128,12 @@ public class LeagueGamesPanel extends JPanel {
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
 
+        // Inicializar etiquetas de error
+        lblErrorLeagueId = createErrorLabel();
+        lblErrorGameCode = createErrorLabel();
 
+
+        // Contenedor de campos
         JPanel fieldsPanel = new JPanel(new GridLayout(1, 2, SPACING_LG, SPACING_MD));
         fieldsPanel.setBackground(BG_CARD);
         fieldsPanel.setBorder(new EmptyBorder(SPACING_MD, 0, 0, 0));
@@ -90,12 +141,14 @@ public class LeagueGamesPanel extends JPanel {
         txtLeagueId = createStyledTextField();
         txtGameCode = createStyledTextField();
 
-        txtLeagueId.addCaretListener(validationListener);
-        txtGameCode.addCaretListener(validationListener);
+        // Usamos DocumentListener para la validación en tiempo real
+        txtLeagueId.getDocument().addDocumentListener(validationListener);
+        txtGameCode.getDocument().addDocumentListener(validationListener);
 
-        fieldsPanel.add(createFieldPanel("ID de la Liga:", txtLeagueId));
-        fieldsPanel.add(createFieldPanel("Código del Juego:", txtGameCode));
+        fieldsPanel.add(createValidatedFieldPanel("ID de la Liga:", txtLeagueId, lblErrorLeagueId));
+        fieldsPanel.add(createValidatedFieldPanel("Código del Juego:", txtGameCode, lblErrorGameCode));
 
+        // --- Botones ---
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
         buttonsPanel.setBorder(new EmptyBorder(SPACING_MD, 0, 0, 0));
@@ -105,14 +158,10 @@ public class LeagueGamesPanel extends JPanel {
         btnClear = createStyledButton("Limpiar", ACCENT_PRIMARY);
         btnRefresh = createStyledButton("Refrescar", ACCENT_PRIMARY);
 
-        // Conexión del botón Asociar a la lógica de inserción y refresh.
         btnAdd.addActionListener(e -> addLeagueGame());
-        // Conexión del botón Eliminar a la lógica de eliminación y confirmación.
         btnDelete.addActionListener(e -> deleteLeagueGame());
-        // LÍNEA MODIFICADA: Conexión del botón Limpiar a la lógica de pregunta/limpieza total.
-        btnClear.addActionListener(e -> handleClearButton());
-        // Conexión del botón Refrescar a la lógica de recarga de tabla.
-        btnRefresh.addActionListener(e -> loadLeagueGames());
+        btnClear.addActionListener(e -> clearFields()); // Solo limpia campos y deselecciona
+        btnRefresh.addActionListener(e -> loadLeagueGames()); // Mantenemos el botón de refresh
 
         buttonsPanel.add(btnAdd);
         buttonsPanel.add(btnDelete);
@@ -126,22 +175,11 @@ public class LeagueGamesPanel extends JPanel {
         panel.add(centerPanel, BorderLayout.CENTER);
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
+        validateAllFields();
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
-        panel.setBackground(BG_CARD);
-
-        JLabel label = new JLabel(labelText);
-        label.setFont(getBoldFont(FONT_SIZE_SMALL));
-        label.setForeground(TEXT_SECONDARY);
-
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(textField, BorderLayout.CENTER);
-
-        return panel;
-    }
+    // Se elimina el createFieldPanel simple, usando la versión validada.
 
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -156,7 +194,6 @@ public class LeagueGamesPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        // Columnas originales (solo ID y Código)
         String[] columns = {"ID Liga", "Código del Juego"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -181,9 +218,10 @@ public class LeagueGamesPanel extends JPanel {
         table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT_PRIMARY));
 
         table.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+            // CORRECCIÓN CLAVE: Comprobar nulidad de 'table'
+            if (table != null && !e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
                 loadSelectedLeagueGame();
-                updateButtonStates();
+                validateAllFields(); // Usamos el nuevo método
             }
         });
 
@@ -237,13 +275,57 @@ public class LeagueGamesPanel extends JPanel {
         return button;
     }
 
-    /**
-     * MÉTODO MODIFICADO: Ahora carga los datos simples (ID y Código) usando el método getAllLeaguesGames().
-     */
+    // --- LÓGICA DE VALIDACIÓN Y DATOS ---
+
+    private void validateAllFields() {
+        // CORRECCIÓN: Si los botones no están inicializados, salimos
+        if (btnAdd == null || btnDelete == null) return;
+
+        boolean isValid = true;
+
+        String leagueIdText = txtLeagueId.getText().trim();
+        String gameCode = txtGameCode.getText().trim();
+
+        // 1. ID Liga
+        if (leagueIdText.isEmpty()) {
+            lblErrorLeagueId.setText("El ID de la Liga es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int id = Integer.parseInt(leagueIdText);
+                if (id <= 0) {
+                    lblErrorLeagueId.setText("Debe ser un número positivo.");
+                    isValid = false;
+                } else {
+                    lblErrorLeagueId.setText(" ");
+                }
+            } catch (NumberFormatException e) {
+                lblErrorLeagueId.setText("Debe ser un número entero válido.");
+                isValid = false;
+            }
+        }
+
+        // 2. Código Juego
+        if (gameCode.isEmpty()) {
+            lblErrorGameCode.setText("El Código del Juego es obligatorio.");
+            isValid = false;
+        } else if (gameCode.length() < 2) {
+            lblErrorGameCode.setText("Mínimo 2 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorGameCode.setText(" ");
+        }
+
+        // Estado de botones
+        boolean isRowSelected = (table != null && table.getSelectedRow() != -1);
+
+        btnAdd.setEnabled(isValid && !isRowSelected);
+        btnDelete.setEnabled(isRowSelected);
+    }
+
     private void loadLeagueGames() {
         tableModel.setRowCount(0);
         try {
-            // Usa el método que devuelve List<GameLeague> con solo ID y Código
             List<GameLeague> leagueGames = leagueGameCRUD.getAllLeaguesGames();
             for (GameLeague lg : leagueGames) {
                 Object[] row = {
@@ -259,18 +341,22 @@ public class LeagueGamesPanel extends JPanel {
     }
 
     private void loadSelectedLeagueGame() {
+        // CORRECCIÓN CLAVE: Si la tabla es nula, salimos inmediatamente.
+        if (table == null) return;
+
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
+            // Obtenemos los valores de las celdas
             txtLeagueId.setText(tableModel.getValueAt(selectedRow, 0).toString());
             txtGameCode.setText(tableModel.getValueAt(selectedRow, 1).toString());
         }
     }
 
-    /**
-     * MÉTODO MODIFICADO: Implementa la lógica de inserción y llama a loadLeagueGames() para refrescar la tabla.
-     */
     private void addLeagueGame() {
-        if (!validateAndShowErrors()) return;
+        if (!btnAdd.isEnabled()) {
+            showError("Corrige los errores en los campos antes de asociar.", "Validación Pendiente");
+            return;
+        }
 
         try {
             int leagueId = Integer.parseInt(txtLeagueId.getText().trim());
@@ -278,42 +364,44 @@ public class LeagueGamesPanel extends JPanel {
 
             GameLeague newAssociation = new GameLeague(leagueId, gameCode);
 
-            // 1. Insertar en la base de datos
             boolean success = leagueGameCRUD.createLeaguesGames(newAssociation);
 
             if (success) {
                 showSuccess("Asociación creada exitosamente.");
-
-                // 2. Limpiar campos y RECARGAR la tabla
                 clearFields();
-                loadLeagueGames();
-
+                loadLeagueGames(); // Recargar la tabla
             } else {
-                showError("No se pudo crear la asociación.");
+                showError("No se pudo crear la asociación. Puede que ya exista o el ID/Código no sea válido.");
             }
 
         } catch (SQLException e) {
-            showError("Error al insertar la asociación: " + e.getMessage(), "Error SQL");
-            e.printStackTrace();
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("duplicate key value")) {
+                showError("Error: Esta asociación (ID Liga y Código Juego) ya existe.", "Error de Clave Compuesta");
+            } else if (errorMessage.contains("violates foreign key constraint")) {
+                showError("Error: El ID de la Liga o el Código del Juego no existen en sus respectivas tablas.", "Error de Clave Foránea");
+            } else {
+                showError("Error al insertar la asociación: " + errorMessage, "Error SQL");
+            }
         } catch (NumberFormatException e) {
             showError("El ID de la Liga debe ser un número entero válido.", "Error de Formato");
         }
     }
 
     private void deleteLeagueGame() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
+        if (!btnDelete.isEnabled()) {
             showError("Debe seleccionar una asociación para poder eliminarla.", "Error de Selección");
             return;
         }
 
-        // 1. Obtener ID y Código de la fila seleccionada
+        int selectedRow = table.getSelectedRow();
+
         try {
             // Los valores se obtienen de las columnas 0 y 1 del modelo
+            // Es seguro castear si se carga correctamente en loadLeagueGames
             int leagueId = (int) tableModel.getValueAt(selectedRow, 0);
             String gameCode = (String) tableModel.getValueAt(selectedRow, 1);
 
-            // 2. Pedir confirmación
             int confirm = JOptionPane.showConfirmDialog(
                     this,
                     "¿Está seguro de que desea eliminar la asociación de Liga " + leagueId + " con el Juego " + gameCode + "?",
@@ -323,24 +411,20 @@ public class LeagueGamesPanel extends JPanel {
             );
 
             if (confirm == JOptionPane.YES_OPTION) {
-                // 3. Llamar al CRUD
                 boolean success = leagueGameCRUD.deleteLeaguesGames(leagueId, gameCode);
 
                 if (success) {
                     showSuccess("Asociación eliminada exitosamente.");
-                    // 4. Refrescar la tabla
                     loadLeagueGames();
-                    clearFields(); // Limpia los campos de texto
+                    clearFields();
                 } else {
                     showError("No se pudo eliminar la asociación. Puede que ya no exista.", "Error de BD");
                 }
             }
         } catch (SQLException e) {
             showError("Error al eliminar la asociación: " + e.getMessage(), "Error SQL");
-            e.printStackTrace();
-        } catch (ClassCastException e) {
-            // Esto ayuda a atrapar si los tipos de datos no son int y String
-            showError("Error interno al leer datos de la tabla.", "Error de Datos");
+        } catch (ClassCastException | ArrayIndexOutOfBoundsException e) {
+            showError("Error interno al leer datos de la tabla. Intente refrescar.", "Error de Datos");
         }
     }
 
@@ -348,90 +432,20 @@ public class LeagueGamesPanel extends JPanel {
         txtLeagueId.setText("");
         txtGameCode.setText("");
 
+        // Limpiar errores
+        lblErrorLeagueId.setText(" ");
+        lblErrorGameCode.setText(" ");
+
         if (table != null) {
             table.clearSelection();
         }
-        updateButtonStates();
+        validateAllFields();
     }
 
-    private void handleClearButton() {
-        // 1. Preguntar si desea borrar TODA la tabla de la BD
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "¿Desea limpiar TODOS los datos de la tabla 'Juegos Asociados a Ligas' en la base de datos?",
-                "Confirmar Limpieza Total",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-        );
+    // Se elimina handleClearButton original, ya que no se ajusta a la función "Limpiar" estándar.
+    // Si se desea la funcionalidad de Borrar TODO, se debe crear un botón separado.
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                // Borrar de la base de datos
-                leagueGameCRUD.deleteAllLeaguesGames();
-                showSuccess("Todos los registros han sido eliminados de la base de datos.");
-
-                // Refrescar la tabla (quedará vacía)
-                loadLeagueGames();
-            } catch (SQLException e) {
-                showError("Error al limpiar todos los datos: " + e.getMessage(), "Error SQL");
-                e.printStackTrace();
-            }
-        } else {
-            // Si dice NO, solo limpiamos los campos de texto
-            clearFields();
-        }
-    }
-
-    private boolean validateAndShowErrors() {
-        String leagueIdText = txtLeagueId.getText().trim();
-        String gameCode = txtGameCode.getText().trim();
-
-        if (leagueIdText.isEmpty() || gameCode.isEmpty()) {
-            showError("Ambos campos (ID Liga y Código Juego) son obligatorios.", "Error de Validación");
-            return false;
-        }
-
-        try {
-            if (Integer.parseInt(leagueIdText) <= 0) {
-                showError("El ID de la Liga debe ser un número positivo.", "Error de Validación");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            showError("El ID de la Liga debe ser un valor numérico entero.", "Error de Validación");
-            return false;
-        }
-
-        return true;
-    }
-
-
-    private void updateButtonStates() {
-        if (table == null || btnAdd == null || btnDelete == null || btnRefresh == null) {
-            return;
-        }
-
-        String leagueIdText = txtLeagueId.getText().trim();
-        String gameCode = txtGameCode.getText().trim();
-
-        boolean isValidId = false;
-        try {
-            int id = Integer.parseInt(leagueIdText);
-            if (id > 0) isValidId = true;
-        } catch (NumberFormatException e) {
-            isValidId = false;
-        }
-
-        boolean fieldsAreValid = isValidId && !gameCode.isEmpty();
-        boolean isSelected = table.getSelectedRow() != -1;
-
-        btnAdd.setEnabled(fieldsAreValid && !isSelected);
-        // CÓDIGO MODIFICADO: Eliminar (btnDelete) solo se activa si hay una fila seleccionada.
-        btnDelete.setEnabled(isSelected);
-        btnRefresh.setEnabled(true);
-        // Limpiar (btnClear) siempre está habilitado (por defecto, no requiere estado de fila/campo)
-        btnClear.setEnabled(true);
-    }
-
+    // --- UTILERÍAS ---
 
     private void showSuccess(String message) {
         JOptionPane.showMessageDialog(this, message, "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -472,6 +486,7 @@ public class LeagueGamesPanel extends JPanel {
         }
 
         private Font getBoldFont(int size) {
+            // Usamos la referencia a la clase externa para obtener el font
             return LeagueGamesPanel.this.getBoldFont(size);
         }
     }

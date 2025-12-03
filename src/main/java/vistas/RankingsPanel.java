@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -25,24 +26,42 @@ public class RankingsPanel extends JPanel {
     private JTextField txtPlayerId, txtPlayerName, txtGameName, txtRanking, txtWins, txtLosses;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
+    // Etiquetas de error visibles solo para campos obligatorios o claves
+    private JLabel lblErrorPlayerId, lblErrorPlayerName, lblErrorGameName, lblErrorWins, lblErrorLosses;
+
+    // Etiqueta de error para el Ranking (oculto en el panel, solo para validación lógica)
+    private JLabel lblErrorRankingLogic;
+
+    private DocumentListener validationListener;
+
     public RankingsPanel(Connection connection) {
         this.connection = connection;
         this.rankingCRUD = new RankingPlayerGameCRUD(connection);
         this.playerCRUD = new PlayerCRUD(connection);
+        validationListener = createValidationListener();
         initComponents();
-        loadRankings();
+        loadRankings(); // Cargar los datos al inicio
+        validateAllFields(); // Validar estados iniciales de botones
     }
 
-    private void initComponents() {
-        setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
-        setBackground(BG_DARK_SECONDARY);
-        setBorder(new EmptyBorder(SPACING_MD, SPACING_MD, SPACING_MD, SPACING_MD));
+    // --- MÉTODOS DE UTILIDAD PARA ESTILO Y VALIDACIÓN ---
 
-        JPanel formPanel = createFormPanel();
-        JPanel tablePanel = createTablePanel();
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        return label;
+    }
 
-        add(formPanel, BorderLayout.NORTH);
-        add(tablePanel, BorderLayout.CENTER);
+    private DocumentListener createValidationListener() {
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { validateAllFields(); }
+        };
     }
 
     private JTextField createStyledTextField() {
@@ -58,6 +77,47 @@ public class RankingsPanel extends JPanel {
         return textField;
     }
 
+    /** Crea un panel de campo que incluye la etiqueta (label), el campo de texto (textField) y el error (errorLabel) */
+    private JPanel createValidatedFieldPanel(String labelText, JTextField textField, JLabel errorLabel, boolean showErrorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(textField, BorderLayout.NORTH);
+
+        if (showErrorLabel) {
+            contentPanel.add(errorLabel, BorderLayout.SOUTH);
+        } else {
+            // Espacio vacío para mantener alineación vertical si el error no es visible
+            contentPanel.add(new JLabel(" "), BorderLayout.SOUTH);
+        }
+
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // --- INICIALIZACIÓN DE COMPONENTES ---
+
+    private void initComponents() {
+        setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
+        setBackground(BG_DARK_SECONDARY);
+        setBorder(new EmptyBorder(SPACING_MD, SPACING_MD, SPACING_MD, SPACING_MD));
+
+        JPanel formPanel = createFormPanel();
+        JPanel tablePanel = createTablePanel();
+
+        add(formPanel, BorderLayout.NORTH);
+        add(tablePanel, BorderLayout.CENTER);
+    }
+
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(BG_CARD);
@@ -65,6 +125,14 @@ public class RankingsPanel extends JPanel {
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
+
+        // Inicializar etiquetas de error
+        lblErrorPlayerId = createErrorLabel();
+        lblErrorPlayerName = createErrorLabel();
+        lblErrorGameName = createErrorLabel();
+        lblErrorWins = createErrorLabel();
+        lblErrorLosses = createErrorLabel();
+        lblErrorRankingLogic = createErrorLabel(); // Para validación interna del Ranking
 
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 3, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
@@ -76,12 +144,24 @@ public class RankingsPanel extends JPanel {
         txtWins = createStyledTextField();
         txtLosses = createStyledTextField();
 
-        fieldsPanel.add(createFieldPanel("ID Jugador:", txtPlayerId));
-        fieldsPanel.add(createFieldPanel("Nombre del Jugador:", txtPlayerName));
-        fieldsPanel.add(createFieldPanel("Nombre del Juego:", txtGameName));
-        fieldsPanel.add(createFieldPanel("Ranking (Opcional):", txtRanking));
-        fieldsPanel.add(createFieldPanel("Victorias:", txtWins));
-        fieldsPanel.add(createFieldPanel("Derrotas:", txtLosses));
+        // Añadir Listeners a los campos relevantes
+        txtPlayerId.getDocument().addDocumentListener(validationListener);
+        txtPlayerName.getDocument().addDocumentListener(validationListener);
+        txtGameName.getDocument().addDocumentListener(validationListener);
+        txtRanking.getDocument().addDocumentListener(validationListener);
+        txtWins.getDocument().addDocumentListener(validationListener);
+        txtLosses.getDocument().addDocumentListener(validationListener);
+
+
+        // Fila 1
+        fieldsPanel.add(createValidatedFieldPanel("ID Jugador:", txtPlayerId, lblErrorPlayerId, true)); // ERROR VISIBLE
+        fieldsPanel.add(createValidatedFieldPanel("Nombre del Jugador:", txtPlayerName, lblErrorPlayerName, true)); // ERROR VISIBLE
+        fieldsPanel.add(createValidatedFieldPanel("Nombre del Juego:", txtGameName, lblErrorGameName, true)); // ERROR VISIBLE
+
+        // Fila 2
+        fieldsPanel.add(createValidatedFieldPanel("Ranking (Opcional):", txtRanking, lblErrorRankingLogic, false)); // ERROR OCULTO
+        fieldsPanel.add(createValidatedFieldPanel("Victorias:", txtWins, lblErrorWins, true)); // ERROR VISIBLE
+        fieldsPanel.add(createValidatedFieldPanel("Derrotas:", txtLosses, lblErrorLosses, true)); // ERROR VISIBLE
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -108,19 +188,7 @@ public class RankingsPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JTextField textField) {
-        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
-        panel.setBackground(BG_CARD);
-
-        JLabel label = new JLabel(labelText);
-        label.setFont(getBoldFont(FONT_SIZE_SMALL));
-        label.setForeground(TEXT_SECONDARY);
-
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(textField, BorderLayout.CENTER);
-
-        return panel;
-    }
+    // Se elimina el createFieldPanel simple, usando la versión validada.
 
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -159,8 +227,9 @@ public class RankingsPanel extends JPanel {
         table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT_PRIMARY));
 
         table.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+            if (table != null && !e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
                 loadSelectedRanking();
+                validateAllFields();
             }
         });
 
@@ -189,6 +258,7 @@ public class RankingsPanel extends JPanel {
                     g2d.setColor(bgColor);
                 }
 
+                int RADIUS_SM = 8;
                 g2d.fillRoundRect(0, 0, getWidth(), getHeight(), RADIUS_SM, RADIUS_SM);
 
                 g2d.setColor(BG_DARK_PRIMARY);
@@ -215,6 +285,122 @@ public class RankingsPanel extends JPanel {
         return button;
     }
 
+    // --- LÓGICA DE DATOS Y VALIDACIÓN ---
+
+    private void validateAllFields() {
+        if (btnAdd == null || btnUpdate == null) return;
+
+        boolean isValid = true;
+
+        String idText = txtPlayerId.getText().trim();
+        String playerName = txtPlayerName.getText().trim();
+        String gameName = txtGameName.getText().trim();
+        String rankingText = txtRanking.getText().trim();
+        String winsText = txtWins.getText().trim();
+        String lossesText = txtLosses.getText().trim();
+
+        // 1. ID Jugador (Obligatorio)
+        lblErrorPlayerId.setText(" ");
+        if (idText.isEmpty()) {
+            lblErrorPlayerId.setText("ID Jugador es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int playerId = Integer.parseInt(idText);
+                if (playerId <= 0) {
+                    lblErrorPlayerId.setText("Debe ser un número positivo.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorPlayerId.setText("Debe ser un número entero válido.");
+                isValid = false;
+            }
+        }
+
+        // 2. Nombre del Jugador (Obligatorio)
+        lblErrorPlayerName.setText(" ");
+        if (playerName.isEmpty()) {
+            lblErrorPlayerName.setText("Nombre Jugador es obligatorio.");
+            isValid = false;
+        } else if (playerName.length() < 3) {
+            lblErrorPlayerName.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        }
+        // Nota: La existencia del jugador se comprueba en add/update para no ralentizar la escritura.
+
+        // 3. Nombre del Juego (Obligatorio)
+        lblErrorGameName.setText(" ");
+        if (gameName.isEmpty()) {
+            lblErrorGameName.setText("Nombre Juego es obligatorio.");
+            isValid = false;
+        } else if (gameName.length() < 2) {
+            lblErrorGameName.setText("Mínimo 2 caracteres.");
+            isValid = false;
+        }
+
+        // 4. Victorias (Obligatorio)
+        lblErrorWins.setText(" ");
+        if (winsText.isEmpty()) {
+            lblErrorWins.setText("Victorias es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int wins = Integer.parseInt(winsText);
+                if (wins < 0) {
+                    lblErrorWins.setText("Debe ser positivo o cero.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorWins.setText("Debe ser un número entero.");
+                isValid = false;
+            }
+        }
+
+        // 5. Derrotas (Obligatorio)
+        lblErrorLosses.setText(" ");
+        if (lossesText.isEmpty()) {
+            lblErrorLosses.setText("Derrotas es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int losses = Integer.parseInt(lossesText);
+                if (losses < 0) {
+                    lblErrorLosses.setText("Debe ser positivo o cero.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorLosses.setText("Debe ser un número entero.");
+                isValid = false;
+            }
+        }
+
+        // 6. Ranking (Opcional, pero se valida si se introduce)
+        lblErrorRankingLogic.setText(" "); // Oculto, pero necesario para la lógica
+        if (!rankingText.isEmpty()) {
+            try {
+                int ranking = Integer.parseInt(rankingText);
+                if (ranking <= 0) {
+                    lblErrorRankingLogic.setText("Ranking debe ser positivo.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorRankingLogic.setText("Ranking debe ser un número entero.");
+                isValid = false;
+            }
+        }
+
+        // Estado de botones
+        boolean isRowSelected = (table != null && table.getSelectedRow() != -1);
+
+        btnAdd.setEnabled(isValid && !isRowSelected);
+        btnUpdate.setEnabled(isValid && isRowSelected);
+        btnDelete.setEnabled(isRowSelected);
+
+        // ID y Nombre Juego no son editables en modo Actualizar
+        txtPlayerId.setEditable(!isRowSelected);
+        txtGameName.setEditable(!isRowSelected);
+    }
+
     private void loadRankings() {
         tableModel.setRowCount(0);
         try {
@@ -230,12 +416,15 @@ public class RankingsPanel extends JPanel {
                 };
                 tableModel.addRow(row);
             }
+            clearFields(); // Limpia los campos después de cargar la tabla
         } catch (SQLException e) {
             showError("Error al cargar rankings: " + e.getMessage(), "Error de Carga");
         }
     }
 
     private void loadSelectedRanking() {
+        if (table == null) return;
+
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
             txtPlayerId.setText(tableModel.getValueAt(selectedRow, 0).toString());
@@ -248,17 +437,21 @@ public class RankingsPanel extends JPanel {
             txtWins.setText(tableModel.getValueAt(selectedRow, 4).toString());
             txtLosses.setText(tableModel.getValueAt(selectedRow, 5).toString());
 
+            // En modo edición, las claves no son editables
             txtPlayerId.setEditable(false);
             txtGameName.setEditable(false);
 
-            btnUpdate.setEnabled(true);
-            btnDelete.setEnabled(true);
-            btnAdd.setEnabled(false);
+            validateAllFields();
         }
     }
 
     private void addRanking() {
-        if (!validateFields(true)) return;
+        if (!btnAdd.isEnabled()) {
+            showError("Corrige los errores en los campos antes de agregar.", "Validación Pendiente");
+            return;
+        }
+
+        if (!validatePlayerExistence()) return;
 
         try {
             Integer ranking = null;
@@ -288,32 +481,27 @@ public class RankingsPanel extends JPanel {
             }
         } catch (SQLException e) {
             String errorMessage = e.getMessage();
-
-            if (errorMessage.contains("duplicate key value") && errorMessage.contains("ranking_player_game_pkey")) {
+            if (errorMessage.contains("duplicate key value")) {
                 showError("Error: Ya existe un ranking para el par (Jugador ID, Nombre Juego). Esta combinación debe ser única.", "Error de Clave Compuesta");
             } else if (errorMessage.contains("violates foreign key constraint")) {
-                if (errorMessage.contains("player_id")) {
-                    showError("Error de Jugador: El ID de Jugador ingresado no existe en la tabla de Jugadores.", "Error de Clave Foránea");
-                } else if (errorMessage.contains("game_name")) {
-                    showError("Error de Juego: El Nombre de Juego ingresado no existe en la tabla de Juegos.", "Error de Clave Foránea");
-                } else {
-                    showError("Error de Clave Foránea: Asegúrate de que el ID de Jugador y el Nombre de Juego existan.", "Error de Clave Foránea");
-                }
+                showError("Error de Clave Foránea: Asegúrate de que el ID de Jugador y el Nombre de Juego existan.", "Error de Clave Foránea");
             } else if (errorMessage.contains("violates check constraint")) {
-                showError("Error de Validación: Victorias, Derrotas y Ranking deben ser números positivos o cero.", "Error de Restricción");
+                showError("Error de Restricción: Los valores deben ser positivos o cero.", "Error de Restricción");
             } else {
                 showError("Error al agregar: " + errorMessage, "Error SQL");
             }
+        } catch (NumberFormatException e) {
+            showError("Error de formato numérico: Los campos de números deben ser válidos.", "Error de Formato");
         }
     }
 
     private void updateRanking() {
-        if (txtPlayerId.getText().trim().isEmpty() || txtGameName.getText().trim().isEmpty()) {
-            showError("Selecciona un ranking de la tabla para actualizar.", "Error de Selección");
+        if (!btnUpdate.isEnabled()) {
+            showError("Selecciona un ranking y corrige los errores antes de actualizar.", "Validación Pendiente");
             return;
         }
 
-        if (!validateFields(false)) return;
+        if (!validatePlayerExistence()) return;
 
         try {
             Integer ranking = null;
@@ -352,15 +540,8 @@ public class RankingsPanel extends JPanel {
     }
 
     private void deleteRanking() {
-        if (txtPlayerId.getText().trim().isEmpty() || txtGameName.getText().trim().isEmpty()) {
+        if (!btnDelete.isEnabled()) {
             showError("Selecciona un ranking de la tabla para eliminar.", "Error de Selección");
-            return;
-        }
-
-        try {
-            Integer.parseInt(txtPlayerId.getText().trim());
-        } catch (NumberFormatException e) {
-            showError("El ID del Jugador debe ser un número válido.", "Error de Formato");
             return;
         }
 
@@ -385,6 +566,8 @@ public class RankingsPanel extends JPanel {
                 }
             } catch (SQLException e) {
                 showError("Error al eliminar: " + e.getMessage(), "Error SQL");
+            } catch (NumberFormatException e) {
+                showError("El ID del Jugador debe ser un número válido.", "Error de Formato");
             }
         }
     }
@@ -396,81 +579,36 @@ public class RankingsPanel extends JPanel {
         txtRanking.setText("");
         txtWins.setText("");
         txtLosses.setText("");
+
+        // Limpiar mensajes de error
+        lblErrorPlayerId.setText(" ");
+        lblErrorPlayerName.setText(" ");
+        lblErrorGameName.setText(" ");
+        lblErrorWins.setText(" ");
+        lblErrorLosses.setText(" ");
+        lblErrorRankingLogic.setText(" "); // Limpiar lógica interna
+
         txtPlayerId.setEditable(true);
         txtGameName.setEditable(true);
-        table.clearSelection();
 
-        btnAdd.setEnabled(true);
-        btnUpdate.setEnabled(false);
-        btnDelete.setEnabled(false);
+        if (table != null) table.clearSelection();
+        validateAllFields();
     }
 
-    private boolean validateFields(boolean isAdd) {
-        String idText = txtPlayerId.getText().trim();
+    private boolean validatePlayerExistence() {
         String playerName = txtPlayerName.getText().trim();
-        String gameName = txtGameName.getText().trim();
-        String rankingText = txtRanking.getText().trim();
-        String winsText = txtWins.getText().trim();
-        String lossesText = txtLosses.getText().trim();
-
-        if (idText.isEmpty() || playerName.isEmpty() || gameName.isEmpty() || winsText.isEmpty() || lossesText.isEmpty()) {
-            showError("ID Jugador, Nombre Jugador, Nombre Juego, Victorias y Derrotas son obligatorios.", "Campos Incompletos");
-            return false;
-        }
-
-        // Validar que el jugador exista
         try {
             if (!playerCRUD.playerExists(playerName)) {
                 showError("El jugador '" + playerName + "' no existe en la base de datos.", "Jugador No Encontrado");
                 txtPlayerName.requestFocus();
+                // Forzamos el error visual para que el usuario vea qué campo falló
+                lblErrorPlayerName.setText("Jugador no encontrado.");
                 return false;
             }
         } catch (SQLException e) {
             showError("Error al verificar el jugador en la base de datos: " + e.getMessage(), "Error de BD");
             return false;
         }
-
-        // Validaciones numéricas
-        try {
-            int playerId = Integer.parseInt(idText);
-            if (playerId <= 0) {
-                showError("El ID del Jugador debe ser un número entero positivo.", "Error de Formato");
-                txtPlayerId.requestFocus();
-                return false;
-            }
-
-            int wins = Integer.parseInt(winsText);
-            if (wins < 0) {
-                showError("Victorias debe ser un número entero mayor o igual a cero.", "Error de Formato");
-                txtWins.requestFocus();
-                return false;
-            }
-
-            int losses = Integer.parseInt(lossesText);
-            if (losses < 0) {
-                showError("Derrotas debe ser un número entero mayor o igual a cero.", "Error de Formato");
-                txtLosses.requestFocus();
-                return false;
-            }
-
-            if (!rankingText.isEmpty()) {
-                int ranking = Integer.parseInt(rankingText);
-                if (ranking <= 0) {
-                    showError("Ranking, si se ingresa, debe ser un número entero positivo.", "Error de Formato");
-                    txtRanking.requestFocus();
-                    return false;
-                }
-            }
-
-        } catch (NumberFormatException e) {
-            showError("ID Jugador, Ranking, Victorias y Derrotas deben ser números enteros válidos.", "Error de Formato");
-            if (!idText.matches("\\d+")) txtPlayerId.requestFocus();
-            else if (!winsText.matches("\\d+")) txtWins.requestFocus();
-            else if (!lossesText.matches("\\d+")) txtLosses.requestFocus();
-            else if (!rankingText.isEmpty() && !rankingText.matches("\\d+")) txtRanking.requestFocus();
-            return false;
-        }
-
         return true;
     }
 

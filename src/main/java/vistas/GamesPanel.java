@@ -6,6 +6,8 @@ import static vistas.DesignConstants.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -23,11 +25,36 @@ public class GamesPanel extends JPanel {
     private JTextField txtGameCode, txtGameName, txtDescription, txtGenres;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
+    // Declaración de los JLabels de error
+    private JLabel lblErrorName, lblErrorCode, lblErrorDes, lblErrorGen;
+    private DocumentListener validationListener;
+
     public GamesPanel(Connection connection) {
         this.connection = connection;
         this.gameCRUD = new GameCRUD(connection);
         initComponents();
         loadGames();
+    }
+
+
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        return label;
+    }
+
+    private void setupValidationListeners() {
+        validationListener = new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) { validateAllFields(); }
+            public void removeUpdate(DocumentEvent e) { validateAllFields(); }
+            public void insertUpdate(DocumentEvent e) { validateAllFields(); }
+        };
+
+        txtGameCode.getDocument().addDocumentListener(validationListener);
+        txtGameName.getDocument().addDocumentListener(validationListener);
+        txtDescription.getDocument().addDocumentListener(validationListener);
+        txtGenres.getDocument().addDocumentListener(validationListener);
     }
 
     private void initComponents() {
@@ -40,6 +67,8 @@ public class GamesPanel extends JPanel {
 
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
+
+        setupValidationListeners();
     }
 
     private JPanel createFormPanel() {
@@ -50,6 +79,11 @@ public class GamesPanel extends JPanel {
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
 
+        lblErrorCode = createErrorLabel();
+        lblErrorName = createErrorLabel();
+        lblErrorDes = createErrorLabel();
+        lblErrorGen = createErrorLabel();
+
         JPanel fieldsPanel = new JPanel(new GridLayout(1, 4, SPACING_MD, SPACING_MD));
         fieldsPanel.setBackground(BG_CARD);
 
@@ -58,10 +92,11 @@ public class GamesPanel extends JPanel {
         txtDescription = createStyledTextField();
         txtGenres = createStyledTextField();
 
-        fieldsPanel.add(createFieldPanel("Código del Juego:", txtGameCode));
-        fieldsPanel.add(createFieldPanel("Nombre:", txtGameName));
-        fieldsPanel.add(createFieldPanel("Descripción:", txtDescription));
-        fieldsPanel.add(createFieldPanel("Géneros:", txtGenres));
+
+        fieldsPanel.add(createFieldPanel("Código del Juego:", txtGameCode, lblErrorCode));
+        fieldsPanel.add(createFieldPanel("Nombre:", txtGameName, lblErrorName));
+        fieldsPanel.add(createFieldPanel("Descripción:", txtDescription, lblErrorDes));
+        fieldsPanel.add(createFieldPanel("Géneros:", txtGenres, lblErrorGen));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -85,10 +120,11 @@ public class GamesPanel extends JPanel {
         panel.add(fieldsPanel, BorderLayout.CENTER);
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
+        validateAllFields();
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JTextField textField) {
+    private JPanel createFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -96,8 +132,13 @@ public class GamesPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel inputContainer = new JPanel(new BorderLayout());
+        inputContainer.setBackground(BG_CARD);
+        inputContainer.add(textField, BorderLayout.CENTER);
+        inputContainer.add(errorLabel, BorderLayout.SOUTH); // <-- Agrega el error AQUÍ
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(textField, BorderLayout.CENTER);
+        panel.add(inputContainer, BorderLayout.CENTER);
 
         return panel;
     }
@@ -194,7 +235,7 @@ public class GamesPanel extends JPanel {
 
                 g2d.dispose();
             }
-            // Métodos placeholder asumidos en DesignConstants o una clase auxiliar
+
             private Color darken(Color color, float factor) { return color; }
             private Color brighten(Color color, float factor) { return color; }
         };
@@ -236,11 +277,13 @@ public class GamesPanel extends JPanel {
             txtDescription.setText(tableModel.getValueAt(selectedRow, 2).toString());
             txtGenres.setText(tableModel.getValueAt(selectedRow, 3).toString());
             txtGameCode.setEditable(false);
+
+            validateAllFields();
         }
     }
 
     private void addGame() {
-        if (!validateFields()) return;
+        if (!validateAllFields()) return;
 
         try {
             Game game = new Game(
@@ -268,7 +311,7 @@ public class GamesPanel extends JPanel {
             return;
         }
 
-        if (!validateFields()) return;
+        if (!validateAllFields()) return;
 
         try {
             Game game = new Game(
@@ -326,6 +369,13 @@ public class GamesPanel extends JPanel {
         txtGenres.setText("");
         txtGameCode.setEditable(true);
         table.clearSelection();
+
+        lblErrorCode.setText(" ");
+        lblErrorName.setText(" ");
+        lblErrorDes.setText(" ");
+        lblErrorGen.setText(" ");
+
+        validateAllFields();
     }
 
     private boolean validateFields() {
@@ -345,7 +395,6 @@ public class GamesPanel extends JPanel {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
 
-    // CLASE INTERNA PARA FORZAR EL ESTILO DE LA CABECERA
     private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
 
         private final Color backgroundColor;
@@ -376,5 +425,57 @@ public class GamesPanel extends JPanel {
         private Font getBoldFont(int size) {
             return new Font("Segoe UI", Font.BOLD, size);
         }
+    }
+
+    private boolean validateAllFields() {
+        boolean isValid = true;
+
+        // 1. VALIDACIÓN DEL NOMBRE
+        String name = txtGameName.getText().trim();
+        if (name.isEmpty()) {
+            lblErrorName.setText("El nombre es obligatorio.");
+            isValid = false;
+        } else if (name.length() < 3) {
+            lblErrorName.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorName.setText(" ");
+        }
+
+        String code = txtGameCode.getText().trim();
+        if (code.isEmpty()) {
+            lblErrorCode.setText("El código del juego es obligatorio.");
+            isValid = false;
+        } else {
+            lblErrorCode.setText(" ");
+        }
+
+        String des = txtDescription.getText().trim();
+        if (des.isEmpty()) {
+            lblErrorDes.setText("La descripción es obligatoria.");
+            isValid = false;
+        } else if (des.length() < 10) {
+            lblErrorDes.setText("Mínimo 10 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorDes.setText(" ");
+        }
+
+        String gen = txtGenres.getText().trim();
+        if (gen.isEmpty()) {
+            lblErrorGen.setText("El género es obligatorio.");
+            isValid = false;
+        } else if (gen.length() < 3) {
+            lblErrorGen.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorGen.setText(" ");
+        }
+
+        // Actualizar el estado de los botones
+        btnAdd.setEnabled(isValid);
+        btnUpdate.setEnabled(isValid && table.getSelectedRow() != -1);
+
+        return isValid;
     }
 }

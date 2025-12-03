@@ -9,14 +9,17 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Date;
-
+import java.text.ParseException; // Necesario para parsear fechas al cargar
 import com.toedter.calendar.JDateChooser;
 
 public class TeamsPanel extends JPanel {
@@ -33,7 +36,12 @@ public class TeamsPanel extends JPanel {
     private JTextField txtTeamId, txtTeamName, txtIdCoach, txtCreatedByPlayer;
     private JDateChooser dateChooserCreated, dateChooserDisbanded;
 
-    private CaretListener validationListener;
+    // Declaración de los JLabels de error
+    private JLabel lblErrorTeamId, lblErrorTeamName, lblErrorIdCoach, lblErrorCreatedByPlayer;
+    private JLabel lblErrorDateCreated, lblErrorDateDisbanded;
+
+    private DocumentListener validationDocumentListener;
+    private PropertyChangeListener validationDateListener;
 
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
@@ -42,10 +50,18 @@ public class TeamsPanel extends JPanel {
         this.teamCRUD = new TeamCRUD(connection);
         this.playerCRUD = new PlayerCRUD(connection);
         SDF.setLenient(false);
-        validationListener = e -> validateFields();
+        setupValidationListeners();
         initComponents();
         loadTeams();
         validateFields();
+    }
+
+    // 2. Método para crear los JLabels de error
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        return label;
     }
 
     private JTextField createStyledTextField() {
@@ -59,6 +75,22 @@ public class TeamsPanel extends JPanel {
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
         return textField;
+    }
+
+    // Nuevo método para configurar los listeners
+    private void setupValidationListeners() {
+        validationDocumentListener = new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) { validateFields(); }
+            public void removeUpdate(DocumentEvent e) { validateFields(); }
+            public void insertUpdate(DocumentEvent e) { validateFields(); }
+        };
+
+        validationDateListener = new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if ("date".equals(evt.getPropertyName())) validateFields();
+            }
+        };
     }
 
     private void initComponents() {
@@ -81,40 +113,47 @@ public class TeamsPanel extends JPanel {
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
 
-        JPanel fieldsPanel1 = new JPanel(new GridLayout(1, 3, SPACING_MD, SPACING_LG));
+        // Inicializar JLabels de error
+        lblErrorTeamId = createErrorLabel();
+        lblErrorTeamName = createErrorLabel();
+        lblErrorIdCoach = createErrorLabel();
+        lblErrorCreatedByPlayer = createErrorLabel();
+        lblErrorDateCreated = createErrorLabel();
+        lblErrorDateDisbanded = createErrorLabel();
+
+        JPanel fieldsPanel1 = new JPanel(new GridLayout(2, 3, SPACING_MD, 0));
         fieldsPanel1.setBackground(BG_CARD);
 
         txtTeamId = createStyledTextField();
         txtTeamName = createStyledTextField();
 
-        fieldsPanel1.add(createFieldPanel("ID del Equipo:", txtTeamId));
-        fieldsPanel1.add(createFieldPanel("Nombre del Equipo:", txtTeamName));
-        dateChooserCreated = createDateChooser("Fecha Creación:");
-        fieldsPanel1.add(dateChooserCreated.getParent());
+        fieldsPanel1.add(createFieldPanel("ID del Equipo:", txtTeamId, lblErrorTeamId));
+        fieldsPanel1.add(createFieldPanel("Nombre del Equipo:", txtTeamName, lblErrorTeamName));
 
-        JPanel fieldsPanel2 = new JPanel(new GridLayout(1, 3, SPACING_MD, SPACING_LG));
+        dateChooserCreated = createDateChooser();
+        fieldsPanel1.add(createDateChooserPanel("Fecha Creación:", dateChooserCreated, lblErrorDateCreated));
+
+        JPanel fieldsPanel2 = new JPanel(new GridLayout(2, 3, SPACING_MD, 0));
         fieldsPanel2.setBackground(BG_CARD);
         fieldsPanel2.setBorder(new EmptyBorder(SPACING_MD, 0, 0, 0));
 
-        dateChooserDisbanded = createDateChooser("Fecha Disolución (Opcional):");
+        dateChooserDisbanded = createDateChooser();
         txtIdCoach = createStyledTextField();
         txtCreatedByPlayer = createStyledTextField();
 
-        fieldsPanel2.add(dateChooserDisbanded.getParent());
-        fieldsPanel2.add(createFieldPanel("ID del Entrenador:", txtIdCoach));
-        fieldsPanel2.add(createFieldPanel("Creado por Jugador:", txtCreatedByPlayer));
+        fieldsPanel2.add(createDateChooserPanel("Fecha Disolución (Opcional):", dateChooserDisbanded, lblErrorDateDisbanded));
+        fieldsPanel2.add(createFieldPanel("ID del Entrenador:", txtIdCoach, lblErrorIdCoach));
+        fieldsPanel2.add(createFieldPanel("Creado por Jugador:", txtCreatedByPlayer, lblErrorCreatedByPlayer));
 
-        txtTeamId.addCaretListener(validationListener);
-        txtTeamName.addCaretListener(validationListener);
-        txtIdCoach.addCaretListener(validationListener);
-        txtCreatedByPlayer.addCaretListener(validationListener);
+        // Registrar los DocumentListeners
+        txtTeamId.getDocument().addDocumentListener(validationDocumentListener);
+        txtTeamName.getDocument().addDocumentListener(validationDocumentListener);
+        txtIdCoach.getDocument().addDocumentListener(validationDocumentListener);
+        txtCreatedByPlayer.getDocument().addDocumentListener(validationDocumentListener);
 
-        dateChooserCreated.getDateEditor().addPropertyChangeListener(evt -> {
-            if ("date".equals(evt.getPropertyName())) validateFields();
-        });
-        dateChooserDisbanded.getDateEditor().addPropertyChangeListener(evt -> {
-            if ("date".equals(evt.getPropertyName())) validateFields();
-        });
+        // Registrar los PropertyChangeListeners
+        dateChooserCreated.getDateEditor().addPropertyChangeListener(validationDateListener);
+        dateChooserDisbanded.getDateEditor().addPropertyChangeListener(validationDateListener);
 
         JPanel allFieldsPanel = new JPanel(new BorderLayout());
         allFieldsPanel.setBackground(BG_CARD);
@@ -146,7 +185,8 @@ public class TeamsPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JTextField textField) {
+    // Método para crear el panel del campo de texto con su error
+    private JPanel createFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -154,20 +194,19 @@ public class TeamsPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel inputContainer = new JPanel(new BorderLayout());
+        inputContainer.setBackground(BG_CARD);
+        inputContainer.add(textField, BorderLayout.CENTER);
+        inputContainer.add(errorLabel, BorderLayout.SOUTH);
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(textField, BorderLayout.CENTER);
+        panel.add(inputContainer, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private JDateChooser createDateChooser(String labelText) {
-        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
-        panel.setBackground(BG_CARD);
-
-        JLabel label = new JLabel(labelText);
-        label.setFont(getBoldFont(FONT_SIZE_SMALL));
-        label.setForeground(TEXT_SECONDARY);
-
+    // Método auxiliar para crear solo el JDateChooser base
+    private JDateChooser createDateChooser() {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
         dateChooser.setFont(getBodyFont(FONT_SIZE_BODY));
@@ -179,14 +218,32 @@ public class TeamsPanel extends JPanel {
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
-
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(dateChooser, BorderLayout.CENTER);
-
-        dateChooser.putClientProperty("panel", panel);
         return dateChooser;
     }
 
+    // Método para crear el panel del DateChooser con su JLabel de error
+    private JPanel createDateChooserPanel(String labelText, JDateChooser dateChooser, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel inputContainer = new JPanel(new BorderLayout());
+        inputContainer.setBackground(BG_CARD);
+        inputContainer.add(dateChooser, BorderLayout.CENTER);
+        inputContainer.add(errorLabel, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(inputContainer, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    /**
+     * CONSTRUCCIÓN DE LA TABLA
+     */
     private JPanel createTablePanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(BG_CARD);
@@ -239,6 +296,335 @@ public class TeamsPanel extends JPanel {
         return panel;
     }
 
+    /**
+     * CARGA DE DATOS DE LA BD
+     */
+    private void loadTeams() {
+        tableModel.setRowCount(0);
+        try {
+            List<Team> teams = teamCRUD.getAllTeams();
+            for (Team team : teams) {
+                Object[] row = {
+                        team.getTeamId(),
+                        team.getTeamName(),
+                        team.getDateCreated() != null ? SDF.format(team.getDateCreated()) : "",
+                        team.getDateDisbanded() != null ? SDF.format(team.getDateDisbanded()) : "",
+                        team.getIdCoach(),
+                        team.getCreatedByPlayer()
+                };
+                tableModel.addRow(row);
+            }
+        } catch (SQLException e) {
+            showError("Error al cargar los equipos: " + e.getMessage(), "Error de Carga");
+        }
+    }
+
+    /**
+     * CARGA DE DATOS EN FORMULARIO AL SELECCIONAR
+     */
+    private void loadSelectedTeam() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow != -1) {
+            txtTeamId.setText(tableModel.getValueAt(selectedRow, 0).toString());
+            txtTeamName.setText(tableModel.getValueAt(selectedRow, 1).toString());
+
+            try {
+                String dateCreatedStr = tableModel.getValueAt(selectedRow, 2).toString();
+                if (!dateCreatedStr.isEmpty()) dateChooserCreated.setDate(SDF.parse(dateCreatedStr));
+                else dateChooserCreated.setDate(null);
+
+                String dateDisbandedStr = tableModel.getValueAt(selectedRow, 3).toString();
+                if (!dateDisbandedStr.isEmpty()) dateChooserDisbanded.setDate(SDF.parse(dateDisbandedStr));
+                else dateChooserDisbanded.setDate(null);
+            } catch (ParseException e) {
+                // Manejar error de parseo si ocurre
+                dateChooserCreated.setDate(null);
+                dateChooserDisbanded.setDate(null);
+            }
+
+            // Asegurar manejo de valores nulos (si se almacenan como null en la tabla)
+            Object idCoachObj = tableModel.getValueAt(selectedRow, 4);
+            txtIdCoach.setText(idCoachObj != null ? idCoachObj.toString() : "");
+
+            Object createdByPlayerObj = tableModel.getValueAt(selectedRow, 5);
+            txtCreatedByPlayer.setText(createdByPlayerObj != null ? createdByPlayerObj.toString() : "");
+
+            txtTeamId.setEditable(false);
+            validateFields();
+        }
+    }
+
+
+    /**
+     * LÓGICA DE BOTONES (CRUD)
+     */
+    private void addTeam() {
+        if (!validateAndShowErrorOnUI()) return; // Validar campos UI
+        if (!validateDateLogic()) return; // Validar lógica de fechas
+
+        try {
+            int teamId = Integer.parseInt(txtTeamId.getText().trim());
+            int idCoach = Integer.parseInt(txtIdCoach.getText().trim());
+            String createdByPlayer = txtCreatedByPlayer.getText().trim();
+
+            // Validación de existencia de jugadores (BD)
+            if (!playerCRUD.playerExists(createdByPlayer)) {
+                showError("El jugador '" + createdByPlayer + "' no existe en la BD.", "Jugador No Encontrado");
+                return;
+            }
+
+            Team team = new Team(
+                    teamId,
+                    txtTeamName.getText().trim(),
+                    dateChooserCreated.getDate(),
+                    dateChooserDisbanded.getDate(),
+                    idCoach,
+                    createdByPlayer
+            );
+
+            if (teamCRUD.createTeam(team)) {
+                showSuccess("¡Equipo agregado exitosamente!");
+                clearFields();
+                loadTeams();
+            } else {
+                showError("No se pudo agregar el equipo.", "Error de Inserción");
+            }
+        } catch (SQLException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("duplicate key value") && errorMessage.contains("team_pkey")) {
+                showError("Error: Ya existe un equipo con el ID '" + txtTeamId.getText().trim() + "'.", "Error de Clave Primaria");
+            } else if (errorMessage.contains("id_coach_fk")) {
+                showError("Error de Entrenador: El ID del Entrenador ingresado no existe.", "Error de Clave Foránea");
+            } else {
+                showError("Error al agregar: " + errorMessage, "Error SQL");
+            }
+        } catch (NumberFormatException e) {
+            showError("Los IDs deben ser números enteros positivos.", "Error de Formato");
+        }
+    }
+
+    private void updateTeam() {
+        if (txtTeamId.isEditable() || table.getSelectedRow() == -1) {
+            showError("Selecciona un equipo de la tabla para actualizar.", "Error de Selección");
+            return;
+        }
+
+        if (!validateAndShowErrorOnUI()) return;
+        if (!validateDateLogic()) return;
+
+        try {
+            int teamId = Integer.parseInt(txtTeamId.getText().trim());
+            int idCoach = Integer.parseInt(txtIdCoach.getText().trim());
+            String createdByPlayer = txtCreatedByPlayer.getText().trim();
+
+            // Validación de existencia de jugadores (BD)
+            if (!playerCRUD.playerExists(createdByPlayer)) {
+                showError("El jugador '" + createdByPlayer + "' no existe en la BD.", "Jugador No Encontrado");
+                return;
+            }
+
+            Team team = new Team(
+                    teamId,
+                    txtTeamName.getText().trim(),
+                    dateChooserCreated.getDate(),
+                    dateChooserDisbanded.getDate(),
+                    idCoach,
+                    createdByPlayer
+            );
+
+            if (teamCRUD.updateTeam(team)) {
+                showSuccess("¡Equipo actualizado exitosamente!");
+                clearFields();
+                loadTeams();
+            } else {
+                showError("No se pudo actualizar el equipo. Asegúrate que el ID exista.", "Error de Actualización");
+            }
+        } catch (SQLException e) {
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("id_coach_fk")) {
+                showError("Error de Entrenador: El ID del Entrenador ingresado no existe.", "Error de Clave Foránea");
+            } else {
+                showError("Error al actualizar: " + errorMessage, "Error SQL");
+            }
+        } catch (NumberFormatException e) {
+            showError("Los IDs deben ser números enteros positivos.", "Error de Formato");
+        }
+    }
+
+    private void deleteTeam() {
+        if (txtTeamId.getText().trim().isEmpty()) {
+            showError("Selecciona un equipo de la tabla para eliminar.", "Error");
+            return;
+        }
+
+        int teamId;
+        try {
+            teamId = Integer.parseInt(txtTeamId.getText().trim());
+        } catch (NumberFormatException e) {
+            showError("El ID del Equipo debe ser un número válido.", "Error de Formato");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "¿Estás seguro de eliminar este equipo? Si el equipo tiene dependencias (jugadores, etc.) la operación fallará.",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                if (teamCRUD.deleteTeam(teamId)) {
+                    showSuccess("¡Equipo eliminado exitosamente!");
+                    clearFields();
+                    loadTeams();
+                } else {
+                    showError("No se pudo eliminar el equipo. Es posible que el ID no exista.", "Error de Eliminación");
+                }
+            } catch (SQLException e) {
+                if (e.getMessage().contains("violates foreign key constraint")) {
+                    showError("Error: No puedes eliminar este equipo porque tiene dependencias asociadas.", "Error de Clave Foránea");
+                } else {
+                    showError("Error al eliminar: " + e.getMessage(), "Error SQL");
+                }
+            }
+        }
+    }
+
+    private void clearFields() {
+        txtTeamId.setText("");
+        txtTeamName.setText("");
+        dateChooserCreated.setDate(null);
+        dateChooserDisbanded.setDate(null);
+        txtIdCoach.setText("");
+        txtCreatedByPlayer.setText("");
+        txtTeamId.setEditable(true);
+        table.clearSelection();
+
+        // Limpiar JLabels de error
+        lblErrorTeamId.setText(" ");
+        lblErrorTeamName.setText(" ");
+        lblErrorIdCoach.setText(" ");
+        lblErrorCreatedByPlayer.setText(" ");
+        lblErrorDateCreated.setText(" ");
+        lblErrorDateDisbanded.setText(" ");
+
+        validateFields();
+    }
+
+    /**
+     * LÓGICA DE VALIDACIÓN EN TIEMPO REAL (UI)
+     */
+    private boolean validateAndShowErrorOnUI() {
+        validateFields(); // Forzar la validación para actualizar los errores de la UI
+        // Si cualquier JLabel de error contiene texto distinto de " ", significa que hay un error visible.
+        return lblErrorTeamId.getText().equals(" ") &&
+                lblErrorTeamName.getText().equals(" ") &&
+                lblErrorIdCoach.getText().equals(" ") &&
+                lblErrorCreatedByPlayer.getText().equals(" ") &&
+                lblErrorDateCreated.getText().equals(" ") &&
+                lblErrorDateDisbanded.getText().equals(" ");
+    }
+
+
+    private void validateFields() {
+        boolean isValid = true;
+
+        // Limpiar errores primero
+        lblErrorTeamId.setText(" ");
+        lblErrorTeamName.setText(" ");
+        lblErrorIdCoach.setText(" ");
+        lblErrorCreatedByPlayer.setText(" ");
+        lblErrorDateCreated.setText(" ");
+        lblErrorDateDisbanded.setText(" ");
+
+        // 1. Validaciones de ID del Equipo
+        if (txtTeamId.getText().trim().isEmpty()) {
+            lblErrorTeamId.setText("El ID es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                if (Integer.parseInt(txtTeamId.getText().trim()) <= 0) {
+                    lblErrorTeamId.setText("Debe ser un número positivo.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorTeamId.setText("Debe ser un número entero.");
+                isValid = false;
+            }
+        }
+
+        // 2. Validaciones de Nombre del Equipo
+        if (txtTeamName.getText().trim().isEmpty()) {
+            lblErrorTeamName.setText("El nombre es obligatorio.");
+            isValid = false;
+        } else if (txtTeamName.getText().trim().length() < 3) {
+            lblErrorTeamName.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        }
+
+        // 3. Validaciones de ID del Entrenador
+        if (txtIdCoach.getText().trim().isEmpty()) {
+            lblErrorIdCoach.setText("El ID del entrenador es obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                if (Integer.parseInt(txtIdCoach.getText().trim()) <= 0) {
+                    lblErrorIdCoach.setText("Debe ser un número positivo.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblErrorIdCoach.setText("Debe ser un número entero.");
+                isValid = false;
+            }
+        }
+
+        // 4. Validaciones de Jugador Creador
+        if (txtCreatedByPlayer.getText().trim().isEmpty()) {
+            lblErrorCreatedByPlayer.setText("El jugador creador es obligatorio.");
+            isValid = false;
+        }
+
+        // 5. Validaciones de Fecha de Creación
+        Date dateCreated = dateChooserCreated.getDate();
+        if (dateCreated == null) {
+            lblErrorDateCreated.setText("La fecha es obligatoria.");
+            isValid = false;
+        }
+
+        // 6. Validaciones de Lógica de Fechas (si ambas existen)
+        Date dateDisbanded = dateChooserDisbanded.getDate();
+        if (dateCreated != null && dateDisbanded != null) {
+            if (dateCreated.after(dateDisbanded)) {
+                lblErrorDateDisbanded.setText("No puede ser anterior a creación.");
+                isValid = false;
+            }
+        }
+
+        // Actualizar el estado de los botones
+        boolean isSelected = !txtTeamId.isEditable();
+        btnAdd.setEnabled(isValid && !isSelected);
+        btnUpdate.setEnabled(isValid && isSelected);
+        btnDelete.setEnabled(isSelected);
+    }
+
+    private boolean validateDateLogic() {
+        Date dateCreated = dateChooserCreated.getDate();
+        Date dateDisbanded = dateChooserDisbanded.getDate();
+
+        if (dateCreated != null && dateDisbanded != null) {
+            if (dateCreated.after(dateDisbanded)) {
+                showError("La Fecha de Creación no puede ser posterior a la Fecha de Disolución.", "Error Lógico de Fecha");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * MÉTODOS DE UTILIDAD
+     */
     private JButton createStyledButton(String text, Color bgColor) {
         JButton button = new JButton(text) {
             @Override
@@ -278,297 +664,6 @@ public class TeamsPanel extends JPanel {
         return button;
     }
 
-    private void loadTeams() {
-        tableModel.setRowCount(0);
-        try {
-            List<Team> teams = teamCRUD.getAllTeams();
-            for (Team team : teams) {
-                Object[] row = {
-                        team.getTeamId(),
-                        team.getTeamName(),
-                        team.getDateCreated() != null ? SDF.format(team.getDateCreated()) : "",
-                        team.getDateDisbanded() != null ? SDF.format(team.getDateDisbanded()) : "",
-                        team.getIdCoach(),
-                        team.getCreatedByPlayer()
-                };
-                tableModel.addRow(row);
-            }
-        } catch (SQLException e) {
-            showError("Error al cargar los equipos: " + e.getMessage(), "Error de Carga");
-        }
-    }
-
-    private void loadSelectedTeam() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow != -1) {
-            txtTeamId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-            txtTeamName.setText(tableModel.getValueAt(selectedRow, 1).toString());
-
-            try {
-                String dateCreatedStr = tableModel.getValueAt(selectedRow, 2).toString();
-                if (!dateCreatedStr.isEmpty()) dateChooserCreated.setDate(SDF.parse(dateCreatedStr));
-                else dateChooserCreated.setDate(null);
-
-                String dateDisbandedStr = tableModel.getValueAt(selectedRow, 3).toString();
-                if (!dateDisbandedStr.isEmpty()) dateChooserDisbanded.setDate(SDF.parse(dateDisbandedStr));
-                else dateChooserDisbanded.setDate(null);
-            } catch (Exception e) {
-                dateChooserCreated.setDate(null);
-                dateChooserDisbanded.setDate(null);
-            }
-
-            txtIdCoach.setText(tableModel.getValueAt(selectedRow, 4) != null ? tableModel.getValueAt(selectedRow, 4).toString() : "");
-            txtCreatedByPlayer.setText(tableModel.getValueAt(selectedRow, 5) != null ? tableModel.getValueAt(selectedRow, 5).toString() : "");
-
-            txtTeamId.setEditable(false);
-            validateFields();
-        }
-    }
-
-    private void addTeam() {
-        if (!validateFieldsForAction(false)) {
-            return;
-        }
-
-        if (!validateDateLogic()) return;
-        if (!validatePlayerExists()) return;
-
-        try {
-            Date dateCreated = dateChooserCreated.getDate();
-            Date dateDisbanded = dateChooserDisbanded.getDate();
-
-            int teamId = Integer.parseInt(txtTeamId.getText().trim());
-            int idCoach = Integer.parseInt(txtIdCoach.getText().trim());
-            String createdByPlayer = txtCreatedByPlayer.getText().trim();
-
-            Team team = new Team(
-                    teamId,
-                    txtTeamName.getText().trim(),
-                    dateCreated,
-                    dateDisbanded,
-                    idCoach,
-                    createdByPlayer
-            );
-
-            if (teamCRUD.createTeam(team)) {
-                showSuccess("¡Equipo agregado exitosamente!");
-                clearFields();
-                loadTeams();
-            } else {
-                showError("No se pudo agregar el equipo.", "Error de Inserción");
-            }
-        } catch (SQLException e) {
-            String errorMessage = e.getMessage();
-
-            if (errorMessage.contains("duplicate key value") && errorMessage.contains("team_pkey")) {
-                showError("Error: Ya existe un equipo con el ID '" + txtTeamId.getText().trim() + "'. El ID debe ser único.", "Error de Clave Primaria");
-            } else if (errorMessage.contains("violates foreign key constraint")) {
-                if (errorMessage.contains("id_coach_fk")) {
-                    showError("Error de Entrenador: El ID del Entrenador ingresado no existe en la tabla de Entrenadores.", "Error de Clave Foránea");
-                } else if (errorMessage.contains("created_by_player_fk")) {
-                    showError("Error de Jugador Creador: El jugador '" + txtCreatedByPlayer.getText().trim() + "' no existe en la tabla de Jugadores.", "Error de Clave Foránea");
-                } else {
-                    showError("Error de Clave Foránea: Asegúrate de que los IDs de Entrenador y Jugador Creador existan.", "Error de Clave Foránea");
-                }
-            } else {
-                showError("Error al agregar: " + errorMessage, "Error SQL");
-            }
-        } catch (NumberFormatException e) {
-            showError("Los IDs deben ser números enteros positivos.", "Error de Formato");
-        }
-    }
-
-    private void updateTeam() {
-        if (txtTeamId.isEditable()) {
-            showError("Selecciona un equipo de la tabla para actualizar.", "Error de Selección");
-            return;
-        }
-
-        if (!validateFieldsForAction(true)) {
-            return;
-        }
-
-        if (!validateDateLogic()) return;
-        if (!validatePlayerExists()) return;
-
-        try {
-            Date dateCreated = dateChooserCreated.getDate();
-            Date dateDisbanded = dateChooserDisbanded.getDate();
-
-            int teamId = Integer.parseInt(txtTeamId.getText().trim());
-            int idCoach = Integer.parseInt(txtIdCoach.getText().trim());
-            String createdByPlayer = txtCreatedByPlayer.getText().trim();
-
-            Team team = new Team(
-                    teamId,
-                    txtTeamName.getText().trim(),
-                    dateCreated,
-                    dateDisbanded,
-                    idCoach,
-                    createdByPlayer
-            );
-
-            if (teamCRUD.updateTeam(team)) {
-                showSuccess("¡Equipo actualizado exitosamente!");
-                clearFields();
-                loadTeams();
-            } else {
-                showError("No se pudo actualizar el equipo.", "Error de Actualización");
-            }
-        } catch (SQLException e) {
-            String errorMessage = e.getMessage();
-            if (errorMessage.contains("violates foreign key constraint")) {
-                if (errorMessage.contains("id_coach_fk")) {
-                    showError("Error de Entrenador: El ID del Entrenador ingresado no existe.", "Error de Clave Foránea");
-                } else if (errorMessage.contains("created_by_player_fk")) {
-                    showError("Error de Jugador Creador: El jugador '" + txtCreatedByPlayer.getText().trim() + "' no existe.", "Error de Clave Foránea");
-                } else {
-                    showError("Error de Clave Foránea: Asegúrate de que los IDs de Entrenador y Jugador Creador existan.", "Error de Clave Foránea");
-                }
-            } else {
-                showError("Error al actualizar: " + errorMessage, "Error SQL");
-            }
-        } catch (NumberFormatException e) {
-            showError("Los IDs deben ser números enteros positivos.", "Error de Formato");
-        }
-    }
-
-    private void deleteTeam() {
-        if (txtTeamId.getText().trim().isEmpty()) {
-            showError("Selecciona un equipo de la tabla para eliminar.", "Error");
-            return;
-        }
-
-        int teamId;
-        try {
-            teamId = Integer.parseInt(txtTeamId.getText().trim());
-        } catch (NumberFormatException e) {
-            showError("El ID del Equipo debe ser un número válido.", "Error de Formato");
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "¿Estás seguro de eliminar este equipo? Si el equipo tiene dependencias (jugadores, torneos, etc.) la operación fallará.",
-                "Confirmar eliminación",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-        );
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                if (teamCRUD.deleteTeam(teamId)) {
-                    showSuccess("¡Equipo eliminado exitosamente!");
-                    clearFields();
-                    loadTeams();
-                } else {
-                    showError("No se pudo eliminar el equipo.", "Error de Eliminación");
-                }
-            } catch (SQLException e) {
-                String errorMessage = e.getMessage();
-                if (errorMessage.contains("violates foreign key constraint")) {
-                    showError("Error: No puedes eliminar este equipo porque tiene dependencias (jugadores, torneos, etc.) asociadas.", "Error de Clave Foránea");
-                } else {
-                    showError("Error al eliminar: " + errorMessage, "Error SQL");
-                }
-            }
-        }
-    }
-
-    private void clearFields() {
-        txtTeamId.setText("");
-        txtTeamName.setText("");
-        dateChooserCreated.setDate(null);
-        dateChooserDisbanded.setDate(null);
-        txtIdCoach.setText("");
-        txtCreatedByPlayer.setText("");
-        txtTeamId.setEditable(true);
-        table.clearSelection();
-        validateFields();
-    }
-
-    private boolean validateFieldsForAction(boolean isUpdate) {
-        String teamIdText = txtTeamId.getText().trim();
-        String teamNameText = txtTeamName.getText().trim();
-        String idCoachText = txtIdCoach.getText().trim();
-        String createdByPlayerText = txtCreatedByPlayer.getText().trim();
-
-        // Validar campos vacíos
-        if (teamIdText.isEmpty() || teamNameText.isEmpty() || idCoachText.isEmpty() || createdByPlayerText.isEmpty()) {
-            String title = isUpdate ? "No se puede actualizar" : "No se puede agregar";
-            showError("Por favor completa todos los campos obligatorios antes de " + (isUpdate ? "actualizar" : "agregar") + ".", title);
-            return false;
-        }
-
-        // Validar formatos numéricos
-        try {
-            int teamId = Integer.parseInt(teamIdText);
-            int idCoach = Integer.parseInt(idCoachText);
-
-            if (teamId <= 0 || idCoach <= 0) {
-                showError("Los IDs deben ser números positivos.", "Error de Formato");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            showError("Los campos de ID deben contener números válidos.", "Error de Formato");
-            return false;
-        }
-
-        // Validar fecha de creación
-        if (dateChooserCreated.getDate() == null) {
-            showError("La fecha de creación es obligatoria.", "Campo Faltante");
-            return false;
-        }
-
-        // Validar lógica de fechas
-        Date dateCreated = dateChooserCreated.getDate();
-        Date dateDisbanded = dateChooserDisbanded.getDate();
-        if (dateCreated != null && dateDisbanded != null && dateCreated.after(dateDisbanded)) {
-            showError("La fecha de creación no puede ser posterior a la fecha de disolución.", "Error de Fechas");
-            return false;
-        }
-
-        return true;
-    }
-
-    private void validateFields() {
-        boolean isSelected = !txtTeamId.isEditable();
-
-        btnAdd.setEnabled(true);
-        btnUpdate.setEnabled(true);
-        btnDelete.setEnabled(true);
-    }
-
-    private boolean validateDateLogic() {
-        Date dateCreated = dateChooserCreated.getDate();
-        Date dateDisbanded = dateChooserDisbanded.getDate();
-
-        if (dateCreated != null && dateDisbanded != null) {
-            if (dateCreated.after(dateDisbanded)) {
-                showError("La Fecha de Creación no puede ser posterior a la Fecha de Disolución.", "Error Lógico de Fecha");
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean validatePlayerExists() {
-        String playerName = txtCreatedByPlayer.getText().trim();
-        if (!playerName.isEmpty()) {
-            try {
-                if (!playerCRUD.playerExists(playerName)) {
-                    showError("El jugador '" + playerName + "' no existe en la base de datos.", "Jugador No Encontrado");
-                    txtCreatedByPlayer.requestFocus();
-                    return false;
-                }
-            } catch (SQLException e) {
-                showError("Error al verificar el jugador en la base de datos: " + e.getMessage(), "Error de BD");
-                return false;
-            }
-        }
-        return true;
-    }
-
     private void showSuccess(String message) {
         JOptionPane.showMessageDialog(this, message, "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -605,7 +700,7 @@ public class TeamsPanel extends JPanel {
         }
     }
 
-    // Métodos de utilidad para fonts y colores
+    // Métodos de utilidad para fonts y colores (asumiendo que no están en DesignConstants)
     private Font getTitleFont(int size) {
         return new Font("Segoe UI", Font.BOLD, size);
     }

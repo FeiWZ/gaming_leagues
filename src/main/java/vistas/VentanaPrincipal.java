@@ -216,11 +216,11 @@ public class VentanaPrincipal extends JFrame {
         tabbedPane.addTab(" Games", gamesPanel);
         tabbedPane.addTab(" Leagues", leaguesPanel);
         tabbedPane.addTab(" Players", playersPanel);
-        tabbedPane.addTab(" Rankings", rankingsPanel);
-        tabbedPane.addTab(" Teams_Players", teamPlayerPanel);
         tabbedPane.addTab(" Teams", teamsPanel);
-        tabbedPane.addTab(" Leagues_Games", leagueGamesPanel);
+        tabbedPane.addTab(" Teams Players", teamPlayerPanel);
+        tabbedPane.addTab(" Leagues Games", leagueGamesPanel);
         tabbedPane.addTab(" Matches", matchesPanel);
+        tabbedPane.addTab(" Rankings", rankingsPanel);
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             tabbedPane.setForegroundAt(i, TEXT_PRIMARY);
