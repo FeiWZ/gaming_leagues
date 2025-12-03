@@ -43,6 +43,9 @@ public class MatchesPanel extends JPanel {
     private JComboBox<String> cmbMatchType, cmbResult, cmbGameName;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
+    // **DECLARACIÓN DE LABELS DE ERROR**
+    private JLabel lblIdError, lblDateError, lblTimeError, lblPlayer1Error, lblPlayer2Error, lblResultError;
+
     private Font getBodyFont(int size) { return new Font("Roboto", Font.PLAIN, size); }
     private Font getTitleFont(int size) { return new Font("Roboto Slab", Font.BOLD, size); }
     private Font getBoldFont(int size) { return new Font("Roboto", Font.BOLD, size); }
@@ -57,8 +60,29 @@ public class MatchesPanel extends JPanel {
         this.gameCRUD = gameCRUD;
         SDF_TIMESTAMP.setLenient(false);
 
+        initializeErrorLabels(); // Inicialización de labels
         initComponents();
         loadMatches();
+        validateFields(); // Validación inicial para estado de botones
+    }
+
+    // --- Métodos de inicialización de soporte ---
+
+    private void initializeErrorLabels() {
+        lblIdError = createErrorLabel();
+        lblDateError = createErrorLabel();
+        lblTimeError = createErrorLabel();
+        lblPlayer1Error = createErrorLabel();
+        lblPlayer2Error = createErrorLabel();
+        lblResultError = createErrorLabel();
+    }
+
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" "); // Siempre tiene espacio, incluso vacío
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setBorder(new EmptyBorder(2, 0, 0, 0));
+        return label;
     }
 
     private void initComponents() {
@@ -99,27 +123,36 @@ public class MatchesPanel extends JPanel {
         cmbResult = createStyledComboBox(new String[]{"N/A", "Gana Jugador 1", "Gana Jugador 2", "Empate"});
 
 
+        // --- Fila 0 ---
         gbc.gridy = 0;
-        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("ID del Partido:", txtMatchId), gbc);
-        gbc.gridx = 1; gbc.weightx = 2.0; fieldsContainer.add(createFieldPanel("Fecha:", dateChooserMatch), gbc);
-        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Hora (hh:mm):", timeInputPanel), gbc);
+        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("ID del Partido:", txtMatchId, lblIdError), gbc);
+        gbc.gridx = 1; gbc.weightx = 2.0; fieldsContainer.add(createValidatedDatePanel("Fecha:", dateChooserMatch, lblDateError), gbc);
+        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("Hora (hh:mm):", timeInputPanel, lblTimeError), gbc);
+        gbc.gridx = 3; gbc.weightx = 1.0; gbc.insets = new Insets(0, 0, SPACING_MD, 0);
+        fieldsContainer.add(createValidatedFieldPanel("Tipo:", cmbMatchType, null), gbc); // No hay validación de error para el tipo, pero mantenemos la estructura
 
-        gbc.gridx = 3;
-        gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 0, SPACING_MD, 0); // Eliminamos el insets derecho para esta columna
-        fieldsContainer.add(createFieldPanel("Tipo:", cmbMatchType), gbc);
-
+        // --- Fila 1 ---
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Nombre del Jugador 1:", txtPlayer1), gbc);
-        gbc.gridx = 1; gbc.weightx = 1.5; fieldsContainer.add(createFieldPanel("Nombre del Jugador 2:", txtPlayer2), gbc); // Mantener el peso de la columna para la simetría si lo deseas
-        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createFieldPanel("Nombre del Juego:", cmbGameName), gbc);
-        gbc.gridx = 3;
-        gbc.weightx = 1.0;
-        gbc.insets = new Insets(0, 0, SPACING_MD, 0);
-        fieldsContainer.add(createFieldPanel("Resultado:", cmbResult), gbc);
+        gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("Nombre del Jugador 1:", txtPlayer1, lblPlayer1Error), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.5; fieldsContainer.add(createValidatedFieldPanel("Nombre del Jugador 2:", txtPlayer2, lblPlayer2Error), gbc);
+        gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("Nombre del Juego:", cmbGameName, null), gbc);
+        gbc.gridx = 3; gbc.weightx = 1.0; gbc.insets = new Insets(0, 0, SPACING_MD, 0);
+        fieldsContainer.add(createValidatedFieldPanel("Resultado:", cmbResult, lblResultError), gbc);
 
+        // --- Listeners para validación en línea ---
+        txtMatchId.addCaretListener(e -> validateFields());
+        txtPlayer1.addCaretListener(e -> validateFields());
+        txtPlayer2.addCaretListener(e -> validateFields());
+        txtTimeValue.addCaretListener(e -> validateFields());
+
+        cmbAmPm.addActionListener(e -> validateFields());
+        cmbResult.addActionListener(e -> validateFields());
+
+        dateChooserMatch.getDateEditor().addPropertyChangeListener(evt -> { if ("date".equals(evt.getPropertyName())) validateFields(); });
+
+        // --- Botones ---
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
         buttonsPanel.setBorder(new EmptyBorder(SPACING_MD, 0, 0, 0));
@@ -145,7 +178,9 @@ public class MatchesPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JComponent component) {
+    // --- Métodos para crear paneles de validación (COPIA DE TEAMS) ---
+
+    private JPanel createValidatedFieldPanel(String labelText, JComponent component, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -153,8 +188,38 @@ public class MatchesPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(component, BorderLayout.NORTH);
+
+        // Si no hay label de error (null), usamos un label vacío que sirve como relleno vertical
+        JLabel errorComponent = errorLabel != null ? errorLabel : createErrorLabel();
+        contentPanel.add(errorComponent, BorderLayout.SOUTH);
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(component, BorderLayout.CENTER);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    private JPanel createValidatedDatePanel(String labelText, JDateChooser dateChooser, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(dateChooser, BorderLayout.NORTH);
+
+        // Si no hay label de error (null), usamos un label vacío que sirve como relleno vertical
+        JLabel errorComponent = errorLabel != null ? errorLabel : createErrorLabel();
+        contentPanel.add(errorComponent, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
 
         return panel;
     }
@@ -403,22 +468,21 @@ public class MatchesPanel extends JPanel {
             cmbGameName.setSelectedItem(tableModel.getValueAt(selectedRow, 6).toString());
 
             txtMatchId.setEditable(false);
+            clearErrorMessages();
+            validateFields();
         }
     }
 
     private void addMatch() {
-        if (!validateFields()) return;
+        if (!validateFields(true)) return;
 
         Timestamp matchDate = getFullTimestamp();
         if (matchDate == null) {
-            showError("Fecha u hora inválidas. Formato de hora requerido: hh:mm.", "Error");
+            showError("Error interno al parsear fecha u hora. Verifica el formato.", "Error de Parseo");
             return;
         }
 
         try {
-            // Se asume que txtMatchId debe ser el ID autogenerado o un ID válido ingresado por el usuario.
-            // Si el ID debe ser autoincremental en la DB, el campo txtMatchId no debería llenarse para la inserción.
-            // Aquí se usa el valor ingresado en txtMatchId para mantener la estructura de tu código.
             Match match = new Match(
                     Integer.parseInt(txtMatchId.getText().trim()),
                     matchDate,
@@ -438,6 +502,8 @@ public class MatchesPanel extends JPanel {
             }
         } catch (SQLException e) {
             handleSQLException(e);
+        } catch (NumberFormatException e) {
+            showError("El ID del partido debe ser un número entero válido.", "Error de Formato");
         }
     }
 
@@ -446,11 +512,11 @@ public class MatchesPanel extends JPanel {
             showError("Selecciona un partido de la tabla para actualizar.", "Error");
             return;
         }
-        if (!validateFields()) return;
+        if (!validateFields(false)) return;
 
         Timestamp matchDate = getFullTimestamp();
         if (matchDate == null) {
-            showError("Fecha u hora inválidas. Formato de hora requerido: hh:mm.", "Error");
+            showError("Error interno al parsear fecha u hora. Verifica el formato.", "Error de Parseo");
             return;
         }
 
@@ -474,6 +540,8 @@ public class MatchesPanel extends JPanel {
             }
         } catch (SQLException e) {
             handleSQLException(e);
+        } catch (NumberFormatException e) {
+            showError("El ID del partido debe ser un número entero válido.", "Error de Formato");
         }
     }
 
@@ -483,7 +551,6 @@ public class MatchesPanel extends JPanel {
             return;
         }
 
-        // 🟢 LÓGICA EXISTENTE: Muestra el mensaje de corroboración
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Estás seguro de eliminar este partido?",
                 "Confirmar eliminación",
@@ -505,9 +572,7 @@ public class MatchesPanel extends JPanel {
         }
     }
 
-    // 🟢 MÉTODO AÑADIDO: Maneja la confirmación de limpieza antes de llamar a clearFields()
     private void clearFieldsWithConfirmation() {
-        // Opcional: Si todos los campos ya están en su estado inicial, simplemente limpiamos la selección
         if (txtMatchId.getText().trim().isEmpty() &&
                 dateChooserMatch.getDate() == null &&
                 txtTimeValue.getText().trim().equals("12:00") &&
@@ -519,10 +584,10 @@ public class MatchesPanel extends JPanel {
 
             table.clearSelection();
             txtMatchId.setEditable(true);
+            clearErrorMessages();
             return;
         }
 
-        // Mostrar el mensaje de corroboración
         int confirm = JOptionPane.showConfirmDialog(this,
                 "¿Estás seguro de limpiar todos los campos del formulario?",
                 "Confirmar limpieza",
@@ -532,6 +597,15 @@ public class MatchesPanel extends JPanel {
         if (confirm == JOptionPane.YES_OPTION) {
             clearFields();
         }
+    }
+
+    private void clearErrorMessages() {
+        lblIdError.setText(" ");
+        lblDateError.setText(" ");
+        lblTimeError.setText(" ");
+        lblPlayer1Error.setText(" ");
+        lblPlayer2Error.setText(" ");
+        lblResultError.setText(" ");
     }
 
     private void clearFields() {
@@ -546,62 +620,118 @@ public class MatchesPanel extends JPanel {
         if (cmbGameName.getItemCount() > 0) cmbGameName.setSelectedIndex(0);
         txtMatchId.setEditable(true);
         table.clearSelection();
+
+        clearErrorMessages();
+        validateFields();
     }
 
     private boolean validateFields() {
-        if (txtMatchId.getText().trim().isEmpty() ||
-                txtPlayer1.getText().trim().isEmpty() ||
-                txtPlayer2.getText().trim().isEmpty()) {
-            showError("Todos los campos nombre son obligatorios.", "Error");
-            return false;
-        }
+        return validateFields(txtMatchId.isEditable());
+    }
 
+    private boolean validateFields(boolean isAdding) {
+        clearErrorMessages(); // Limpiar errores al iniciar
+        boolean isValid = true;
+
+        String matchIdText = txtMatchId.getText().trim();
+        String player1Text = txtPlayer1.getText().trim();
+        String player2Text = txtPlayer2.getText().trim();
         String timeStr = txtTimeValue.getText().trim();
+        String result = cmbResult.getSelectedItem().toString();
+        Date dateSelected = dateChooserMatch.getDate();
+
+        // 1. ID del Partido
+        if (matchIdText.isEmpty()) {
+            lblIdError.setText("ID obligatorio.");
+            isValid = false;
+        } else {
+            try {
+                int id = Integer.parseInt(matchIdText);
+                if (id <= 0) {
+                    lblIdError.setText("Debe ser un número positivo.");
+                    isValid = false;
+                }
+            } catch (NumberFormatException e) {
+                lblIdError.setText("Debe ser un número válido.");
+                isValid = false;
+            }
+        }
+
+        // 2. Jugador 1 (NOT NULL, CHECK LENGTH >= 3)
+        if (player1Text.isEmpty()) {
+            lblPlayer1Error.setText("Jugador 1 obligatorio.");
+            isValid = false;
+        } else if (player1Text.length() < 3) {
+            lblPlayer1Error.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        }
+
+        // 3. Jugador 2 (NOT NULL, CHECK LENGTH >= 3)
+        if (player2Text.isEmpty()) {
+            lblPlayer2Error.setText("Jugador 2 obligatorio.");
+            isValid = false;
+        } else if (player2Text.length() < 3) {
+            lblPlayer2Error.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        }
+
+        // 4. Jugadores Diferentes
+        if (!player1Text.isEmpty() && !player2Text.isEmpty() && player1Text.length() >= 3 && player2Text.length() >= 3) {
+            if (player1Text.equalsIgnoreCase(player2Text)) {
+                lblPlayer1Error.setText("Los jugadores deben ser diferentes.");
+                lblPlayer2Error.setText("Los jugadores deben ser diferentes.");
+                isValid = false;
+            }
+        }
+
+        // 5. Resultado (CHECK LENGTH >= 3)
+        if (result.length() < 3) {
+            lblResultError.setText("Resultado inválido (Mínimo 3 caracteres).");
+            isValid = false;
+        }
+
+        // 6. Fecha (NOT NULL)
+        if (dateSelected == null) {
+            lblDateError.setText("Fecha obligatoria.");
+            isValid = false;
+        }
+
+        // 7. Hora (Formato hh:mm, Rango 01-12)
         if (timeStr.isEmpty() || !timeStr.matches("\\d{2}:\\d{2}")) {
-            showError("El formato de hora debe ser hh:mm (ej: 03:30).", "Error de Formato");
-            return false;
+            lblTimeError.setText("Formato de hora inválido (hh:mm).");
+            isValid = false;
+        } else {
+            try {
+                Date timeTest = SDF_TIME_HHMM.parse(timeStr);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(timeTest);
+                int hour = cal.get(Calendar.HOUR);
+                if (hour < 1 || hour > 12) {
+                    lblTimeError.setText("Hora debe ser 01 a 12.");
+                    isValid = false;
+                }
+            } catch (ParseException e) {
+                lblTimeError.setText("Hora no válida.");
+                isValid = false;
+            }
         }
 
-        try {
-            Date timeTest = SDF_TIME_HHMM.parse(timeStr);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(timeTest);
-            int hour = cal.get(Calendar.HOUR);
-            if (hour < 1 || hour > 12) {
-                showError("La hora debe estar entre 01 y 12.", "Error de Rango");
-                return false;
+        // 8. Fecha/Hora Futura (CHECK match_date <= CURRENT_TIMESTAMP)
+        if (dateSelected != null && lblTimeError.getText().trim().isEmpty()) { // Solo checamos si la hora ya es válida
+            Timestamp matchDate = getFullTimestamp();
+            if (matchDate != null && matchDate.after(new Timestamp(System.currentTimeMillis()))) {
+                lblDateError.setText("La fecha no puede ser futura.");
+                isValid = false;
             }
-        } catch (ParseException e) {
-            showError("La hora no es válida. Asegúrate de usar hh:mm (ej: 03:30).", "Error de Formato");
-            return false;
         }
 
+        // Control de botones
+        boolean rowSelected = table.getSelectedRow() != -1;
+        btnAdd.setEnabled(isValid && isAdding);
+        btnUpdate.setEnabled(isValid && !isAdding && rowSelected);
+        btnDelete.setEnabled(rowSelected);
 
-        try {
-            String player1 = txtPlayer1.getText().trim();
-            String player2 = txtPlayer2.getText().trim();
-
-            if (player1.isEmpty() || player2.isEmpty()) {
-                showError("Los nombres de jugadores no pueden estar vacíos.", "Error");
-                return false;
-            }
-
-            if (player1.equalsIgnoreCase(player2)) {
-                showError("Los nombres de los jugadores deben ser diferentes.", "Error");
-                return false;
-            }
-
-            if (player1.length() < 3 || player2.length() < 3) {
-                showError("Los nombres deben tener al menos 3 caracteres.", "Error");
-                return false;
-            }
-
-        } catch (Exception e) {
-            showError("Error al procesar los nombres: " + e.getMessage(), "Error");
-            return false;
-        }
-
-        return true;
+        return isValid;
     }
 
     private Timestamp getFullTimestamp() {
@@ -639,7 +769,7 @@ public class MatchesPanel extends JPanel {
     private void handleSQLException(SQLException e) {
         String msg = e.getMessage();
         if (msg.contains("duplicate key")) {
-            showError("Ya existe un partido con ese nombre.", "Error");
+            showError("Ya existe un partido con ese ID.", "Error");
         } else if (msg.contains("foreign key")) {
             showError("Nombre del jugador o juego no válidos. Asegúrate de que existen en la base de datos.", "Error");
         } else {
@@ -680,10 +810,6 @@ public class MatchesPanel extends JPanel {
             setForeground(foregroundColor);
             setText(value == null ? "" : value.toString());
             return this;
-        }
-
-        private Font getBoldFont(int size) {
-            return MatchesPanel.this.getBoldFont(size);
         }
     }
 }

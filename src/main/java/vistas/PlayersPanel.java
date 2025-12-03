@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
-
+import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -25,7 +25,8 @@ public class PlayersPanel extends JPanel {
     private PlayerCRUD playerCRUD;
 
     private final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
+    // Patrón de email simplificado para esta validación, aunque el patrón regex es más robusto
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^.+@.+\\..+$");
 
     private JTable table;
     private DefaultTableModel tableModel;
@@ -39,6 +40,10 @@ public class PlayersPanel extends JPanel {
     private final String[] COMMON_NATIONALITIES = {"México", "Estados Unidos", "España", "Argentina", "Colombia", "Otro"};
     private int selectedPlayerId = -1;
 
+    // DECLARACIÓN DE LABELS DE ERROR
+    private JLabel lblErrorFirstName, lblErrorLastName, lblErrorEmail, lblErrorAddress;
+    private JLabel lblErrorBirthDate, lblErrorGender, lblErrorNationality;
+
     private Font getBodyFont(int size) { return new Font("Roboto", Font.PLAIN, size); }
     private Font getTitleFont(int size) { return new Font("Roboto Slab", Font.BOLD, size); }
     private Font getBoldFont(int size) { return new Font("Roboto", Font.BOLD, size); }
@@ -47,12 +52,25 @@ public class PlayersPanel extends JPanel {
     private static Color darken(Color color, float factor) { return new Color(Math.max(0, (int)(color.getRed() * factor)), Math.max(0, (int)(color.getGreen() * factor)), Math.max(0, (int)(color.getBlue() * factor))); }
     private static Color brighten(Color color, float factor) { return new Color(Math.min(255, (int)(color.getRed() * factor)), Math.min(255, (int)(color.getGreen() * factor)), Math.min(255, (int)(color.getBlue() * factor))); }
 
+    // Método auxiliar para crear el JLabel de error con estilo rojo
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setBorder(new EmptyBorder(2, 0, 0, 0));
+        return label;
+    }
+
+    private CaretListener createCaretListener() {
+        return e -> validateFields();
+    }
 
     public PlayersPanel(Connection connection) {
         this.connection = connection;
         this.playerCRUD = new PlayerCRUD(connection);
         SDF.setLenient(false);
 
+        // Inicializar componentes de entrada
         txtFirstName = createStyledTextField();
         txtLastName = createStyledTextField();
         txtEmail = createStyledTextField();
@@ -65,6 +83,35 @@ public class PlayersPanel extends JPanel {
         txtCustomNationality = createStyledTextField();
         txtCustomNationality.setVisible(false);
 
+        // Inicializar JLabels de error
+        lblErrorFirstName = createErrorLabel();
+        lblErrorLastName = createErrorLabel();
+        lblErrorEmail = createErrorLabel();
+        lblErrorAddress = createErrorLabel();
+        lblErrorBirthDate = createErrorLabel();
+        lblErrorGender = createErrorLabel();
+        lblErrorNationality = createErrorLabel();
+
+        // Asignar listeners a los campos de texto
+        CaretListener listener = createCaretListener();
+        txtFirstName.addCaretListener(listener);
+        txtLastName.addCaretListener(listener);
+        txtEmail.addCaretListener(listener);
+        txtAddress.addCaretListener(listener);
+        txtCustomGender.addCaretListener(listener);
+        txtCustomNationality.addCaretListener(listener);
+
+        // Asignar listeners a ComboBox y DateChooser
+        cmbGender.addActionListener(e -> validateFields());
+        cmbNationality.addActionListener(e -> validateFields());
+        dateChooserBirthDate.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                validateFields();
+            }
+        });
+
+        // Inicializar tabla y paneles
+        initializeTableComponents();
         initComponents();
         loadPlayers();
     }
@@ -79,6 +126,21 @@ public class PlayersPanel extends JPanel {
 
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
+
+        // Llamar a validateFields() una vez que los componentes están inicializados
+        validateFields();
+    }
+
+    /**
+     * Inicializa JTable y DefaultTableModel para que 'this.table' no sea null.
+     */
+    private void initializeTableComponents() {
+        String[] columns = {"ID", "Nombre", "Apellido", "Género", "Dirección", "Nacionalidad", "Fecha Nac.", "Email"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        table = new JTable(tableModel);
     }
 
     private JPanel createFormPanel() {
@@ -100,6 +162,7 @@ public class PlayersPanel extends JPanel {
             boolean isOther = "Otro".equals(cmbGender.getSelectedItem());
             txtCustomGender.setVisible(isOther);
             if (isOther) txtCustomGender.requestFocus();
+            validateFields(); // Revalidar al cambiar
             revalidate();
             repaint();
         });
@@ -108,6 +171,7 @@ public class PlayersPanel extends JPanel {
             boolean isOther = "Otro".equals(cmbNationality.getSelectedItem());
             txtCustomNationality.setVisible(isOther);
             if (isOther) txtCustomNationality.requestFocus();
+            validateFields(); // Revalidar al cambiar
             revalidate();
             repaint();
         });
@@ -116,21 +180,21 @@ public class PlayersPanel extends JPanel {
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre:", txtFirstName), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Apellido:", txtLastName), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Email:", txtEmail), gbc);
+        gbc.gridx = 0; fieldsContainer.add(createValidatedFieldPanel("Nombre:", txtFirstName, lblErrorFirstName), gbc);
+        gbc.gridx = 1; fieldsContainer.add(createValidatedFieldPanel("Apellido:", txtLastName, lblErrorLastName), gbc);
+        gbc.gridx = 2; fieldsContainer.add(createValidatedFieldPanel("Email:", txtEmail, lblErrorEmail), gbc);
 
         gbc.gridx = 3;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
-        fieldsContainer.add(createFieldPanel("Dirección:", txtAddress), gbc);
+        fieldsContainer.add(createValidatedFieldPanel("Dirección:", txtAddress, lblErrorAddress), gbc);
 
 
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Fecha Nacimiento:", dateChooserBirthDate), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createComboFieldPanel("Género:", cmbGender, txtCustomGender), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createComboFieldPanel("Nacionalidad:", cmbNationality, txtCustomNationality), gbc);
+        gbc.gridx = 0; fieldsContainer.add(createDatePanel("Fecha Nacimiento:", dateChooserBirthDate, lblErrorBirthDate), gbc);
+        gbc.gridx = 1; fieldsContainer.add(createComboValidatedPanel("Género:", cmbGender, txtCustomGender, lblErrorGender), gbc);
+        gbc.gridx = 2; fieldsContainer.add(createComboValidatedPanel("Nacionalidad:", cmbNationality, txtCustomNationality, lblErrorNationality), gbc);
 
         gbc.gridx = 3;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
@@ -162,7 +226,8 @@ public class PlayersPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JComponent component) {
+    // Método para campos de texto con validación
+    private JPanel createValidatedFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -170,13 +235,39 @@ public class PlayersPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(textField, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(component, BorderLayout.CENTER);
+        panel.add(contentPanel, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private JPanel createComboFieldPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt) {
+    // Método para DateChooser con validación
+    private JPanel createDatePanel(String labelText, JDateChooser dateChooser, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(dateChooser, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(contentPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+    // Método para ComboBox con validación (maneja el campo auxiliar)
+    private JPanel createComboValidatedPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -194,10 +285,16 @@ public class PlayersPanel extends JPanel {
 
         auxTxt.setMaximumSize(new Dimension(Integer.MAX_VALUE, auxTxt.getPreferredSize().height));
 
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(BG_CARD);
+        contentPanel.add(inputGroup, BorderLayout.NORTH);
+        contentPanel.add(errorLabel, BorderLayout.SOUTH);
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(inputGroup, BorderLayout.CENTER);
+        panel.add(contentPanel, BorderLayout.CENTER);
         return panel;
     }
+
 
     private JTextField createStyledTextField() {
         JTextField textField = new JTextField();
@@ -283,13 +380,7 @@ public class PlayersPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        String[] columns = {"ID", "Nombre", "Apellido", "Género", "Dirección", "Nacionalidad", "Fecha Nac.", "Email"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) { return false; }
-        };
-
-        table = new JTable(tableModel);
+        // JTable y tableModel inicializados en initializeTableComponents
         table.setFont(getBodyFont(FONT_SIZE_BODY - 1));
         table.setForeground(TEXT_PRIMARY);
         table.setBackground(BG_INPUT);
@@ -359,7 +450,13 @@ public class PlayersPanel extends JPanel {
 
     private String getSelectedGender() {
         String selected = (String) cmbGender.getSelectedItem();
-        return "Otro".equals(selected) ? txtCustomGender.getText().trim() : selected;
+        // Si el valor seleccionado es 'Otro', toma el valor del campo de texto auxiliar
+        // Si el campo auxiliar está vacío, devuelve 'Otro' por defecto (check constraint lo maneja)
+        if ("Otro".equals(selected)) {
+            String custom = txtCustomGender.getText().trim();
+            return custom.isEmpty() ? "Otro" : custom;
+        }
+        return selected;
     }
 
     private String getSelectedNationality() {
@@ -416,6 +513,9 @@ public class PlayersPanel extends JPanel {
         } catch (Exception e) {
             dateChooserBirthDate.setDate(null);
         }
+
+        clearErrorMessages();
+        validateFields(); // Revalidar para actualizar botones
     }
 
     private void loadCustomValue(JComboBox<String> cmb, JTextField txt, String[] commonValues, String currentValue) {
@@ -439,7 +539,7 @@ public class PlayersPanel extends JPanel {
     }
 
     private void addPlayer() {
-        if (!validateFields()) return;
+        if (!validateFields(true)) return;
 
         try {
             Player player = new Player(
@@ -470,7 +570,7 @@ public class PlayersPanel extends JPanel {
             showError("Selecciona un jugador de la tabla para actualizar.");
             return;
         }
-        if (!validateFields()) return;
+        if (!validateFields(false)) return;
 
         try {
             Player player = new Player(
@@ -520,6 +620,16 @@ public class PlayersPanel extends JPanel {
         }
     }
 
+    private void clearErrorMessages() {
+        lblErrorFirstName.setText(" ");
+        lblErrorLastName.setText(" ");
+        lblErrorEmail.setText(" ");
+        lblErrorAddress.setText(" ");
+        lblErrorBirthDate.setText(" ");
+        lblErrorGender.setText(" ");
+        lblErrorNationality.setText(" ");
+    }
+
     private void clearFields() {
         selectedPlayerId = -1;
         txtFirstName.setText("");
@@ -534,54 +644,123 @@ public class PlayersPanel extends JPanel {
         txtCustomNationality.setVisible(false);
         dateChooserBirthDate.setDate(null);
         table.clearSelection();
+
+        clearErrorMessages();
+        validateFields(); // Revalidar para actualizar botones
         revalidate();
         repaint();
     }
 
+    // Sobrecarga para determinar el modo de operación
     private boolean validateFields() {
+        return validateFields(selectedPlayerId == -1);
+    }
+
+    // Método principal de validación con las reglas CHECK
+    private boolean validateFields(boolean isAdding) {
+        boolean isValid = true;
+
         String firstName = txtFirstName.getText().trim();
         String lastName = txtLastName.getText().trim();
         String email = txtEmail.getText().trim();
-        String gender = getSelectedGender();
-        String nationality = getSelectedNationality();
+        String address = txtAddress.getText().trim();
+        String gender = getSelectedGender(); // Obtiene el valor del combo o del auxiliar
+        String nationality = getSelectedNationality(); // Obtiene el valor del combo o del auxiliar
         Date birthDate = dateChooserBirthDate.getDate();
 
-        if (firstName.isEmpty() || firstName.length() < 2) {
-            showError("Nombre obligatorio (Mín. 2 caracteres).");
-            return false;
+        // 1. First Name (NOT NULL + CHECK LENGTH >= 3)
+        if (firstName.isEmpty()) {
+            lblErrorFirstName.setText("El nombre es obligatorio.");
+            isValid = false;
+        } else if (firstName.length() < 3) {
+            lblErrorFirstName.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorFirstName.setText(" ");
         }
-        if (lastName.isEmpty() || lastName.length() < 2) {
-            showError("Apellido obligatorio (Mín. 2 caracteres).");
-            return false;
+
+        // 2. Last Name (NOT NULL + CHECK LENGTH >= 3)
+        if (lastName.isEmpty()) {
+            lblErrorLastName.setText("El apellido es obligatorio.");
+            isValid = false;
+        } else if (lastName.length() < 3) {
+            lblErrorLastName.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorLastName.setText(" ");
         }
-        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
-            showError("Email inválido.");
-            return false;
+
+        // 3. Email (NOT NULL + CHECK LIKE '%@%.%')
+        if (email.isEmpty()) {
+            lblErrorEmail.setText("El email es obligatorio.");
+            isValid = false;
+        } else if (!EMAIL_PATTERN.matcher(email).matches()) {
+            lblErrorEmail.setText("Formato de email inválido.");
+            isValid = false;
+        } else {
+            lblErrorEmail.setText(" ");
         }
-        if (gender.isEmpty()) {
-            showError("El género es obligatorio.");
-            return false;
+
+        // 4. Address (NOT NULL + CHECK LENGTH >= 10)
+        // Se considera obligatorio ya que tiene NOT NULL y un check de longitud
+        if (address.isEmpty()) {
+            lblErrorAddress.setText("La dirección es obligatoria.");
+            isValid = false;
+        } else if (address.length() < 10) {
+            lblErrorAddress.setText("Mínimo 10 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorAddress.setText(" ");
         }
-        if (nationality.isEmpty() || nationality.length() < 2) {
-            showError("Nacionalidad obligatoria (Mín. 2 caracteres).");
-            return false;
+
+        // 5. Gender (NOT NULL + CHECK IN ('M', 'F', 'Otro'))
+        // El check en la DB es para los valores de M, F, Otro. Si se selecciona 'Otro' y se deja el texto en blanco,
+        // el método getSelectedGender devuelve 'Otro', lo que es válido. Solo se verifica que el combo no esté nulo.
+        if (cmbGender.getSelectedItem() == null) {
+            lblErrorGender.setText("El género es obligatorio.");
+            isValid = false;
+        } else {
+            lblErrorGender.setText(" ");
         }
+
+        // 6. Nationality (NOT NULL + CHECK LENGTH >= 5)
+        if (nationality.isEmpty()) {
+            lblErrorNationality.setText("La nacionalidad es obligatoria.");
+            isValid = false;
+        } else if (nationality.length() < 5) {
+            lblErrorNationality.setText("Mínimo 5 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorNationality.setText(" ");
+        }
+
+        // 7. Birthdate (NOT NULL + CHECK <= CURRENT_DATE)
         if (birthDate == null) {
-            showError("La fecha de nacimiento es obligatoria.");
-            return false;
+            lblErrorBirthDate.setText("La fecha es obligatoria.");
+            isValid = false;
+        } else if (birthDate.after(new Date())) {
+            lblErrorBirthDate.setText("La fecha no puede ser futura.");
+            isValid = false;
+        } else {
+            lblErrorBirthDate.setText(" ");
         }
-        if (birthDate.after(new Date())) {
-            showError("La fecha no puede ser futura.");
-            return false;
-        }
-        return true;
+
+        // Actualización de botones
+        btnAdd.setEnabled(isValid && isAdding);
+        btnUpdate.setEnabled(isValid && !isAdding && table.getSelectedRow() != -1);
+        btnDelete.setEnabled(table.getSelectedRow() != -1);
+
+        return isValid;
     }
 
     private void handleSQLError(SQLException e) {
         String msg = e.getMessage();
         if (msg.contains("duplicate key") && msg.contains("email")) {
-            showError("El Email ya está registrado.");
-        } else {
+            showError("El Email ya está registrado (debe ser único).");
+        } else if (msg.contains("violates check constraint")) {
+            showError("Error de validación: Verifica la longitud de los campos o el formato.");
+        }
+        else {
             showError("Error: " + msg);
         }
     }

@@ -2,6 +2,7 @@ package vistas;
 
 import consultas.GameCRUD;
 import tablas.Game;
+// Importar DesignConstants para usar el mismo estilo
 import static vistas.DesignConstants.*;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.event.CaretListener;
 
 public class GamesPanel extends JPanel {
 
@@ -23,6 +25,8 @@ public class GamesPanel extends JPanel {
     private JTextField txtGameCode, txtGameName, txtDescription, txtGenres;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
+    private JLabel lblCodeError, lblNameError, lblGenresError; // Nuevo: lblGenresError
+
     public GamesPanel(Connection connection) {
         this.connection = connection;
         this.gameCRUD = new GameCRUD(connection);
@@ -30,16 +34,49 @@ public class GamesPanel extends JPanel {
         loadGames();
     }
 
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setBorder(new EmptyBorder(2, 0, 0, 0));
+        return label;
+    }
+
+    private CaretListener createCaretListener() {
+        return e -> {
+            // Llama a validateFields() para reevaluar la validez y el estado de los botones
+            validateFields();
+        };
+    }
+
     private void initComponents() {
         setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
         setBackground(BG_DARK_SECONDARY);
         setBorder(new EmptyBorder(SPACING_MD, SPACING_MD, SPACING_MD, SPACING_MD));
+
+        // Inicializar la tabla y el modelo AQUÍ, antes de crear el formulario
+        initializeTableComponents();
 
         JPanel formPanel = createFormPanel();
         JPanel tablePanel = createTablePanel();
 
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
+
+        // Llamar a validateFields() una vez que 'table' ya está inicializado
+        validateFields(false);
+    }
+
+    private void initializeTableComponents() {
+        String[] columns = {"Código", "Nombre", "Descripción", "Géneros"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        table = new JTable(tableModel);
     }
 
     private JPanel createFormPanel() {
@@ -58,10 +95,22 @@ public class GamesPanel extends JPanel {
         txtDescription = createStyledTextField();
         txtGenres = createStyledTextField();
 
-        fieldsPanel.add(createFieldPanel("Código del Juego:", txtGameCode));
-        fieldsPanel.add(createFieldPanel("Nombre:", txtGameName));
-        fieldsPanel.add(createFieldPanel("Descripción:", txtDescription));
-        fieldsPanel.add(createFieldPanel("Géneros:", txtGenres));
+        // Inicializar JLabels de error
+        lblCodeError = createErrorLabel();
+        lblNameError = createErrorLabel();
+        lblGenresError = createErrorLabel(); // Inicializar el nuevo label de error
+
+        // Asignar listeners para revalidar y ocultar errores al escribir
+        CaretListener listener = createCaretListener();
+        txtGameCode.addCaretListener(listener);
+        txtGameName.addCaretListener(listener);
+        txtDescription.addCaretListener(listener); // Aunque no tiene check, revalidamos
+        txtGenres.addCaretListener(listener); // Listener para Géneros
+
+        fieldsPanel.add(createFieldPanel("Código del Juego:", txtGameCode, lblCodeError));
+        fieldsPanel.add(createFieldPanel("Nombre:", txtGameName, lblNameError));
+        fieldsPanel.add(createFieldPanel("Descripción:", txtDescription, null)); // Descripción no tiene validación en línea
+        fieldsPanel.add(createFieldPanel("Géneros:", txtGenres, lblGenresError)); // Géneros tiene validación de longitud
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -88,7 +137,7 @@ public class GamesPanel extends JPanel {
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JTextField textField) {
+    private JPanel createFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -96,8 +145,16 @@ public class GamesPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBackground(BG_CARD);
+        inputPanel.add(textField, BorderLayout.NORTH);
+
+        if (errorLabel != null) {
+            inputPanel.add(errorLabel, BorderLayout.SOUTH);
+        }
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(textField, BorderLayout.CENTER);
+        panel.add(inputPanel, BorderLayout.CENTER);
 
         return panel;
     }
@@ -128,15 +185,7 @@ public class GamesPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        String[] columns = {"Código", "Nombre", "Descripción", "Géneros"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        table = new JTable(tableModel);
+        // Configuración de JTable (JTable y tableModel ya están inicializados en initializeTableComponents)
         table.setFont(getBodyFont(FONT_SIZE_BODY));
         table.setForeground(TEXT_PRIMARY);
         table.setBackground(BG_INPUT);
@@ -236,11 +285,19 @@ public class GamesPanel extends JPanel {
             txtDescription.setText(tableModel.getValueAt(selectedRow, 2).toString());
             txtGenres.setText(tableModel.getValueAt(selectedRow, 3).toString());
             txtGameCode.setEditable(false);
+
+            // Limpiar errores al seleccionar un registro
+            lblCodeError.setText(" ");
+            lblNameError.setText(" ");
+            lblGenresError.setText(" ");
+
+            // Validar para habilitar el botón de actualizar
+            validateFields(false);
         }
     }
 
     private void addGame() {
-        if (!validateFields()) return;
+        if (!validateFields(true)) return;
 
         try {
             Game game = new Game(
@@ -268,7 +325,7 @@ public class GamesPanel extends JPanel {
             return;
         }
 
-        if (!validateFields()) return;
+        if (!validateFields(false)) return;
 
         try {
             Game game = new Game(
@@ -326,16 +383,70 @@ public class GamesPanel extends JPanel {
         txtGenres.setText("");
         txtGameCode.setEditable(true);
         table.clearSelection();
+
+        // Limpiar mensajes de error
+        lblCodeError.setText(" ");
+        lblNameError.setText(" ");
+        lblGenresError.setText(" "); // Limpiar el error de géneros
+
+        // Deshabilitar botones al limpiar
+        validateFields(true);
     }
 
-    private boolean validateFields() {
-        if (txtGameCode.getText().trim().isEmpty() ||
-                txtGameName.getText().trim().isEmpty()) {
-            showError("El código y nombre del juego son obligatorios.");
-            return false;
+    /**
+     * Valida campos, actualiza mensajes de error y habilita/deshabilita botones,
+     * incluyendo las restricciones CHECK de la tabla SQL.
+     * @param isAdding true si el modo actual es Agregar (txtGameCode editable).
+     * @return true si los campos obligatorios son válidos.
+     */
+    private boolean validateFields(boolean isAdding) {
+        boolean isValid = true;
+
+        // --- 1. Validación Código (Obligatorio) ---
+        if (txtGameCode.getText().trim().isEmpty()) {
+            lblCodeError.setText("El código es obligatorio.");
+            isValid = false;
+        } else {
+            lblCodeError.setText(" ");
         }
-        return true;
+
+        // --- 2. Validación Nombre (Obligatorio + CHECK LENGTH >= 3) ---
+        String gameName = txtGameName.getText().trim();
+        if (gameName.isEmpty()) {
+            lblNameError.setText("El nombre es obligatorio.");
+            isValid = false;
+        } else if (gameName.length() < 3) {
+            lblNameError.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else {
+            lblNameError.setText(" ");
+        }
+
+        // --- 3. Validación Géneros (Obligatorio + CHECK LENGTH >= 3) ---
+        String genres = txtGenres.getText().trim();
+        if (genres.isEmpty()) {
+            lblGenresError.setText("Los géneros son obligatorios.");
+            isValid = false;
+        } else if (genres.length() < 3) {
+            lblGenresError.setText("Mínimo 3 caracteres.");
+            isValid = false;
+        } else {
+            lblGenresError.setText(" ");
+        }
+
+        // --- 4. Habilitar/Deshabilitar botones ---
+        btnAdd.setEnabled(isValid && isAdding);
+        btnUpdate.setEnabled(isValid && !isAdding && table.getSelectedRow() != -1);
+        btnDelete.setEnabled(table.getSelectedRow() != -1);
+
+        return isValid;
     }
+
+    // Sobrecarga del método de validación para llamar desde listeners
+    private boolean validateFields() {
+        return validateFields(txtGameCode.isEditable());
+    }
+
 
     private void showSuccess(String message) {
         JOptionPane.showMessageDialog(this, message, "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -344,6 +455,7 @@ public class GamesPanel extends JPanel {
     private void showError(String message) {
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
+
 
     // CLASE INTERNA PARA FORZAR EL ESTILO DE LA CABECERA
     private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
