@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="EstructuraEquipos" pageWidth="595" pageHeight="842"
+              columnCount="1" printOrder="Vertical" orientation="Portrait"
+              whenNoDataType="NoPages" isTitleNewPage="false" isSummaryNewPage="false">
+
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+
+    <queryString>
+        <![CDATA[
+        SELECT t.team_name as equipo,
+               p.first_name || ' ' || p.last_name as jugador_completo,
+               t.role as rol,
+               p.nationality as nacionalidad,
+               p.gender as genero,
+               (SELECT COUNT(*) FROM teams t2 WHERE t2.team_name = t.team_name) as total_jugadores
+        FROM teams t
+        JOIN players p ON t.player_name = p.first_name
+        ORDER BY t.team_name,
+                 CASE t.role
+                     WHEN 'Capitán' THEN 1
+                     WHEN 'Subcapitán' THEN 2
+                     WHEN 'Jugador' THEN 3
+                     ELSE 4
+                 END,
+                 p.first_name
+        ]]>
+    </queryString>
+
+    <field name="equipo" class="java.lang.String"/>
+    <field name="jugador_completo" class="java.lang.String"/>
+    <field name="rol" class="java.lang.String"/>
+    <field name="nacionalidad" class="java.lang.String"/>
+    <field name="genero" class="java.lang.String"/>
+    <field name="total_jugadores" class="java.lang.Integer"/>
+
+    <variable name="totalEquipos" class="java.lang.Integer" calculation="DistinctCount">
+        <variableExpression><![CDATA[$F{equipo}]]></variableExpression>
+    </variable>
+
+    <variable name="totalMiembros" class="java.lang.Integer" calculation="Count">
+        <variableExpression><![CDATA[$F{equipo}]]></variableExpression>
+    </variable>
+
+    <group name="EquipoGroup">
+        <groupExpression><![CDATA[$F{equipo}]]></groupExpression>
+        <groupHeader>
+            <band height="25">
+                <staticText>
+                    <reportElement x="10" y="5" width="70" height="15"/>
+                    <textElement>
+                        <font size="11" isBold="true"/>
+                    </textElement>
+                    <text><![CDATA[EQUIPO:]]></text>
+                </staticText>
+
+                <textField isStretchWithOverflow="true">
+                    <reportElement x="80" y="5" width="495" height="15"/>
+                    <textElement>
+                        <font size="11" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{equipo}]]></textFieldExpression>
+                </textField>
+
+                <line>
+                    <reportElement x="10" y="22" width="575" height="1"/>
+                    <graphicElement>
+                        <pen lineWidth="0.5" lineColor="#CCCCCC"/>
+                    </graphicElement>
+                </line>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="15">
+                <line>
+                    <reportElement x="10" y="7" width="575" height="1"/>
+                    <graphicElement>
+                        <pen lineWidth="0.3" lineColor="#EEEEEE" lineStyle="Dashed"/>
+                    </graphicElement>
+                </line>
+            </band>
+        </groupFooter>
+    </group>
+
+    <title>
+        <band height="80">
+            <staticText>
+                <reportElement x="0" y="10" width="595" height="30"/>
+                <textElement textAlignment="Center">
+                    <font size="22" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ESTRUCTURA DE EQUIPOS]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="40" width="595" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[Composición y organización de equipos]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="30" y="65" width="535" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="25">
+            <line>
+                <reportElement x="5" y="0" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+
+            <staticText>
+                <reportElement x="10" y="5" width="200" height="20"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[JUGADOR]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="220" y="5" width="100" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[ROL]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="330" y="5" width="100" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NACIONALIDAD]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="440" y="5" width="80" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[GÉNERO]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="5" y="24" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="25">
+            <line>
+                <reportElement x="5" y="24" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.3" lineColor="#EEEEEE"/>
+                </graphicElement>
+            </line>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="10" y="2" width="200" height="20"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{jugador_completo}]]></textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="220" y="2" width="100" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA[$F{rol} == null ? "Jugador" : $F{rol}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="330" y="2" width="100" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA[$F{nacionalidad} == null ? "-" : $F{nacionalidad}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="440" y="2" width="80" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA[
+                        $F{genero} == null ? "No especificado" :
+                        $F{genero}.equals("M") ? "Masculino" :
+                        $F{genero}.equals("F") ? "Femenino" : "Otro"
+                    ]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="40">
+            <line>
+                <reportElement x="0" y="0" width="595" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#CCCCCC"/>
+                </graphicElement>
+            </line>
+
+            <textField>
+                <reportElement x="0" y="5" width="595" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Generado el " + new java.text.SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm").format(new java.util.Date())]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="20" width="595" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Página 1 de 1"]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <summary>
+        <band height="90">
+            <line>
+                <reportElement x="5" y="0" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+
+            <staticText>
+                <reportElement x="10" y="10" width="150" height="15"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[RESUMEN ESTADÍSTICO]]></text>
+            </staticText>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="30" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Total de equipos registrados: " + $V{totalEquipos}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="50" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Total de jugadores: " + $V{totalMiembros}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="70" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Jugadores por equipo: " +
+                        ($V{totalEquipos} > 0 ?
+                            new java.text.DecimalFormat("#,##0.0").format($V{totalMiembros}.doubleValue() / $V{totalEquipos}.doubleValue()) :
+                            "0.0")]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

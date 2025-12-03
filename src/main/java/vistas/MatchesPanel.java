@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import javax.swing.SwingUtilities;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -165,10 +166,16 @@ public class MatchesPanel extends JPanel {
         textField.setForeground(TEXT_PRIMARY);
         textField.setBackground(BG_INPUT);
         textField.setCaretColor(ACCENT_PRIMARY);
+
+        // CAMBIAR ESTO:
         textField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
+                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)  // ← ELIMINAR ESTO
         ));
+
+        // POR ESTO (igual que LeaguesPanel):
+        textField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
+
         return textField;
     }
 
@@ -192,22 +199,83 @@ public class MatchesPanel extends JPanel {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
 
-        JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
-        dateEditor.setColumns(10);
-        dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
-        dateEditor.setForeground(TEXT_PRIMARY);
-        dateEditor.setBackground(BG_INPUT);
-        dateEditor.setCaretColor(ACCENT_PRIMARY);
-        dateEditor.setBorder(BorderFactory.createCompoundBorder(
+        // CAMBIAR: Obtener el JTextField interno de forma diferente
+        JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
+
+        // Configurar colores para texto blanco
+        dateField.setForeground(TEXT_PRIMARY); // TEXTO BLANCO
+        dateField.setBackground(BG_INPUT);
+        dateField.setCaretColor(ACCENT_PRIMARY);
+
+        // CAMBIAR ESTO:
+        dateField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
+                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)  // ← ELIMINAR ESTO
         ));
+
+        // POR ESTO (igual que LeaguesPanel):
+        dateField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
+
+        // IMPORTANTE: Configurar el color del texto seleccionado
+        dateField.setSelectionColor(ACCENT_PRIMARY);
+        dateField.setSelectedTextColor(BG_DARK_PRIMARY);
+
+        // AÑADIR: DocumentListener para mantener el color blanco
+        dateField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY);
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                });
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY);
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                });
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY);
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                });
+            }
+        });
+
+        // AÑADIR: PropertyChangeListener para cuando se selecciona una fecha
+        dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY);
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                    dateField.revalidate();
+                    dateField.repaint();
+                });
+            }
+        });
 
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
         dateChooser.getJCalendar().setBackground(Color.WHITE);
         dateChooser.getJCalendar().setForeground(BG_DARK_PRIMARY);
         dateChooser.getJCalendar().setWeekdayForeground(Color.BLACK);
         dateChooser.getJCalendar().setSundayForeground(Color.BLACK);
+
+        // AÑADIR: Ajustar tamaño
+        dateChooser.setPreferredSize(new Dimension(150, dateChooser.getPreferredSize().height));
+
         return dateChooser;
     }
 
@@ -241,10 +309,14 @@ public class MatchesPanel extends JPanel {
             }
         });
 
+        // CAMBIAR ESTO:
         cmb.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
+                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)  // ← ELIMINAR ESTO
         ));
+
+        // POR ESTO (opcional, pero para consistencia):
+        cmb.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
 
         return cmb;
     }

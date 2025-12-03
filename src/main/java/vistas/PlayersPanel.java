@@ -9,7 +9,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import com.toedter.calendar.JDateChooser;
-import com.toedter.calendar.JTextFieldDateEditor;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -57,7 +56,10 @@ public class PlayersPanel extends JPanel {
         txtLastName = createStyledTextField();
         txtEmail = createStyledTextField();
         txtAddress = createStyledTextField();
+
+        // Usar el método corregido para el DateChooser
         dateChooserBirthDate = createStyledDateChooser();
+
         cmbGender = createStyledComboBox(GENDERS);
         cmbNationality = createStyledComboBox(COMMON_NATIONALITIES);
         txtCustomGender = createStyledTextField();
@@ -112,7 +114,6 @@ public class PlayersPanel extends JPanel {
             repaint();
         });
 
-
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
@@ -124,7 +125,6 @@ public class PlayersPanel extends JPanel {
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
         fieldsContainer.add(createFieldPanel("Dirección:", txtAddress), gbc);
 
-
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
@@ -135,7 +135,6 @@ public class PlayersPanel extends JPanel {
         gbc.gridx = 3;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
         fieldsContainer.add(new JPanel() {{ setBackground(BG_CARD); }}, gbc);
-
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -169,6 +168,11 @@ public class PlayersPanel extends JPanel {
         JLabel label = new JLabel(labelText);
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
+
+        // Si es un JDateChooser, darle más espacio - MÁS PEQUEÑO
+        if (component instanceof JDateChooser) {
+            component.setPreferredSize(new Dimension(150, component.getPreferredSize().height));
+        }
 
         panel.add(label, BorderLayout.NORTH);
         panel.add(component, BorderLayout.CENTER);
@@ -205,29 +209,96 @@ public class PlayersPanel extends JPanel {
         textField.setForeground(TEXT_PRIMARY);
         textField.setBackground(BG_INPUT);
         textField.setCaretColor(ACCENT_PRIMARY);
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
-        ));
+
+        // USAR EL MISMO BORDE QUE EN LEAGUES
+        textField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
+
         return textField;
     }
 
     private JDateChooser createStyledDateChooser() {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
+        dateChooser.setFont(getBodyFont(FONT_SIZE_BODY));
 
-        JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
-        dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
-        dateEditor.setForeground(TEXT_PRIMARY);
-        dateEditor.setBackground(BG_INPUT);
-        dateEditor.setCaretColor(ACCENT_PRIMARY);
-        dateEditor.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
-        ));
+        // Obtener el JTextField interno del JDateChooser
+        JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
 
+        // Configurar colores para texto blanco - MISMOS QUE LEAGUES
+        dateField.setForeground(TEXT_PRIMARY); // TEXTO BLANCO
+        dateField.setBackground(BG_INPUT);
+        dateField.setCaretColor(ACCENT_PRIMARY);
+
+        // CORRECCIÓN: USAR EXACTAMENTE EL MISMO BORDE QUE LEAGUES
+        dateField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
+
+        // IMPORTANTE: Configurar el color del texto seleccionado
+        dateField.setSelectionColor(ACCENT_PRIMARY);
+        dateField.setSelectedTextColor(BG_DARK_PRIMARY);
+
+        // Ajustar tamaño del campo para que no se corte
+        dateField.setPreferredSize(new Dimension(140, dateField.getPreferredSize().height));
+
+        // DocumentListener para mantener el color blanco cuando cambia el texto
+        dateField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Forzar texto blanco
+                    // Asegurar que el texto completo sea visible
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                });
+            }
+
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Forzar texto blanco
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                });
+            }
+
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Forzar texto blanco
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+                });
+            }
+        });
+
+        // PropertyChangeListener para cuando se selecciona una fecha del calendario
+        dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                // Forzar el color del texto a blanco después de cada cambio de fecha
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Mantener texto blanco
+                    // Asegurar que el texto completo sea visible después de seleccionar fecha
+                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
+                        dateField.setCaretPosition(dateField.getText().length());
+                    }
+
+                    // También forzar un repaint para asegurar que se muestre completo
+                    dateField.revalidate();
+                    dateField.repaint();
+                });
+            }
+        });
+
+        // Configurar el JDateChooser completo
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
-        dateChooser.getJCalendar().setBackground(BG_INPUT);
+        dateChooser.setPreferredSize(new Dimension(150, dateChooser.getPreferredSize().height));
+
+        // Configurar el calendario
+        if (dateChooser.getJCalendar() != null) {
+            dateChooser.getJCalendar().setBackground(BG_INPUT);
+        }
 
         return dateChooser;
     }

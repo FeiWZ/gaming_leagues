@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="ResumenLigas" pageWidth="595" pageHeight="842"
+              columnCount="1" printOrder="Vertical" orientation="Portrait"
+              whenNoDataType="NoPages" isTitleNewPage="false" isSummaryNewPage="false">
+
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+
+    <queryString>
+        <![CDATA[
+        SELECT league_name, game_name, prize_pool
+        FROM leagues
+        ORDER BY prize_pool DESC
+        ]]>
+    </queryString>
+
+    <field name="league_name" class="java.lang.String"/>
+    <field name="game_name" class="java.lang.String"/>
+    <field name="prize_pool" class="java.lang.Integer"/>
+
+    <variable name="totalPremios" class="java.lang.Integer" calculation="Sum">
+        <variableExpression><![CDATA[$F{prize_pool}]]></variableExpression>
+    </variable>
+
+    <title>
+        <band height="80">
+            <staticText>
+                <reportElement x="0" y="10" width="595" height="30"/>
+                <textElement textAlignment="Center">
+                    <font size="22" isBold="true"/>
+                </textElement>
+                <text><![CDATA[RESUMEN DE LIGAS]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="40" width="595" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[Distribución de premios por liga]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="30" y="65" width="535" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="25">
+            <line>
+                <reportElement x="5" y="0" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+
+            <staticText>
+                <reportElement x="10" y="5" width="200" height="20"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[NOMBRE DE LIGA]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="220" y="5" width="120" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[JUEGO]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="350" y="5" width="120" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[POZO DE PREMIOS]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="480" y="5" width="100" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[% DEL TOTAL]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="5" y="24" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="25">
+            <line>
+                <reportElement x="5" y="24" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.3" lineColor="#EEEEEE"/>
+                </graphicElement>
+            </line>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="10" y="2" width="200" height="20"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{league_name}]]></textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="220" y="2" width="120" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{game_name}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="350" y="2" width="120" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["$" + new java.text.DecimalFormat("#,##0").format($F{prize_pool})]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="480" y="2" width="100" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA[($V{totalPremios} > 0) ?
+                        String.format("%.1f%%", ($F{prize_pool}.doubleValue() / $V{totalPremios}.doubleValue()) * 100) :
+                        "0.0%"]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="40">
+            <line>
+                <reportElement x="0" y="0" width="595" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#CCCCCC"/>
+                </graphicElement>
+            </line>
+
+            <textField>
+                <reportElement x="0" y="5" width="595" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Generado el " + new java.text.SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm").format(new java.util.Date())]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="20" width="595" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Página 1 de 1"]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <summary>
+        <band height="90">
+            <line>
+                <reportElement x="5" y="0" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+
+            <staticText>
+                <reportElement x="10" y="10" width="150" height="15"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[RESUMEN FINANCIERO]]></text>
+            </staticText>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="30" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Total de ligas registradas: " + $V{REPORT_COUNT}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="50" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Inversión total en premios: $" + new java.text.DecimalFormat("#,##0").format($V{totalPremios})]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="70" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Premio promedio: $" +
+                        ($V{REPORT_COUNT} > 0 ?
+                            new java.text.DecimalFormat("#,##0.00").format($V{totalPremios}.doubleValue() / $V{REPORT_COUNT}) :
+                            "0.00")]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

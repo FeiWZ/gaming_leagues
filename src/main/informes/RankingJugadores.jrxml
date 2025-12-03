@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="RankingJugadores" pageWidth="595" pageHeight="842"
+              columnCount="1" printOrder="Vertical" orientation="Portrait"
+              whenNoDataType="NoPages" isTitleNewPage="false" isSummaryNewPage="false">
+
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+
+    <queryString>
+        <![CDATA[
+        SELECT ROW_NUMBER() OVER (ORDER BY pgr.wins DESC, pgr.ranking ASC) as pos,
+               p.first_name || ' ' || p.last_name as jugador,
+               pgr.game_name as juego,
+               pgr.wins as victorias,
+               pgr.losses as derrotas,
+               (pgr.wins * 100.0 / (pgr.wins + pgr.losses)) as porcentaje
+        FROM players_games_ranking pgr
+        JOIN players p ON pgr.player_id = p.player_id
+        WHERE pgr.wins + pgr.losses > 0
+        ORDER BY pgr.wins DESC, pgr.ranking ASC
+        LIMIT 15
+        ]]>
+    </queryString>
+
+    <field name="pos" class="java.lang.Integer"/>
+    <field name="jugador" class="java.lang.String"/>
+    <field name="juego" class="java.lang.String"/>
+    <field name="victorias" class="java.lang.Integer"/>
+    <field name="derrotas" class="java.lang.Integer"/>
+    <field name="porcentaje" class="java.math.BigDecimal"/>
+
+    <variable name="totalVictorias" class="java.lang.Integer" calculation="Sum">
+        <variableExpression><![CDATA[$F{victorias}]]></variableExpression>
+    </variable>
+
+    <variable name="totalDerrotas" class="java.lang.Integer" calculation="Sum">
+        <variableExpression><![CDATA[$F{derrotas}]]></variableExpression>
+    </variable>
+
+    <title>
+        <band height="80">
+            <staticText>
+                <reportElement x="0" y="10" width="595" height="30"/>
+                <textElement textAlignment="Center">
+                    <font size="22" isBold="true"/>
+                </textElement>
+                <text><![CDATA[RANKING DE JUGADORES - TOP 15]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="40" width="595" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="12"/>
+                </textElement>
+                <text><![CDATA[Estadísticas de rendimiento por juego]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="30" y="65" width="535" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="25">
+            <line>
+                <reportElement x="5" y="0" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+
+            <staticText>
+                <reportElement x="10" y="5" width="40" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[#]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="60" y="5" width="160" height="20"/>
+                <textElement>
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[JUGADOR]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="230" y="5" width="120" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[JUEGO]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="360" y="5" width="70" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[VICTORIAS]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="440" y="5" width="70" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DERROTAS]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="520" y="5" width="40" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <text><![CDATA[% VICT.]]></text>
+            </staticText>
+
+            <line>
+                <reportElement x="5" y="24" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="25">
+            <line>
+                <reportElement x="5" y="24" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.3" lineColor="#EEEEEE"/>
+                </graphicElement>
+            </line>
+
+            <textField>
+                <reportElement x="10" y="2" width="40" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{pos}]]></textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="60" y="2" width="160" height="20"/>
+                <textElement>
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{jugador}]]></textFieldExpression>
+            </textField>
+
+            <textField isStretchWithOverflow="true">
+                <reportElement x="230" y="2" width="120" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{juego}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="360" y="2" width="70" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{victorias}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="440" y="2" width="70" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{derrotas}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="520" y="2" width="40" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="11" isBold="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA[String.format("%.0f%%", $F{porcentaje})]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="40">
+            <line>
+                <reportElement x="0" y="0" width="595" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#CCCCCC"/>
+                </graphicElement>
+            </line>
+
+            <textField>
+                <reportElement x="0" y="5" width="595" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Generado el " + new java.text.SimpleDateFormat("dd/MM/yyyy 'a las' HH:mm").format(new java.util.Date())]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="0" y="20" width="595" height="15"/>
+                <textElement textAlignment="Center">
+                    <font size="8"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["Página 1 de 1"]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <summary>
+        <band height="90">
+            <line>
+                <reportElement x="5" y="0" width="585" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="1" lineColor="#333333"/>
+                </graphicElement>
+            </line>
+
+            <staticText>
+                <reportElement x="10" y="10" width="150" height="15"/>
+                <textElement>
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[RESUMEN ESTADÍSTICO]]></text>
+            </staticText>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="30" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Total jugadores listados: " + $V{REPORT_COUNT}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="50" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Total victorias: " + $V{totalVictorias}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField evaluationTime="Report">
+                <reportElement x="10" y="70" width="280" height="15"/>
+                <textElement>
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA["• Total derrotas: " + $V{totalDerrotas}]]>
+                </textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+</jasperReport>

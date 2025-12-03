@@ -2,14 +2,13 @@ package vistas;
 
 import consultas.LeagueCRUD;
 import tablas.League;
-// Importar DesignConstants para usar el mismo estilo que GamesPanel
 import static vistas.DesignConstants.*;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,8 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-// Importación de JCalendar
 import com.toedter.calendar.JDateChooser;
 
 public class LeaguesPanel extends JPanel {
@@ -60,7 +57,6 @@ public class LeaguesPanel extends JPanel {
     private JLabel createErrorLabel() {
         JLabel label = new JLabel(" ");
         label.setForeground(ACCENT_DANGER);
-        // CORRECCIÓN: Usar getBoldFont en lugar del método getItalicFont que no existe.
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         return label;
     }
@@ -68,17 +64,17 @@ public class LeaguesPanel extends JPanel {
     private DocumentListener createValidationListener() {
         return new DocumentListener() {
             @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            public void insertUpdate(DocumentEvent e) {
                 validateAllFields();
             }
 
             @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
                 validateAllFields();
             }
 
             @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            public void changedUpdate(DocumentEvent e) {
                 validateAllFields();
             }
         };
@@ -86,7 +82,7 @@ public class LeaguesPanel extends JPanel {
 
     private void initComponents() {
         setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
-        setBackground(BG_DARK_SECONDARY); // Fondo Oscuro
+        setBackground(BG_DARK_SECONDARY);
         setBorder(new EmptyBorder(SPACING_MD, SPACING_MD, SPACING_MD, SPACING_MD));
 
         JPanel formPanel = createFormPanel();
@@ -98,7 +94,7 @@ public class LeaguesPanel extends JPanel {
 
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(BG_CARD); // Color de tarjeta
+        panel.setBackground(BG_CARD);
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
@@ -113,7 +109,6 @@ public class LeaguesPanel extends JPanel {
         lblErrorEnd = createErrorLabel();
         validationListener = createValidationListener();
 
-        // Panel de campos: 2 filas x 3 columnas (secciones)
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 4, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
 
@@ -121,7 +116,7 @@ public class LeaguesPanel extends JPanel {
         txtLeagueDetails = createStyledTextField();
         txtGameName = createStyledTextField();
         txtPrizeAmount = createStyledTextField();
-        txtRules = createStyledTextArea(2, 20); // Usar JTextArea con el estilo dark
+        txtRules = createStyledTextArea(2, 20);
 
         txtLeagueName.getDocument().addDocumentListener(validationListener);
         txtLeagueDetails.getDocument().addDocumentListener(validationListener);
@@ -129,13 +124,11 @@ public class LeaguesPanel extends JPanel {
         txtPrizeAmount.getDocument().addDocumentListener(validationListener);
         txtRules.getDocument().addDocumentListener(validationListener);
 
-
         fieldsPanel.add(createValidatedFieldPanel("Nombre:", txtLeagueName, lblErrorName));
         fieldsPanel.add(createValidatedFieldPanel("Detalles:", txtLeagueDetails, lblErrorDetails));
         fieldsPanel.add(createValidatedFieldPanel("Juego:", txtGameName, lblErrorGame));
         fieldsPanel.add(createPrizePanel());
 
-        // SEGUNDA FILA: Reglas y Fechas (Se eliminó el panel vacío que causaba el espacio extra)
         fieldsPanel.add(createRulesPanel());
         fieldsPanel.add(createDatePanel("Fecha Inicio:", lblErrorStart, true));
         fieldsPanel.add(createDatePanel("Fecha Fin:", lblErrorEnd, false));
@@ -218,9 +211,37 @@ public class LeaguesPanel extends JPanel {
 
         cmbPrizeCurrency = new JComboBox<>(CURRENCIES);
         cmbPrizeCurrency.setFont(getBodyFont(FONT_SIZE_BODY));
-        cmbPrizeCurrency.setBackground(BG_INPUT);
-        cmbPrizeCurrency.setForeground(TEXT_PRIMARY);
+        cmbPrizeCurrency.setForeground(BG_DARK_PRIMARY); // Texto negro
         cmbPrizeCurrency.addActionListener(e -> validateAllFields());
+
+        // RENDERER PERSONALIZADO PARA FONDO BLANCO Y TEXTO NEGRO
+        cmbPrizeCurrency.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setOpaque(true);
+                label.setFont(getBodyFont(FONT_SIZE_BODY));
+
+                if (isSelected) {
+                    label.setBackground(ACCENT_PRIMARY);
+                    label.setForeground(BG_DARK_PRIMARY);
+                } else {
+                    label.setBackground(Color.WHITE); // FONDO BLANCO
+                    label.setForeground(BG_DARK_PRIMARY); // TEXTO NEGRO
+                }
+
+                list.setBackground(Color.WHITE);
+                label.setBorder(new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD));
+                return label;
+            }
+        });
+
+        // Configurar borde del combobox
+        cmbPrizeCurrency.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(BORDER_LIGHT, 1),
+                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
+        ));
 
         txtPrizeAmount.setFont(getBodyFont(FONT_SIZE_BODY));
         txtPrizeAmount.setBorder(BorderFactory.createCompoundBorder(
@@ -230,9 +251,6 @@ public class LeaguesPanel extends JPanel {
 
         JPanel inputPanel = new JPanel(new BorderLayout(SPACING_XS, 0));
         inputPanel.setBackground(BG_INPUT);
-
-        ((JLabel)cmbPrizeCurrency.getRenderer()).setOpaque(true);
-        ((JLabel)cmbPrizeCurrency.getRenderer()).setBackground(BG_INPUT);
 
         inputPanel.add(txtPrizeAmount, BorderLayout.CENTER);
         inputPanel.add(cmbPrizeCurrency, BorderLayout.EAST);
@@ -282,22 +300,59 @@ public class LeaguesPanel extends JPanel {
         dateChooser.setDateFormatString("yyyy-MM-dd");
         dateChooser.setFont(getBodyFont(FONT_SIZE_BODY));
 
+        // Obtener el JTextField interno del JDateChooser
         JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
+
+        // Configurar colores para texto blanco
+        dateField.setForeground(TEXT_PRIMARY); // TEXTO BLANCO
         dateField.setBackground(BG_INPUT);
-        dateField.setForeground(TEXT_PRIMARY);
+        dateField.setCaretColor(ACCENT_PRIMARY); // Color del cursor
         dateField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
+
+        // IMPORTANTE: Configurar el color del texto seleccionado
+        dateField.setSelectionColor(ACCENT_PRIMARY);
+        dateField.setSelectedTextColor(BG_DARK_PRIMARY);
+
+        // CORRECCIÓN: DocumentListener para mantener el color blanco cuando cambia el texto
+        dateField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Forzar texto blanco
+                });
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Forzar texto blanco
+                });
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Forzar texto blanco
+                });
+            }
+        });
+
+        // CORRECCIÓN: PropertyChangeListener para cuando se selecciona una fecha
+        dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                // Forzar el color del texto a blanco después de cada cambio de fecha
+                SwingUtilities.invokeLater(() -> {
+                    dateField.setForeground(TEXT_PRIMARY); // Mantener texto blanco
+                });
+                validateAllFields();
+            }
+        });
 
         if (isStartDate) {
             dateChooserStartedDate = dateChooser;
         } else {
             dateChooserEndDate = dateChooser;
         }
-
-        dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
-            if ("date".equals(evt.getPropertyName())) {
-                validateAllFields();
-            }
-        });
 
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(BG_CARD);
@@ -341,7 +396,6 @@ public class LeaguesPanel extends JPanel {
         table.setSelectionForeground(BG_DARK_PRIMARY);
         table.setShowVerticalLines(true);
 
-        // Aplicar el Custom Renderer a la cabecera
         table.getTableHeader().setFont(getBoldFont(FONT_SIZE_BODY));
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setDefaultRenderer(new CustomTableHeaderRenderer(BG_DARK_PRIMARY, Color.WHITE));
@@ -389,9 +443,22 @@ public class LeaguesPanel extends JPanel {
 
                 g2d.dispose();
             }
-            // Métodos placeholder asumidos en DesignConstants o una clase auxiliar
-            private Color darken(Color color, float factor) { return color; }
-            private Color brighten(Color color, float factor) { return color; }
+
+            private Color darken(Color color, float factor) {
+                return new Color(
+                        Math.max(0, (int)(color.getRed() * factor)),
+                        Math.max(0, (int)(color.getGreen() * factor)),
+                        Math.max(0, (int)(color.getBlue() * factor))
+                );
+            }
+
+            private Color brighten(Color color, float factor) {
+                return new Color(
+                        Math.min(255, (int)(color.getRed() * factor)),
+                        Math.min(255, (int)(color.getGreen() * factor)),
+                        Math.min(255, (int)(color.getBlue() * factor))
+                );
+            }
         };
 
         button.setFont(getBoldFont(FONT_SIZE_BODY));
@@ -411,48 +478,60 @@ public class LeaguesPanel extends JPanel {
         String name = txtLeagueName.getText().trim();
         if (name.isEmpty()) {
             lblErrorName.setText("El nombre es obligatorio.");
+            lblErrorName.setVisible(true);  // Hacer visible
             isValid = false;
         } else if (name.length() < 5) {
             lblErrorName.setText("Mínimo 5 caracteres.");
+            lblErrorName.setVisible(true);  // Hacer visible
             isValid = false;
         } else {
             lblErrorName.setText(" ");
+            lblErrorName.setVisible(false); // Ocultar cuando no hay error
         }
 
         String details = txtLeagueDetails.getText().trim();
         if (details.isEmpty()) {
             lblErrorDetails.setText("Los detalles son obligatorios.");
+            lblErrorDetails.setVisible(true);
             isValid = false;
-        } else if (details.length() < 10) { // Según tu BD, mínimo 10 caracteres
+        } else if (details.length() < 10) {
             lblErrorDetails.setText("Mínimo 10 caracteres.");
+            lblErrorDetails.setVisible(true);
             isValid = false;
         } else {
             lblErrorDetails.setText(" ");
+            lblErrorDetails.setVisible(false);
         }
 
         String gameNameText = txtGameName.getText().trim();
         if (gameNameText.isEmpty()) {
             lblErrorGame.setText("El juego es obligatorio.");
+            lblErrorGame.setVisible(true);
             isValid = false;
         } else {
             lblErrorGame.setText(" ");
+            lblErrorGame.setVisible(false);
         }
 
         String prizeAmountText = txtPrizeAmount.getText().trim();
         if (prizeAmountText.isEmpty()) {
             lblErrorPrize.setText("El monto del premio es obligatorio.");
+            lblErrorPrize.setVisible(true);
             isValid = false;
         } else {
             try {
                 int prizePool = Integer.parseInt(prizeAmountText);
                 if (prizePool < 0) {
                     lblErrorPrize.setText("Debe ser un número positivo o cero.");
+                    lblErrorPrize.setVisible(true);
                     isValid = false;
                 } else {
                     lblErrorPrize.setText(" ");
+                    lblErrorPrize.setVisible(false);
                 }
             } catch (NumberFormatException e) {
                 lblErrorPrize.setText("Debe ser un número entero válido.");
+                lblErrorPrize.setVisible(true);
                 isValid = false;
             }
         }
@@ -460,33 +539,40 @@ public class LeaguesPanel extends JPanel {
         String rules = txtRules.getText().trim();
         if (rules.isEmpty()) {
             lblErrorRules.setText("Las reglas son obligatorias.");
+            lblErrorRules.setVisible(true);
             isValid = false;
         } else if (rules.length() < 10) {
             lblErrorRules.setText("Mínimo 10 caracteres.");
+            lblErrorRules.setVisible(true);
             isValid = false;
         } else {
             lblErrorRules.setText(" ");
+            lblErrorRules.setVisible(false);
         }
 
         Date startDate = dateChooserStartedDate.getDate();
         Date endDate = dateChooserEndDate.getDate();
 
-        lblErrorStart.setText(" ");
-        lblErrorEnd.setText(" ");
+        // Ocultar errores de fecha por defecto
+        lblErrorStart.setVisible(false);
+        lblErrorEnd.setVisible(false);
 
         if (startDate == null) {
             lblErrorStart.setText("La fecha de inicio es obligatoria.");
+            lblErrorStart.setVisible(true);
             isValid = false;
         }
 
         if (endDate == null) {
             lblErrorEnd.setText("La fecha de fin es obligatoria.");
+            lblErrorEnd.setVisible(true);
             isValid = false;
         }
 
         if (startDate != null && endDate != null) {
             if (endDate.before(startDate)) {
                 lblErrorEnd.setText("Fecha Fin no puede ser anterior a la Fecha Inicio.");
+                lblErrorEnd.setVisible(true);
                 isValid = false;
             }
         }
@@ -494,13 +580,11 @@ public class LeaguesPanel extends JPanel {
         btnAdd.setEnabled(isValid);
         btnUpdate.setEnabled(isValid && table.getSelectedRow() != -1);
     }
-
     private void loadLeagues() {
         tableModel.setRowCount(0);
         try {
             List<League> leagues = leagueCRUD.getAllLeagues();
             for (League league : leagues) {
-                // Se removió la variable prizeDisplay que no se usa en el array Object[]
                 Object[] row = {
                         league.getLeagueId(),
                         league.getLeagueName(),
@@ -522,11 +606,8 @@ public class LeaguesPanel extends JPanel {
     private void loadSelectedLeague() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
-            // String leagueId = tableModel.getValueAt(selectedRow, 0).toString(); // Ya no se necesita el ID aquí
-
-            // Limpia el formato de premio (por si incluye comas) para usar el valor numérico
             String prizeAmountText = tableModel.getValueAt(selectedRow, 4).toString().replaceAll("[^0-9]", "");
-            String currency = tableModel.getValueAt(selectedRow, 5).toString(); // Moneda
+            String currency = tableModel.getValueAt(selectedRow, 5).toString();
 
             txtLeagueName.setText(tableModel.getValueAt(selectedRow, 1).toString());
             txtLeagueDetails.setText(tableModel.getValueAt(selectedRow, 2).toString());
@@ -684,12 +765,14 @@ public class LeaguesPanel extends JPanel {
         dateChooserStartedDate.setDate(null);
         dateChooserEndDate.setDate(null);
 
-        lblErrorName.setText(" ");
-        lblErrorDetails.setText(" ");
-        lblErrorPrize.setText(" ");
-        lblErrorRules.setText(" ");
-        lblErrorStart.setText(" ");
-        lblErrorEnd.setText(" ");
+        // Ocultar todos los mensajes de error
+        lblErrorName.setVisible(false);
+        lblErrorDetails.setVisible(false);
+        lblErrorGame.setVisible(false);
+        lblErrorPrize.setVisible(false);
+        lblErrorRules.setVisible(false);
+        lblErrorStart.setVisible(false);
+        lblErrorEnd.setVisible(false);
 
         table.clearSelection();
         validateAllFields();
@@ -703,9 +786,21 @@ public class LeaguesPanel extends JPanel {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    // CLASE INTERNA PARA FORZAR EL ESTILO DE LA CABECERA (copiada de GamesPanel)
-    private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
+    // Métodos de fuente
+    private Font getBodyFont(int size) {
+        return new Font("Segoe UI", Font.PLAIN, size);
+    }
 
+    private Font getBoldFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    private Font getTitleFont(int size) {
+        return new Font("Segoe UI", Font.BOLD, size);
+    }
+
+    // CLASE INTERNA PARA FORZAR EL ESTILO DE LA CABECERA
+    private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
         private final Color backgroundColor;
         private final Color foregroundColor;
 
@@ -724,17 +819,10 @@ public class LeaguesPanel extends JPanel {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
-
             setBackground(backgroundColor);
             setForeground(foregroundColor);
             setText(value == null ? "" : value.toString());
             return this;
-        }
-
-        // Método placeholder (asumimos que existe en DesignConstants o en la clase principal)
-        private Font getBoldFont(int size) {
-            // Se usa una fuente de respaldo para que compile
-            return new Font("Segoe UI", Font.BOLD, size);
         }
     }
 }
