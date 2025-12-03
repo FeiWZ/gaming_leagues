@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
-      <change afterPath="$PROJECT_DIR$/src/main/java/consultas/Transacciones.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,5 +172,29 @@
     <MESSAGE value="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)" />
     <MESSAGE value="Tabla Matches y Ranking corregidos" />
     <option name="LAST_COMMIT_MESSAGE" value="Tabla Matches y Ranking corregidos" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java</url>
+          <line>320</line>
+          <properties class="vistas.GamesPanel" method="updateGame">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java</url>
+          <line>444</line>
+          <properties class="vistas.GamesPanel" method="validateFields">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

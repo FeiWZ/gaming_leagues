@@ -13,7 +13,6 @@ public class Game {
         this.gameGenres = gameGenres;
     }
 
-    // Getters y setters
     public String getGameCode() { return gameCode; }
     public void setGameCode(String gameCode) { this.gameCode = gameCode; }
 

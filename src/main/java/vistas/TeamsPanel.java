@@ -187,19 +187,16 @@ public class TeamsPanel extends JPanel {
         dateChooser.setDateFormatString("yyyy-MM-dd");
         dateChooser.setFont(getBodyFont(FONT_SIZE_BODY));
 
-        // Configurar tamaño del JDateChooser
         dateChooser.setPreferredSize(new Dimension(150, 35));
         dateChooser.setMinimumSize(new Dimension(150, 35));
 
         JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
 
-        // Configurar tamaño del campo de texto
         dateField.setPreferredSize(new Dimension(150, 35));
         dateField.setMinimumSize(new Dimension(150, 35));
 
         dateField.setBackground(BG_INPUT);
 
-        // FORZAR COLOR BLANCO
         dateField.setForeground(Color.WHITE);
 
         dateField.setBorder(BorderFactory.createCompoundBorder(
@@ -207,17 +204,14 @@ public class TeamsPanel extends JPanel {
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
 
-        // Asegurar que el caret también sea visible
         dateField.setCaretColor(ACCENT_PRIMARY);
 
-        // Forzar color blanco con listeners
         dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
             if ("date".equals(evt.getPropertyName())) {
                 SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
             }
         });
 
-        // Listener para cuando cambie el foreground
         dateField.addPropertyChangeListener("foreground", evt -> {
             SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
         });
@@ -225,7 +219,6 @@ public class TeamsPanel extends JPanel {
         panel.add(label, BorderLayout.NORTH);
         panel.add(dateChooser, BorderLayout.CENTER);
 
-        // Configurar tamaño del panel también
         panel.setPreferredSize(new Dimension(180, 60));
         panel.setMinimumSize(new Dimension(180, 60));
 
@@ -582,14 +575,12 @@ public class TeamsPanel extends JPanel {
         String playerNameText = txtPlayerName.getText().trim();
         String role = txtRole.getText().trim();
 
-        // Validar campos vacíos
         if (teamIdText.isEmpty() || teamNameText.isEmpty() || idCoachText.isEmpty() || createdByPlayerText.isEmpty() || playerNameText.isEmpty() || role.isEmpty()) {
             String title = isUpdate ? "No se puede actualizar" : "No se puede agregar";
             showError("Por favor completa todos los campos obligatorios antes de " + (isUpdate ? "actualizar" : "agregar") + ".", title);
             return false;
         }
 
-        // Validar formatos numéricos
         try {
             int teamId = Integer.parseInt(teamIdText);
             int idCoach = Integer.parseInt(idCoachText);
@@ -603,13 +594,11 @@ public class TeamsPanel extends JPanel {
             return false;
         }
 
-        // Validar fecha de creación
         if (dateChooserCreated.getDate() == null) {
             showError("La fecha de creación es obligatoria.", "Campo Faltante");
             return false;
         }
 
-        // Validar lógica de fechas
         Date dateCreated = dateChooserCreated.getDate();
         Date dateDisbanded = dateChooserDisbanded.getDate();
         if (dateCreated != null && dateDisbanded != null && dateCreated.after(dateDisbanded)) {
@@ -712,7 +701,6 @@ public class TeamsPanel extends JPanel {
         }
     }
 
-    // Métodos de utilidad para fonts y colores
     private Font getTitleFont(int size) {
         return new Font("Segoe UI", Font.BOLD, size);
     }

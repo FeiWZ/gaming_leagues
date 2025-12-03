@@ -169,7 +169,7 @@ public class InformesPanel extends JPanel {
             exporter.exportReport();
 
             int respuesta = JOptionPane.showConfirmDialog(this,
-                    "✅ PDF generado: " + archivo + "\n\n¿Abrir archivo?",
+                    "PDF generado: " + archivo + "\n\n¿Abrir archivo?",
                     "PDF Generado", JOptionPane.YES_NO_OPTION);
 
             if (respuesta == JOptionPane.YES_OPTION) {

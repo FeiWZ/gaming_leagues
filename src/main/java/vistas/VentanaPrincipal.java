@@ -10,7 +10,7 @@ import java.sql.Connection;
 import static vistas.DesignConstants.*;
 
 import consultas.GameCRUD;
-import vistas.InformesPanel; // <-- ¡IMPORTACIÓN AÑADIDA!
+import vistas.InformesPanel;
 
 public class VentanaPrincipal extends JFrame {
 
@@ -212,9 +212,7 @@ public class VentanaPrincipal extends JFrame {
         TeamsPanel teamsPanel = new TeamsPanel(connection);
         MatchesPanel matchesPanel = new MatchesPanel(connection, this.gameCRUD);
 
-        // --- CÓDIGO AÑADIDO: Inicializar el panel de informes ---
         InformesPanel informesPanel = new InformesPanel(connection);
-        // --- FIN DE CÓDIGO AÑADIDO ---
 
         tabbedPane.addTab(" Games", gamesPanel);
         tabbedPane.addTab(" Leagues", leaguesPanel);
@@ -223,9 +221,7 @@ public class VentanaPrincipal extends JFrame {
         tabbedPane.addTab(" Teams", teamsPanel);
         tabbedPane.addTab(" Matches", matchesPanel);
 
-        // --- CÓDIGO AÑADIDO: Agregar la nueva pestaña ---
         tabbedPane.addTab(" Informes", informesPanel);
-        // --- FIN DE CÓDIGO AÑADIDO ---
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
             tabbedPane.setForegroundAt(i, TEXT_PRIMARY);

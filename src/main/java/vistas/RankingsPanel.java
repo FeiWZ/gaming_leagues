@@ -26,7 +26,6 @@ public class RankingsPanel extends JPanel {
     private JTextField txtPlayerId, txtPlayerName, txtGameName, txtRanking, txtWins, txtLosses;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
-    // Declaración de JLabels para los mensajes de validación
     private JLabel lblErrorPlayerId, lblErrorPlayerName, lblErrorGameName;
     private JLabel lblErrorRanking, lblErrorWins, lblErrorLosses;
 
@@ -35,16 +34,13 @@ public class RankingsPanel extends JPanel {
         this.rankingCRUD = new RankingPlayerGameCRUD(connection);
         this.playerCRUD = new PlayerCRUD(connection);
 
-        // Inicializar componentes de la tabla ANTES de crear el formulario
         initializeTableComponents();
         initComponents();
         loadRankings();
 
-        // Validar el estado inicial de los botones
         validateFields(true);
     }
 
-    // Método auxiliar para crear el JLabel de error con estilo rojo
     private JLabel createErrorLabel() {
         JLabel label = new JLabel(" ");
         label.setForeground(ACCENT_DANGER);
@@ -111,7 +107,6 @@ public class RankingsPanel extends JPanel {
         txtWins = createStyledTextField();
         txtLosses = createStyledTextField();
 
-        // Inicializar JLabels de error
         lblErrorPlayerId = createErrorLabel();
         lblErrorPlayerName = createErrorLabel();
         lblErrorGameName = createErrorLabel();
@@ -119,7 +114,6 @@ public class RankingsPanel extends JPanel {
         lblErrorWins = createErrorLabel();
         lblErrorLosses = createErrorLabel();
 
-        // Asignar listeners
         CaretListener listener = createCaretListener();
         txtPlayerId.addCaretListener(listener);
         txtPlayerName.addCaretListener(listener);
@@ -129,7 +123,6 @@ public class RankingsPanel extends JPanel {
         txtLosses.addCaretListener(listener);
 
 
-        // Usar el nuevo createFieldPanel con validación
         fieldsPanel.add(createValidatedFieldPanel("ID Jugador:", txtPlayerId, lblErrorPlayerId));
         fieldsPanel.add(createValidatedFieldPanel("Nombre del Jugador:", txtPlayerName, lblErrorPlayerName));
         fieldsPanel.add(createValidatedFieldPanel("Nombre del Juego:", txtGameName, lblErrorGameName));
@@ -162,7 +155,6 @@ public class RankingsPanel extends JPanel {
         return panel;
     }
 
-    // Nuevo método para campos de texto con validación
     private JPanel createValidatedFieldPanel(String labelText, JTextField textField, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
@@ -183,7 +175,6 @@ public class RankingsPanel extends JPanel {
     }
 
     private JPanel createFieldPanel(String labelText, JTextField textField) {
-        // Mantenemos esta versión como alias por si se usa en otro contexto, pero ahora llamamos a createValidatedFieldPanel
         return createValidatedFieldPanel(labelText, textField, new JLabel(" ")); // Usar un label vacío si no se necesita validación roja
     }
 
@@ -200,7 +191,6 @@ public class RankingsPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        // JTable y tableModel inicializados en initializeTableComponents
         table.setFont(getBodyFont(FONT_SIZE_BODY));
         table.setForeground(TEXT_PRIMARY);
         table.setBackground(BG_INPUT);
@@ -309,7 +299,7 @@ public class RankingsPanel extends JPanel {
             txtGameName.setEditable(false);
 
             clearErrorMessages();
-            validateFields(false); // Validar en modo Actualizar
+            validateFields(false);
         }
     }
 
@@ -449,12 +439,10 @@ public class RankingsPanel extends JPanel {
         table.clearSelection();
 
         clearErrorMessages();
-        validateFields(true); // Validar en modo Agregar
+        validateFields(true);
     }
 
-    // Sobrecarga del método de validación para llamar desde listeners
     private boolean validateFields() {
-        // Si el ID del jugador y el Nombre del Juego son editables, asumimos modo Agregar.
         boolean isAdding = txtPlayerId.isEditable() && txtGameName.isEditable();
         return validateFields(isAdding);
     }
@@ -470,7 +458,6 @@ public class RankingsPanel extends JPanel {
         String winsText = txtWins.getText().trim();
         String lossesText = txtLosses.getText().trim();
 
-        // --- 1. ID Jugador (NOT NULL + Numérico > 0) ---
         if (idText.isEmpty()) {
             lblErrorPlayerId.setText("ID obligatorio.");
             isValid = false;
@@ -489,16 +476,13 @@ public class RankingsPanel extends JPanel {
             }
         }
 
-        // --- 2. Nombre del Jugador (NOT NULL) ---
         if (playerName.isEmpty()) {
             lblErrorPlayerName.setText("Nombre obligatorio.");
             isValid = false;
         } else {
             lblErrorPlayerName.setText(" ");
-            // Nota: La validación de existencia del jugador se hace solo en addRanking/updateRanking
         }
 
-        // --- 3. Nombre del Juego (NOT NULL) ---
         if (gameName.isEmpty()) {
             lblErrorGameName.setText("Juego obligatorio.");
             isValid = false;
@@ -506,7 +490,6 @@ public class RankingsPanel extends JPanel {
             lblErrorGameName.setText(" ");
         }
 
-        // --- 4. Victorias (NOT NULL + CHECK >= 0) ---
         if (winsText.isEmpty()) {
             lblErrorWins.setText("Victorias obligatorio.");
             isValid = false;
@@ -525,7 +508,6 @@ public class RankingsPanel extends JPanel {
             }
         }
 
-        // --- 5. Derrotas (NOT NULL + CHECK >= 0) ---
         if (lossesText.isEmpty()) {
             lblErrorLosses.setText("Derrotas obligatorio.");
             isValid = false;
@@ -544,7 +526,6 @@ public class RankingsPanel extends JPanel {
             }
         }
 
-        // --- 6. Ranking (Opcional, si se ingresa debe ser numérico > 0) ---
         if (!rankingText.isEmpty()) {
             try {
                 int ranking = Integer.parseInt(rankingText);
@@ -559,10 +540,9 @@ public class RankingsPanel extends JPanel {
                 isValid = false;
             }
         } else {
-            lblErrorRanking.setText(" "); // Limpiar si está vacío
+            lblErrorRanking.setText(" ");
         }
 
-        // Control de botones
         boolean rowSelected = table.getSelectedRow() != -1;
         btnAdd.setEnabled(isValid && isAdding);
         btnUpdate.setEnabled(isValid && !isAdding && rowSelected);
@@ -605,7 +585,6 @@ public class RankingsPanel extends JPanel {
     }
 
     private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
-        // ... (Clase CustomTableHeaderRenderer)
         private final Color backgroundColor;
         private final Color foregroundColor;
         private static final int RADIUS_SM = 8;
@@ -638,7 +617,6 @@ public class RankingsPanel extends JPanel {
         }
     }
 
-    // Métodos utilitarios de fuente y color (asumimos que existen o se toman de DesignConstants)
     private Font getTitleFont(int size) {
         return new Font("Segoe UI", Font.BOLD, size);
     }

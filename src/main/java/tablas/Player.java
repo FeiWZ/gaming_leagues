@@ -23,7 +23,6 @@ public class Player {
         this.email = email;
     }
 
-    // Getters y setters para cada atributo
     public int getPlayerId() { return playerId; }
     public void setPlayerId(int playerId) { this.playerId = playerId; }
 

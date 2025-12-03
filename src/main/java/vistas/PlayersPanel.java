@@ -217,16 +217,13 @@ public class PlayersPanel extends JPanel {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
 
-        // Configurar tamaño preferido
         dateChooser.setPreferredSize(new Dimension(150, 35));
         dateChooser.setMinimumSize(new Dimension(150, 35));
 
         JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
 
-        // Configurar fuente y tamaño
         dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
 
-        // FORZAR COLOR BLANCO
         dateEditor.setForeground(Color.WHITE);
 
         dateEditor.setBackground(BG_INPUT);
@@ -236,7 +233,6 @@ public class PlayersPanel extends JPanel {
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
 
-        // Configurar tamaño del editor
         Component editorComponent = dateChooser.getDateEditor().getUiComponent();
         if (editorComponent instanceof JTextField) {
             JTextField textField = (JTextField) editorComponent;
@@ -246,18 +242,15 @@ public class PlayersPanel extends JPanel {
 
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // Configurar el calendario
         JCalendar calendar = dateChooser.getJCalendar();
         calendar.setBackground(BG_INPUT);
 
-        // Configurar días del calendario
         calendar.getDayChooser().getDayPanel().setBackground(BG_INPUT);
         calendar.getDayChooser().setForeground(Color.WHITE);
         calendar.getDayChooser().setBackground(BG_INPUT);
         calendar.getDayChooser().setDecorationBackgroundColor(BG_INPUT);
         calendar.getDayChooser().setDecorationBordersVisible(false);
 
-        // Forzar color blanco en el campo de texto
         dateChooser.addPropertyChangeListener("date", evt -> {
             SwingUtilities.invokeLater(() -> {
                 dateEditor.setForeground(Color.WHITE);
@@ -267,7 +260,6 @@ public class PlayersPanel extends JPanel {
             });
         });
 
-        // Listener adicional para asegurar color
         dateEditor.addPropertyChangeListener(evt -> {
             if ("foreground".equals(evt.getPropertyName())) {
                 SwingUtilities.invokeLater(() -> dateEditor.setForeground(Color.WHITE));

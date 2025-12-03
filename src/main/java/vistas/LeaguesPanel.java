@@ -111,7 +111,6 @@ public class LeaguesPanel extends JPanel {
         lblErrorEnd = createErrorLabel();
         validationListener = createValidationListener();
 
-        // Panel de campos: 2 filas x 3 columnas (secciones)
         JPanel fieldsPanel = new JPanel(new GridLayout(2, 4, SPACING_MD, SPACING_LG));
         fieldsPanel.setBackground(BG_CARD);
 
@@ -279,10 +278,8 @@ public class LeaguesPanel extends JPanel {
         dateChooser.setDateFormatString("yyyy-MM-dd");
         dateChooser.setFont(getBodyFont(FONT_SIZE_BODY));
 
-        // Obtener el JTextField interno del JDateChooser
         JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
 
-        // Configurar el tamaño y estilo del campo de fecha
         dateField.setPreferredSize(new Dimension(150, 35));
         dateField.setMinimumSize(new Dimension(150, 35));
         dateField.setFont(getBodyFont(FONT_SIZE_BODY));
@@ -300,24 +297,19 @@ public class LeaguesPanel extends JPanel {
             dateChooserEndDate = dateChooser;
         }
 
-        // FORZAR COLOR BLANCO CADA VEZ QUE CAMBIE
         dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
             if ("date".equals(evt.getPropertyName())) {
                 validateAllFields();
-                // Forzar color blanco después de cada cambio
                 dateField.setForeground(Color.WHITE);
             }
         });
 
-        // Listener adicional para asegurar color blanco
         dateField.addPropertyChangeListener(evt -> {
             if ("foreground".equals(evt.getPropertyName())) {
-                // Si algo intenta cambiar el color, volver a blanco
                 SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
             }
         });
 
-        // Forzar color blanco después de que el componente se muestre
         dateChooser.addHierarchyListener(e -> {
             if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
                 if (dateChooser.isShowing()) {
@@ -555,7 +547,6 @@ public class LeaguesPanel extends JPanel {
         int selectedRow = table.getSelectedRow();
         if (selectedRow != -1) {
 
-            // Limpia el formato de premio (por si incluye comas) para usar el valor numérico
             String prizeAmountText = tableModel.getValueAt(selectedRow, 4).toString().replaceAll("[^0-9]", "");
             String currency = tableModel.getValueAt(selectedRow, 5).toString(); // Moneda
 

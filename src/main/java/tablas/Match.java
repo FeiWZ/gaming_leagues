@@ -22,7 +22,6 @@ public class Match {
         this.gameCode = gameCode;
     }
 
-    // Getters y setters
     public int getMatchId() { return matchId; }
     public void setMatchId(int matchId) { this.matchId = matchId; }
 

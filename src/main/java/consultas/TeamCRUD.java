@@ -65,7 +65,6 @@ public class TeamCRUD {
             preparedStatement.setString(5, team.getCreatedByPlayer());
             preparedStatement.setString(6, team.getPlayerName());
 
-            // Convertir java.util.Date a java.sql.Date
             java.sql.Date dateFromSql = (team.getDateFrom() != null) ? new java.sql.Date(team.getDateFrom().getTime()) : null;
             java.sql.Date dateToSql = (team.getDateTo() != null) ? new java.sql.Date(team.getDateTo().getTime()) : null;
 
@@ -88,7 +87,6 @@ public class TeamCRUD {
             preparedStatement.setString(5, team.getCreatedByPlayer());
             preparedStatement.setString(6, team.getPlayerName());
 
-            // Convertir java.util.Date a java.sql.Date
             java.sql.Date dateFromSql = (team.getDateFrom() != null) ? new java.sql.Date(team.getDateFrom().getTime()) : null;
             java.sql.Date dateToSql = (team.getDateTo() != null) ? new java.sql.Date(team.getDateTo().getTime()) : null;
 

@@ -2,7 +2,6 @@ package vistas;
 
 import consultas.GameCRUD;
 import tablas.Game;
-// Importar DesignConstants para usar el mismo estilo
 import static vistas.DesignConstants.*;
 
 import javax.swing.*;
@@ -44,7 +43,6 @@ public class GamesPanel extends JPanel {
 
     private CaretListener createCaretListener() {
         return e -> {
-            // Llama a validateFields() para reevaluar la validez y el estado de los botones
             validateFields();
         };
     }
@@ -54,7 +52,6 @@ public class GamesPanel extends JPanel {
         setBackground(BG_DARK_SECONDARY);
         setBorder(new EmptyBorder(SPACING_MD, SPACING_MD, SPACING_MD, SPACING_MD));
 
-        // Inicializar la tabla y el modelo AQUÍ, antes de crear el formulario
         initializeTableComponents();
 
         JPanel formPanel = createFormPanel();
@@ -63,7 +60,6 @@ public class GamesPanel extends JPanel {
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
 
-        // Llamar a validateFields() una vez que 'table' ya está inicializado
         validateFields(false);
     }
 
@@ -95,22 +91,20 @@ public class GamesPanel extends JPanel {
         txtDescription = createStyledTextField();
         txtGenres = createStyledTextField();
 
-        // Inicializar JLabels de error
         lblCodeError = createErrorLabel();
         lblNameError = createErrorLabel();
-        lblGenresError = createErrorLabel(); // Inicializar el nuevo label de error
+        lblGenresError = createErrorLabel();
 
-        // Asignar listeners para revalidar y ocultar errores al escribir
         CaretListener listener = createCaretListener();
         txtGameCode.addCaretListener(listener);
         txtGameName.addCaretListener(listener);
-        txtDescription.addCaretListener(listener); // Aunque no tiene check, revalidamos
-        txtGenres.addCaretListener(listener); // Listener para Géneros
+        txtDescription.addCaretListener(listener);
+        txtGenres.addCaretListener(listener);
 
         fieldsPanel.add(createFieldPanel("Código del Juego:", txtGameCode, lblCodeError));
         fieldsPanel.add(createFieldPanel("Nombre:", txtGameName, lblNameError));
-        fieldsPanel.add(createFieldPanel("Descripción:", txtDescription, null)); // Descripción no tiene validación en línea
-        fieldsPanel.add(createFieldPanel("Géneros:", txtGenres, lblGenresError)); // Géneros tiene validación de longitud
+        fieldsPanel.add(createFieldPanel("Descripción:", txtDescription, null));
+        fieldsPanel.add(createFieldPanel("Géneros:", txtGenres, lblGenresError));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
@@ -185,7 +179,6 @@ public class GamesPanel extends JPanel {
         titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));
 
-        // Configuración de JTable (JTable y tableModel ya están inicializados en initializeTableComponents)
         table.setFont(getBodyFont(FONT_SIZE_BODY));
         table.setForeground(TEXT_PRIMARY);
         table.setBackground(BG_INPUT);
@@ -285,12 +278,10 @@ public class GamesPanel extends JPanel {
             txtGenres.setText(tableModel.getValueAt(selectedRow, 3).toString());
             txtGameCode.setEditable(false);
 
-            // Limpiar errores al seleccionar un registro
             lblCodeError.setText(" ");
             lblNameError.setText(" ");
             lblGenresError.setText(" ");
 
-            // Validar para habilitar el botón de actualizar
             validateFields(false);
         }
     }
@@ -392,16 +383,9 @@ public class GamesPanel extends JPanel {
         validateFields(true);
     }
 
-    /**
-     * Valida campos, actualiza mensajes de error y habilita/deshabilita botones,
-     * incluyendo las restricciones CHECK de la tabla SQL.
-     * @param isAdding true si el modo actual es Agregar (txtGameCode editable).
-     * @return true si los campos obligatorios son válidos.
-     */
     private boolean validateFields(boolean isAdding) {
         boolean isValid = true;
 
-        // --- 1. Validación Código (Obligatorio) ---
         if (txtGameCode.getText().trim().isEmpty()) {
             lblCodeError.setText("El código es obligatorio.");
             isValid = false;
@@ -409,7 +393,6 @@ public class GamesPanel extends JPanel {
             lblCodeError.setText(" ");
         }
 
-        // --- 2. Validación Nombre (Obligatorio + CHECK LENGTH >= 3) ---
         String gameName = txtGameName.getText().trim();
         if (gameName.isEmpty()) {
             lblNameError.setText("El nombre es obligatorio.");
@@ -421,7 +404,6 @@ public class GamesPanel extends JPanel {
             lblNameError.setText(" ");
         }
 
-        // --- 3. Validación Géneros (Obligatorio + CHECK LENGTH >= 3) ---
         String genres = txtGenres.getText().trim();
         if (genres.isEmpty()) {
             lblGenresError.setText("Los géneros son obligatorios.");
@@ -433,7 +415,6 @@ public class GamesPanel extends JPanel {
             lblGenresError.setText(" ");
         }
 
-        // --- 4. Habilitar/Deshabilitar botones ---
         btnAdd.setEnabled(isValid && isAdding);
         btnUpdate.setEnabled(isValid && !isAdding && table.getSelectedRow() != -1);
         btnDelete.setEnabled(table.getSelectedRow() != -1);
@@ -441,7 +422,6 @@ public class GamesPanel extends JPanel {
         return isValid;
     }
 
-    // Sobrecarga del método de validación para llamar desde listeners
     private boolean validateFields() {
         return validateFields(txtGameCode.isEditable());
     }
@@ -456,7 +436,6 @@ public class GamesPanel extends JPanel {
     }
 
 
-    // CLASE INTERNA PARA FORZAR EL ESTILO DE LA CABECERA
     private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {
 
         private final Color backgroundColor;

@@ -27,7 +27,6 @@ public class Team {
         this.role = role;
     }
 
-    // Getters y setters
     public int getTeamId() { return teamId; }
     public void setTeamId(int teamId) { this.teamId = teamId; }
 

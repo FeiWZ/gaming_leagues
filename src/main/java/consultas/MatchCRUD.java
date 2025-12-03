@@ -50,9 +50,6 @@ public class MatchCRUD {
         return data;
     }
 
-
-    // ⬇️ INICIO DEL CÓDIGO AÑADIDO ⬇️
-
     public List<Match> getAllMatches() throws SQLException {
         List<Match> matches = new ArrayList<>();
         String SQL = "SELECT match_id, match_date, result, match_type, player_name_1, player_name_2, game_name FROM matches ORDER BY match_date DESC";
@@ -76,7 +73,6 @@ public class MatchCRUD {
     }
 
     public Match getMatchById(int matchId) throws SQLException {
-        // No es estrictamente necesario para la funcionalidad solicitada, pero se puede implementar si se requiere.
         return null;
     }
 
@@ -115,5 +111,4 @@ public class MatchCRUD {
             return pstmt.executeUpdate() > 0;
         }
     }
-    // ⬆️ FIN DEL CÓDIGO AÑADIDO ⬆️
 }

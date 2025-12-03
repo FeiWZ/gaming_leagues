@@ -23,7 +23,6 @@ public class League {
         this.endDate = endDate;
     }
 
-    // Getters y setters
     public int getLeagueId() { return leagueId; }
     public void setLeagueId(int leagueId) { this.leagueId = leagueId; }
 
