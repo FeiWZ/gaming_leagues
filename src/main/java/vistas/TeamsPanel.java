@@ -187,16 +187,47 @@ public class TeamsPanel extends JPanel {
         dateChooser.setDateFormatString("yyyy-MM-dd");
         dateChooser.setFont(getBodyFont(FONT_SIZE_BODY));
 
+        // Configurar tamaño del JDateChooser
+        dateChooser.setPreferredSize(new Dimension(150, 35));
+        dateChooser.setMinimumSize(new Dimension(150, 35));
+
         JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
+
+        // Configurar tamaño del campo de texto
+        dateField.setPreferredSize(new Dimension(150, 35));
+        dateField.setMinimumSize(new Dimension(150, 35));
+
         dateField.setBackground(BG_INPUT);
-        dateField.setForeground(TEXT_PRIMARY);
+
+        // FORZAR COLOR BLANCO
+        dateField.setForeground(Color.WHITE);
+
         dateField.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
 
+        // Asegurar que el caret también sea visible
+        dateField.setCaretColor(ACCENT_PRIMARY);
+
+        // Forzar color blanco con listeners
+        dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
+            }
+        });
+
+        // Listener para cuando cambie el foreground
+        dateField.addPropertyChangeListener("foreground", evt -> {
+            SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
+        });
+
         panel.add(label, BorderLayout.NORTH);
         panel.add(dateChooser, BorderLayout.CENTER);
+
+        // Configurar tamaño del panel también
+        panel.setPreferredSize(new Dimension(180, 60));
+        panel.setMinimumSize(new Dimension(180, 60));
 
         dateChooser.putClientProperty("panel", panel);
         return dateChooser;
