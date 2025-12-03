@@ -3,6 +3,7 @@ package vistas;
 import com.toedter.calendar.JCalendar;
 import consultas.MatchCRUD;
 import consultas.GameCRUD;
+import consultas.Transacciones;
 import tablas.Match;
 import static vistas.DesignConstants.*;
 
@@ -45,7 +46,6 @@ public class MatchesPanel extends JPanel {
     private JComboBox<String> cmbMatchType, cmbResult, cmbGameName;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
 
-    // **DECLARACIÓN DE LABELS DE ERROR**
     private JLabel lblIdError, lblDateError, lblTimeError, lblPlayer1Error, lblPlayer2Error, lblResultError;
 
     private Font getBodyFont(int size) { return new Font("Roboto", Font.PLAIN, size); }
@@ -62,13 +62,11 @@ public class MatchesPanel extends JPanel {
         this.gameCRUD = gameCRUD;
         SDF_TIMESTAMP.setLenient(false);
 
-        initializeErrorLabels(); // Inicialización de labels
+        initializeErrorLabels();
         initComponents();
         loadMatches();
-        validateFields(); // Validación inicial para estado de botones
+        validateFields();
     }
-
-    // --- Métodos de inicialización de soporte ---
 
     private void initializeErrorLabels() {
         lblIdError = createErrorLabel();
@@ -80,7 +78,7 @@ public class MatchesPanel extends JPanel {
     }
 
     private JLabel createErrorLabel() {
-        JLabel label = new JLabel(" "); // Siempre tiene espacio, incluso vacío
+        JLabel label = new JLabel(" ");
         label.setForeground(ACCENT_DANGER);
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setBorder(new EmptyBorder(2, 0, 0, 0));
@@ -124,16 +122,13 @@ public class MatchesPanel extends JPanel {
         cmbGameName = createGameNameComboBox();
         cmbResult = createStyledComboBox(new String[]{"N/A", "Gana Jugador 1", "Gana Jugador 2", "Empate"});
 
-
-        // --- Fila 0 ---
         gbc.gridy = 0;
         gbc.gridx = 0; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("ID del Partido:", txtMatchId, lblIdError), gbc);
         gbc.gridx = 1; gbc.weightx = 2.0; fieldsContainer.add(createValidatedDatePanel("Fecha:", dateChooserMatch, lblDateError), gbc);
         gbc.gridx = 2; gbc.weightx = 1.0; fieldsContainer.add(createValidatedFieldPanel("Hora (hh:mm):", timeInputPanel, lblTimeError), gbc);
         gbc.gridx = 3; gbc.weightx = 1.0; gbc.insets = new Insets(0, 0, SPACING_MD, 0);
-        fieldsContainer.add(createValidatedFieldPanel("Tipo:", cmbMatchType, null), gbc); // No hay validación de error para el tipo, pero mantenemos la estructura
+        fieldsContainer.add(createValidatedFieldPanel("Tipo:", cmbMatchType, null), gbc);
 
-        // --- Fila 1 ---
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
@@ -143,7 +138,6 @@ public class MatchesPanel extends JPanel {
         gbc.gridx = 3; gbc.weightx = 1.0; gbc.insets = new Insets(0, 0, SPACING_MD, 0);
         fieldsContainer.add(createValidatedFieldPanel("Resultado:", cmbResult, lblResultError), gbc);
 
-        // --- Listeners para validación en línea ---
         txtMatchId.addCaretListener(e -> validateFields());
         txtPlayer1.addCaretListener(e -> validateFields());
         txtPlayer2.addCaretListener(e -> validateFields());
@@ -154,7 +148,6 @@ public class MatchesPanel extends JPanel {
 
         dateChooserMatch.getDateEditor().addPropertyChangeListener(evt -> { if ("date".equals(evt.getPropertyName())) validateFields(); });
 
-        // --- Botones ---
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));
         buttonsPanel.setBackground(BG_CARD);
         buttonsPanel.setBorder(new EmptyBorder(SPACING_MD, 0, 0, 0));
@@ -180,8 +173,6 @@ public class MatchesPanel extends JPanel {
         return panel;
     }
 
-    // --- Métodos para crear paneles de validación (COPIA DE TEAMS) ---
-
     private JPanel createValidatedFieldPanel(String labelText, JComponent component, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
@@ -194,7 +185,6 @@ public class MatchesPanel extends JPanel {
         contentPanel.setBackground(BG_CARD);
         contentPanel.add(component, BorderLayout.NORTH);
 
-        // Si no hay label de error (null), usamos un label vacío que sirve como relleno vertical
         JLabel errorComponent = errorLabel != null ? errorLabel : createErrorLabel();
         contentPanel.add(errorComponent, BorderLayout.SOUTH);
 
@@ -216,7 +206,6 @@ public class MatchesPanel extends JPanel {
         contentPanel.setBackground(BG_CARD);
         contentPanel.add(dateChooser, BorderLayout.NORTH);
 
-        // Si no hay label de error (null), usamos un label vacío que sirve como relleno vertical
         JLabel errorComponent = errorLabel != null ? errorLabel : createErrorLabel();
         contentPanel.add(errorComponent, BorderLayout.SOUTH);
 
@@ -232,16 +221,7 @@ public class MatchesPanel extends JPanel {
         textField.setForeground(TEXT_PRIMARY);
         textField.setBackground(BG_INPUT);
         textField.setCaretColor(ACCENT_PRIMARY);
-
-        // CAMBIAR ESTO:
-        textField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)  // ← ELIMINAR ESTO
-        ));
-
-        // POR ESTO (igual que LeaguesPanel):
         textField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
-
         return textField;
     }
 
@@ -264,19 +244,12 @@ public class MatchesPanel extends JPanel {
     private JDateChooser createStyledDateChooser() {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
-
-        // Configurar tamaño preferido
         dateChooser.setPreferredSize(new Dimension(150, 35));
         dateChooser.setMinimumSize(new Dimension(150, 35));
 
         JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
-
-        // Configurar fuente y tamaño
         dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
-
-        // FORZAR COLOR BLANCO
         dateEditor.setForeground(Color.WHITE);
-
         dateEditor.setBackground(BG_INPUT);
         dateEditor.setCaretColor(ACCENT_PRIMARY);
         dateEditor.setBorder(BorderFactory.createCompoundBorder(
@@ -284,7 +257,6 @@ public class MatchesPanel extends JPanel {
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
 
-        // Configurar tamaño del editor
         Component editorComponent = dateChooser.getDateEditor().getUiComponent();
         if (editorComponent instanceof JTextField) {
             JTextField textField = (JTextField) editorComponent;
@@ -294,18 +266,14 @@ public class MatchesPanel extends JPanel {
 
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        // Configurar el calendario
         JCalendar calendar = dateChooser.getJCalendar();
         calendar.setBackground(BG_INPUT);
-
-        // Configurar días del calendario
         calendar.getDayChooser().getDayPanel().setBackground(BG_INPUT);
         calendar.getDayChooser().setForeground(Color.WHITE);
         calendar.getDayChooser().setBackground(BG_INPUT);
         calendar.getDayChooser().setDecorationBackgroundColor(BG_INPUT);
         calendar.getDayChooser().setDecorationBordersVisible(false);
 
-        // Forzar color blanco en el campo de texto
         dateChooser.addPropertyChangeListener("date", evt -> {
             SwingUtilities.invokeLater(() -> {
                 dateEditor.setForeground(Color.WHITE);
@@ -315,7 +283,6 @@ public class MatchesPanel extends JPanel {
             });
         });
 
-        // Listener adicional para asegurar color
         dateEditor.addPropertyChangeListener(evt -> {
             if ("foreground".equals(evt.getPropertyName())) {
                 SwingUtilities.invokeLater(() -> dateEditor.setForeground(Color.WHITE));
@@ -348,22 +315,12 @@ public class MatchesPanel extends JPanel {
                 }
 
                 list.setBackground(Color.WHITE);
-
                 label.setBorder(new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD));
-
                 return label;
             }
         });
 
-        // CAMBIAR ESTO:
-        cmb.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)  // ← ELIMINAR ESTO
-        ));
-
-        // POR ESTO (opcional, pero para consistencia):
         cmb.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
-
         return cmb;
     }
 
@@ -536,27 +493,34 @@ public class MatchesPanel extends JPanel {
         }
 
         try {
-            Match match = new Match(
+            boolean exito = Transacciones.registrarPartidoCompleto(
+                    connection,
                     Integer.parseInt(txtMatchId.getText().trim()),
-                    matchDate,
-                    cmbResult.getSelectedItem().toString(),
-                    cmbMatchType.getSelectedItem().toString().toLowerCase(),
                     txtPlayer1.getText().trim(),
                     txtPlayer2.getText().trim(),
-                    cmbGameName.getSelectedItem().toString()
+                    cmbGameName.getSelectedItem().toString(),
+                    cmbResult.getSelectedItem().toString()
             );
 
-            if (matchCRUD.createMatch(match)) {
-                showSuccess("¡Partido agregado exitosamente!");
+            if (exito) {
+                showSuccess("¡Partido registrado exitosamente con actualizacion de rankings!");
                 clearFields();
                 loadMatches();
             } else {
-                showError("No se pudo agregar el partido.", "Error");
+                showError("No se pudo registrar el partido.", "Error");
             }
+
         } catch (SQLException e) {
-            handleSQLException(e);
+            String msg = e.getMessage();
+            if (msg.contains("duplicate key")) {
+                showError("Ya existe un partido con ese ID.", "Error");
+            } else if (msg.contains("foreign key")) {
+                showError("Nombre del jugador o juego no validos. Asegurate de que existen en la base de datos.", "Error");
+            } else {
+                showError("Error en transaccion: " + msg, "Error de Transaccion");
+            }
         } catch (NumberFormatException e) {
-            showError("El ID del partido debe ser un número entero válido.", "Error de Formato");
+            showError("El ID del partido debe ser un numero entero valido.", "Error de Formato");
         }
     }
 
@@ -683,7 +647,7 @@ public class MatchesPanel extends JPanel {
     }
 
     private boolean validateFields(boolean isAdding) {
-        clearErrorMessages(); // Limpiar errores al iniciar
+        clearErrorMessages();
         boolean isValid = true;
 
         String matchIdText = txtMatchId.getText().trim();
@@ -693,7 +657,6 @@ public class MatchesPanel extends JPanel {
         String result = cmbResult.getSelectedItem().toString();
         Date dateSelected = dateChooserMatch.getDate();
 
-        // 1. ID del Partido
         if (matchIdText.isEmpty()) {
             lblIdError.setText("ID obligatorio.");
             isValid = false;
@@ -710,7 +673,6 @@ public class MatchesPanel extends JPanel {
             }
         }
 
-        // 2. Jugador 1 (NOT NULL, CHECK LENGTH >= 3)
         if (player1Text.isEmpty()) {
             lblPlayer1Error.setText("Jugador 1 obligatorio.");
             isValid = false;
@@ -719,7 +681,6 @@ public class MatchesPanel extends JPanel {
             isValid = false;
         }
 
-        // 3. Jugador 2 (NOT NULL, CHECK LENGTH >= 3)
         if (player2Text.isEmpty()) {
             lblPlayer2Error.setText("Jugador 2 obligatorio.");
             isValid = false;
@@ -728,7 +689,6 @@ public class MatchesPanel extends JPanel {
             isValid = false;
         }
 
-        // 4. Jugadores Diferentes
         if (!player1Text.isEmpty() && !player2Text.isEmpty() && player1Text.length() >= 3 && player2Text.length() >= 3) {
             if (player1Text.equalsIgnoreCase(player2Text)) {
                 lblPlayer1Error.setText("Los jugadores deben ser diferentes.");
@@ -737,19 +697,16 @@ public class MatchesPanel extends JPanel {
             }
         }
 
-        // 5. Resultado (CHECK LENGTH >= 3)
         if (result.length() < 3) {
             lblResultError.setText("Resultado inválido (Mínimo 3 caracteres).");
             isValid = false;
         }
 
-        // 6. Fecha (NOT NULL)
         if (dateSelected == null) {
             lblDateError.setText("Fecha obligatoria.");
             isValid = false;
         }
 
-        // 7. Hora (Formato hh:mm, Rango 01-12)
         if (timeStr.isEmpty() || !timeStr.matches("\\d{2}:\\d{2}")) {
             lblTimeError.setText("Formato de hora inválido (hh:mm).");
             isValid = false;
@@ -769,8 +726,7 @@ public class MatchesPanel extends JPanel {
             }
         }
 
-        // 8. Fecha/Hora Futura (CHECK match_date <= CURRENT_TIMESTAMP)
-        if (dateSelected != null && lblTimeError.getText().trim().isEmpty()) { // Solo checamos si la hora ya es válida
+        if (dateSelected != null && lblTimeError.getText().trim().isEmpty()) {
             Timestamp matchDate = getFullTimestamp();
             if (matchDate != null && matchDate.after(new Timestamp(System.currentTimeMillis()))) {
                 lblDateError.setText("La fecha no puede ser futura.");
@@ -778,7 +734,6 @@ public class MatchesPanel extends JPanel {
             }
         }
 
-        // Control de botones
         boolean rowSelected = table.getSelectedRow() != -1;
         btnAdd.setEnabled(isValid && isAdding);
         btnUpdate.setEnabled(isValid && !isAdding && rowSelected);
