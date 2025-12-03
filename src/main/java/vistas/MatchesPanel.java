@@ -1,5 +1,6 @@
 package vistas;
 
+import com.toedter.calendar.JCalendar;
 import consultas.MatchCRUD;
 import consultas.GameCRUD;
 import tablas.Match;
@@ -264,82 +265,62 @@ public class MatchesPanel extends JPanel {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
 
-        // CAMBIAR: Obtener el JTextField interno de forma diferente
-        JTextField dateField = (JTextField) dateChooser.getDateEditor().getUiComponent();
+        // Configurar tamaño preferido
+        dateChooser.setPreferredSize(new Dimension(150, 35));
+        dateChooser.setMinimumSize(new Dimension(150, 35));
 
-        // Configurar colores para texto blanco
-        dateField.setForeground(TEXT_PRIMARY); // TEXTO BLANCO
-        dateField.setBackground(BG_INPUT);
-        dateField.setCaretColor(ACCENT_PRIMARY);
+        JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
 
-        // CAMBIAR ESTO:
-        dateField.setBorder(BorderFactory.createCompoundBorder(
+        // Configurar fuente y tamaño
+        dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
+
+        // FORZAR COLOR BLANCO
+        dateEditor.setForeground(Color.WHITE);
+
+        dateEditor.setBackground(BG_INPUT);
+        dateEditor.setCaretColor(ACCENT_PRIMARY);
+        dateEditor.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
-                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)  // ← ELIMINAR ESTO
+                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
 
-        // POR ESTO (igual que LeaguesPanel):
-        dateField.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));
-
-        // IMPORTANTE: Configurar el color del texto seleccionado
-        dateField.setSelectionColor(ACCENT_PRIMARY);
-        dateField.setSelectedTextColor(BG_DARK_PRIMARY);
-
-        // AÑADIR: DocumentListener para mantener el color blanco
-        dateField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    dateField.setForeground(TEXT_PRIMARY);
-                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
-                        dateField.setCaretPosition(dateField.getText().length());
-                    }
-                });
-            }
-
-            @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    dateField.setForeground(TEXT_PRIMARY);
-                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
-                        dateField.setCaretPosition(dateField.getText().length());
-                    }
-                });
-            }
-
-            @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    dateField.setForeground(TEXT_PRIMARY);
-                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
-                        dateField.setCaretPosition(dateField.getText().length());
-                    }
-                });
-            }
-        });
-
-        // AÑADIR: PropertyChangeListener para cuando se selecciona una fecha
-        dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
-            if ("date".equals(evt.getPropertyName())) {
-                javax.swing.SwingUtilities.invokeLater(() -> {
-                    dateField.setForeground(TEXT_PRIMARY);
-                    if (dateField.getText() != null && !dateField.getText().isEmpty()) {
-                        dateField.setCaretPosition(dateField.getText().length());
-                    }
-                    dateField.revalidate();
-                    dateField.repaint();
-                });
-            }
-        });
+        // Configurar tamaño del editor
+        Component editorComponent = dateChooser.getDateEditor().getUiComponent();
+        if (editorComponent instanceof JTextField) {
+            JTextField textField = (JTextField) editorComponent;
+            textField.setPreferredSize(new Dimension(150, 35));
+            textField.setMinimumSize(new Dimension(150, 35));
+        }
 
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
-        dateChooser.getJCalendar().setBackground(Color.WHITE);
-        dateChooser.getJCalendar().setForeground(BG_DARK_PRIMARY);
-        dateChooser.getJCalendar().setWeekdayForeground(Color.BLACK);
-        dateChooser.getJCalendar().setSundayForeground(Color.BLACK);
 
-        // AÑADIR: Ajustar tamaño
-        dateChooser.setPreferredSize(new Dimension(150, dateChooser.getPreferredSize().height));
+        // Configurar el calendario
+        JCalendar calendar = dateChooser.getJCalendar();
+        calendar.setBackground(BG_INPUT);
+
+        // Configurar días del calendario
+        calendar.getDayChooser().getDayPanel().setBackground(BG_INPUT);
+        calendar.getDayChooser().setForeground(Color.WHITE);
+        calendar.getDayChooser().setBackground(BG_INPUT);
+        calendar.getDayChooser().setDecorationBackgroundColor(BG_INPUT);
+        calendar.getDayChooser().setDecorationBordersVisible(false);
+
+        // Forzar color blanco en el campo de texto
+        dateChooser.addPropertyChangeListener("date", evt -> {
+            SwingUtilities.invokeLater(() -> {
+                dateEditor.setForeground(Color.WHITE);
+                if (editorComponent instanceof JTextField) {
+                    ((JTextField) editorComponent).setForeground(Color.WHITE);
+                }
+            });
+        });
+
+        // Listener adicional para asegurar color
+        dateEditor.addPropertyChangeListener(evt -> {
+            if ("foreground".equals(evt.getPropertyName())) {
+                SwingUtilities.invokeLater(() -> dateEditor.setForeground(Color.WHITE));
+            }
+        });
 
         return dateChooser;
     }

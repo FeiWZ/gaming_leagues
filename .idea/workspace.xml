@@ -4,46 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< HEAD
-    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="FINAL">
-      <change afterPath="$PROJECT_DIR$/src/main/informes/EstructuraEquipos.jrxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/informes/RankingJugadores.jrxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/informes/ResumenLigas.jrxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/vistas/InformesPanel.java" afterDir="false" />
+    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" afterDir="false" />
-=======
-<<<<<<< HEAD
-    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-core-javadoc.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-core-sources.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-core.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-swing-javadoc.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-swing-sources.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/lib/miglayout-swing.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/src/main/java/MainForm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Games_Leagues/src/main/java/MainForm.jfd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../demostracion/src/main/java/EjemploGame.form" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../demostracion/src/main/java/EjemploGame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Codigos" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Hermosillo2.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../HermosilloCP.class" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../HermosilloCP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../HermosilloCP.java" afterDir="false" />
-=======
-    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/basedatos/ConexionBD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/GamesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/RankingsPanel.java" afterDir="false" />
->>>>>>> ee2594402dac9a63fea6e0a1a56c9192f89f96f0
       <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" afterDir="false" />
->>>>>>> 7fda5034c9bf6d2ab2d5854a32daaa9088a6f55e
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,22 +33,15 @@
     &quot;assignee&quot;: &quot;FeiWZ&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-<<<<<<< HEAD
-    "url": "https://github.com/FeiWZ/gaming_leagues",
-    "accountId": "2731dd41-cf0d-47fb-8298-56f19dcb2854"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/FeiWZ/gaming_leagues.git&quot;,
+    &quot;accountId&quot;: &quot;3987c8bc-3f29-4aa0-b9be-7c7c95b10f2f&quot;
   }
-}]]></component>
-=======
-    "url": "https://github.com/FeiWZ/gaming_leagues.git",
-    "accountId": "3987c8bc-3f29-4aa0-b9be-7c7c95b10f2f"
-  }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
->>>>>>> ee2594402dac9a63fea6e0a1a56c9192f89f96f0
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -91,32 +50,6 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-<<<<<<< HEAD
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.CompiladorReportes.executor": "Run",
-    "Application.CompilarResumenLigasFinal.executor": "Run",
-    "Application.ConexionBD.executor": "Run",
-    "Application.GameLeaguesApp.executor": "Debug",
-    "Application.GameSwing.executor": "Run",
-    "Application.MenuPrincipal.executor": "Run",
-    "Application.PantallaInicio.executor": "Run",
-    "Application.SoloCompilarResumenLigas.executor": "Run",
-    "Application.VentanaPrincipal.executor": "Run",
-    "Application.VerificarCrear.executor": "Run",
-    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Usuario/Desktop/Game_LeaguesN/gaming_leagues/src/main/informes",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
-=======
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Application.ConexionBD.executor&quot;: &quot;Run&quot;,
@@ -126,18 +59,6 @@
     &quot;Application.VentanaPrincipal.executor&quot;: &quot;Run&quot;,
     &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-<<<<<<< HEAD
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Usuario/Desktop/RNBD/gaming_leagues&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;
-  }
-}</component>
-=======
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
@@ -148,30 +69,11 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
->>>>>>> ee2594402dac9a63fea6e0a1a56c9192f89f96f0
   }
-}]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Usuario\Desktop\Game_LeaguesN\gaming_leagues\src\main\informes" />
-    </key>
-  </component>
+}</component>
   <component name="RunManager" selected="Application.PantallaInicio">
-    <configuration name="CompiladorReportes" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="basedatos.CompiladorReportes" />
-      <module name="Gaming_Leagues" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="basedatos.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CompilarResumenLigasFinal" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="basedatos.CompilarResumenLigasFinal" />
+    <configuration name="ConexionBD" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="basedatos.ConexionBD" />
       <module name="Gaming_Leagues" />
       <extension name="coverage">
         <pattern>
@@ -196,51 +98,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SoloCompilarResumenLigas" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="basedatos.SoloCompilarResumenLigas" />
-      <module name="Gaming_Leagues" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="basedatos.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="VerificarCrear" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="basedatos.VerificarCrear" />
-      <module name="Gaming_Leagues" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="basedatos.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Application.CompiladorReportes" />
-      <item itemvalue="Application.CompilarResumenLigasFinal" />
-      <item itemvalue="Application.SoloCompilarResumenLigas" />
-      <item itemvalue="Application.VerificarCrear" />
-      <item itemvalue="Application.PantallaInicio" />
-    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.PantallaInicio" />
-        <item itemvalue="Application.CompiladorReportes" />
-        <item itemvalue="Application.SoloCompilarResumenLigas" />
-        <item itemvalue="Application.VerificarCrear" />
-        <item itemvalue="Application.CompilarResumenLigasFinal" />
+        <item itemvalue="Application.ConexionBD" />
       </list>
     </recent_temporary>
   </component>
-<<<<<<< HEAD
-=======
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -248,8 +112,6 @@
       </set>
     </attachedChunks>
   </component>
->>>>>>> 7fda5034c9bf6d2ab2d5854a32daaa9088a6f55e
->>>>>>> ee2594402dac9a63fea6e0a1a56c9192f89f96f0
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -291,15 +153,7 @@
       <option name="project" value="LOCAL" />
       <updated>1764275464666</updated>
     </task>
-    <task id="LOCAL-00005" summary="FINAL">
-      <option name="closed" value="true" />
-      <created>1764564808438</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1764564808438</updated>
-    </task>
-    <option name="localTasksCounter" value="6" />
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -317,31 +171,6 @@
     <MESSAGE value="Cambio en jdk" />
     <MESSAGE value="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)" />
     <MESSAGE value="Tabla Matches y Ranking corregidos" />
-    <MESSAGE value="FINAL" />
-    <option name="LAST_COMMIT_MESSAGE" value="FINAL" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java</url>
-          <line>49</line>
-          <properties class="vistas.PlayersPanel" method="&lt;init&gt;">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java</url>
-          <line>64</line>
-          <properties class="vistas.MatchesPanel" method="initComponents">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <option name="LAST_COMMIT_MESSAGE" value="Tabla Matches y Ranking corregidos" />
   </component>
 </project>
