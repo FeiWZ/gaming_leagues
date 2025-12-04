@@ -1,12 +1,13 @@
 package vistas;
 
-import com.toedter.calendar.JCalendar;
 import consultas.PlayerCRUD;
 import tablas.Player;
-import static vistas.DesignConstants.*;
+import static vistas.DesignConstants.*; // Asumimos que aquí está ACCENT_DANGER, SPACING_MD, etc.
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener; // Importación necesaria
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import com.toedter.calendar.JDateChooser;
@@ -35,6 +36,12 @@ public class PlayersPanel extends JPanel {
     private JTextField txtCustomGender, txtCustomNationality;
     private JDateChooser dateChooserBirthDate;
     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
+
+    // --- DECLARACIÓN DE LABELS DE ERROR ---
+    private JLabel lblErrorFirst, lblErrorLast, lblErrorEmail, lblErrorAddress, lblErrorBirthDate;
+    private JLabel lblErrorGender, lblErrorNationality; // Para errores de "Otro" vacío
+
+    private DocumentListener validationListener;
 
     private final String[] GENDERS = {"M", "F", "Otro"};
     private final String[] COMMON_NATIONALITIES = {"México", "Estados Unidos", "España", "Argentina", "Colombia", "Otro"};
@@ -70,6 +77,42 @@ public class PlayersPanel extends JPanel {
         loadPlayers();
     }
 
+    // --- NUEVO MÉTODO PARA CREAR LABEL DE ERROR (ROJO Y NEGRITAS) ---
+    private JLabel createErrorLabel() {
+        JLabel label = new JLabel(" ");
+        label.setForeground(ACCENT_DANGER);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        return label;
+    }
+
+    // --- NUEVO MÉTODO PARA CONFIGURAR LA VALIDACIÓN AUTOMÁTICA ---
+    private void setupValidationListeners() {
+        validationListener = new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) { validateAllFields(); }
+            public void removeUpdate(DocumentEvent e) { validateAllFields(); }
+            public void insertUpdate(DocumentEvent e) { validateAllFields(); }
+        };
+
+        // Escucha cambios en campos de texto principales y personalizados
+        txtFirstName.getDocument().addDocumentListener(validationListener);
+        txtLastName.getDocument().addDocumentListener(validationListener);
+        txtEmail.getDocument().addDocumentListener(validationListener);
+        txtAddress.getDocument().addDocumentListener(validationListener);
+        txtCustomGender.getDocument().addDocumentListener(validationListener);
+        txtCustomNationality.getDocument().addDocumentListener(validationListener);
+
+        // Escucha cambios en JComboBox
+        cmbGender.addActionListener(e -> validateAllFields());
+        cmbNationality.addActionListener(e -> validateAllFields());
+
+        // Escucha cambios en JDateChooser
+        dateChooserBirthDate.getDateEditor().addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName())) {
+                validateAllFields();
+            }
+        });
+    }
+
     private void initComponents() {
         setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
         setBackground(BG_DARK_SECONDARY);
@@ -80,6 +123,8 @@ public class PlayersPanel extends JPanel {
 
         add(formPanel, BorderLayout.NORTH);
         add(tablePanel, BorderLayout.CENTER);
+
+        setupValidationListeners(); // Activa la validación
     }
 
     private JPanel createFormPanel() {
@@ -89,6 +134,16 @@ public class PlayersPanel extends JPanel {
                 BorderFactory.createLineBorder(BORDER_LIGHT, 1),
                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
         ));
+
+        // --- Inicialización de Labels de Error ---
+        lblErrorFirst = createErrorLabel();
+        lblErrorLast = createErrorLabel();
+        lblErrorEmail = createErrorLabel();
+        lblErrorAddress = createErrorLabel();
+        lblErrorBirthDate = createErrorLabel();
+        lblErrorGender = createErrorLabel();
+        lblErrorNationality = createErrorLabel();
+
 
         JPanel fieldsContainer = new JPanel(new GridBagLayout());
         fieldsContainer.setBackground(BG_CARD);
@@ -103,6 +158,7 @@ public class PlayersPanel extends JPanel {
             if (isOther) txtCustomGender.requestFocus();
             revalidate();
             repaint();
+            validateAllFields(); // Validar al cambiar el combo
         });
 
         cmbNationality.addActionListener(e -> {
@@ -111,27 +167,30 @@ public class PlayersPanel extends JPanel {
             if (isOther) txtCustomNationality.requestFocus();
             revalidate();
             repaint();
+            validateAllFields(); // Validar al cambiar el combo
         });
 
 
         gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre:", txtFirstName), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Apellido:", txtLastName), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Email:", txtEmail), gbc);
+        // --- Integración de Labels de Error en createFieldPanel ---
+        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre:", txtFirstName, lblErrorFirst), gbc);
+        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Apellido:", txtLastName, lblErrorLast), gbc);
+        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Email:", txtEmail, lblErrorEmail), gbc);
 
         gbc.gridx = 3;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
-        fieldsContainer.add(createFieldPanel("Dirección:", txtAddress), gbc);
+        fieldsContainer.add(createFieldPanel("Dirección:", txtAddress, lblErrorAddress), gbc);
 
 
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
 
-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Fecha Nacimiento:", dateChooserBirthDate), gbc);
-        gbc.gridx = 1; fieldsContainer.add(createComboFieldPanel("Género:", cmbGender, txtCustomGender), gbc);
-        gbc.gridx = 2; fieldsContainer.add(createComboFieldPanel("Nacionalidad:", cmbNationality, txtCustomNationality), gbc);
+        // --- Integración de Labels de Error en Fecha y Combos ---
+        gbc.gridx = 0; fieldsContainer.add(createDatePanel("Fecha Nacimiento:", dateChooserBirthDate, lblErrorBirthDate), gbc);
+        gbc.gridx = 1; fieldsContainer.add(createComboFieldPanel("Género:", cmbGender, txtCustomGender, lblErrorGender), gbc);
+        gbc.gridx = 2; fieldsContainer.add(createComboFieldPanel("Nacionalidad:", cmbNationality, txtCustomNationality, lblErrorNationality), gbc);
 
         gbc.gridx = 3;
         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
@@ -160,10 +219,13 @@ public class PlayersPanel extends JPanel {
         panel.add(fieldsContainer, BorderLayout.NORTH);
         panel.add(buttonsPanel, BorderLayout.SOUTH);
 
+        validateAllFields(); // Validación inicial
+
         return panel;
     }
 
-    private JPanel createFieldPanel(String labelText, JComponent component) {
+    // --- MÉTODO MODIFICADO: Acepta JComponent y JLabel de error ---
+    private JPanel createFieldPanel(String labelText, JComponent component, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -171,13 +233,75 @@ public class PlayersPanel extends JPanel {
         label.setFont(getBoldFont(FONT_SIZE_SMALL));
         label.setForeground(TEXT_SECONDARY);
 
+        JPanel inputContainer = new JPanel(new BorderLayout());
+        inputContainer.setOpaque(false);
+        inputContainer.add(component, BorderLayout.CENTER);
+        inputContainer.add(errorLabel, BorderLayout.SOUTH); // Agrega el error AQUÍ
+
         panel.add(label, BorderLayout.NORTH);
-        panel.add(component, BorderLayout.CENTER);
+        panel.add(inputContainer, BorderLayout.CENTER);
 
         return panel;
     }
 
-    private JPanel createComboFieldPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt) {
+    // --- NUEVO MÉTODO PARA JDateChooser con JLabel de error ---
+    private JPanel createDatePanel(String labelText, JDateChooser dateChooser, JLabel errorLabel) {
+        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+        panel.setBackground(BG_CARD);
+
+        JLabel label = new JLabel(labelText);
+        label.setFont(getBoldFont(FONT_SIZE_SMALL));
+        label.setForeground(TEXT_SECONDARY);
+
+        // CONFIGURAR EL JDateChooser AQUÍ
+        if (dateChooser != null) {
+            // Configurar tamaño
+            dateChooser.setPreferredSize(new Dimension(150, 35));
+            dateChooser.setMinimumSize(new Dimension(150, 35));
+
+            // Configurar el campo de texto interno
+            Component dateEditor = dateChooser.getDateEditor().getUiComponent();
+            if (dateEditor instanceof JTextField) {
+                JTextField dateField = (JTextField) dateEditor;
+
+                // Configurar tamaño del campo
+                dateField.setPreferredSize(new Dimension(150, 35));
+                dateField.setMinimumSize(new Dimension(150, 35));
+
+                // COLOR BLANCO
+                dateField.setForeground(Color.WHITE);
+
+                // Configurar otros estilos
+                dateField.setBackground(BG_INPUT);
+                dateField.setCaretColor(ACCENT_PRIMARY);
+                dateField.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(BORDER_LIGHT, 1),
+                        new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
+                ));
+
+                // Forzar color blanco continuamente
+                dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
+                    if ("date".equals(evt.getPropertyName())) {
+                        SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
+                    }
+                });
+            }
+        }
+
+        JPanel inputContainer = new JPanel(new BorderLayout());
+        inputContainer.setOpaque(false);
+        inputContainer.add(dateChooser, BorderLayout.CENTER);
+        inputContainer.add(errorLabel, BorderLayout.SOUTH); // Agrega el error AQUÍ
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(inputContainer, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+
+    // --- MÉTODO MODIFICADO: Acepta JLabel de error para texto libre ---
+    private JPanel createComboFieldPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt, JLabel errorLabel) {
         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
         panel.setBackground(BG_CARD);
 
@@ -192,6 +316,7 @@ public class PlayersPanel extends JPanel {
         inputGroup.add(cmb);
         inputGroup.add(Box.createVerticalStrut(SPACING_XS));
         inputGroup.add(auxTxt);
+        inputGroup.add(errorLabel); // Agrega el error AQUI
 
         auxTxt.setMaximumSize(new Dimension(Integer.MAX_VALUE, auxTxt.getPreferredSize().height));
 
@@ -199,6 +324,9 @@ public class PlayersPanel extends JPanel {
         panel.add(inputGroup, BorderLayout.CENTER);
         return panel;
     }
+
+    // El método createFieldPanel(String labelText, JComponent component) original ya no se usa
+    // y ha sido reemplazado por createFieldPanel(String labelText, JComponent component, JLabel errorLabel)
 
     private JTextField createStyledTextField() {
         JTextField textField = new JTextField();
@@ -217,15 +345,9 @@ public class PlayersPanel extends JPanel {
         JDateChooser dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("yyyy-MM-dd");
 
-        dateChooser.setPreferredSize(new Dimension(150, 35));
-        dateChooser.setMinimumSize(new Dimension(150, 35));
-
         JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
-
         dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
-
-        dateEditor.setForeground(Color.WHITE);
-
+        dateEditor.setForeground(TEXT_PRIMARY);
         dateEditor.setBackground(BG_INPUT);
         dateEditor.setCaretColor(ACCENT_PRIMARY);
         dateEditor.setBorder(BorderFactory.createCompoundBorder(
@@ -233,38 +355,8 @@ public class PlayersPanel extends JPanel {
                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
         ));
 
-        Component editorComponent = dateChooser.getDateEditor().getUiComponent();
-        if (editorComponent instanceof JTextField) {
-            JTextField textField = (JTextField) editorComponent;
-            textField.setPreferredSize(new Dimension(150, 35));
-            textField.setMinimumSize(new Dimension(150, 35));
-        }
-
         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
-
-        JCalendar calendar = dateChooser.getJCalendar();
-        calendar.setBackground(BG_INPUT);
-
-        calendar.getDayChooser().getDayPanel().setBackground(BG_INPUT);
-        calendar.getDayChooser().setForeground(Color.WHITE);
-        calendar.getDayChooser().setBackground(BG_INPUT);
-        calendar.getDayChooser().setDecorationBackgroundColor(BG_INPUT);
-        calendar.getDayChooser().setDecorationBordersVisible(false);
-
-        dateChooser.addPropertyChangeListener("date", evt -> {
-            SwingUtilities.invokeLater(() -> {
-                dateEditor.setForeground(Color.WHITE);
-                if (editorComponent instanceof JTextField) {
-                    ((JTextField) editorComponent).setForeground(Color.WHITE);
-                }
-            });
-        });
-
-        dateEditor.addPropertyChangeListener(evt -> {
-            if ("foreground".equals(evt.getPropertyName())) {
-                SwingUtilities.invokeLater(() -> dateEditor.setForeground(Color.WHITE));
-            }
-        });
+        dateChooser.getJCalendar().setBackground(BG_INPUT);
 
         return dateChooser;
     }
@@ -453,6 +545,8 @@ public class PlayersPanel extends JPanel {
         } catch (Exception e) {
             dateChooserBirthDate.setDate(null);
         }
+
+        validateAllFields(); // Vuelve a validar para actualizar botones
     }
 
     private void loadCustomValue(JComboBox<String> cmb, JTextField txt, String[] commonValues, String currentValue) {
@@ -571,48 +665,111 @@ public class PlayersPanel extends JPanel {
         txtCustomNationality.setVisible(false);
         dateChooserBirthDate.setDate(null);
         table.clearSelection();
+
+        // --- Limpiar Labels de Error ---
+        lblErrorFirst.setText(" ");
+        lblErrorLast.setText(" ");
+        lblErrorEmail.setText(" ");
+        lblErrorAddress.setText(" ");
+        lblErrorBirthDate.setText(" ");
+        lblErrorGender.setText(" ");
+        lblErrorNationality.setText(" ");
+
+        validateAllFields(); // Valida para resetear el estado de los botones
         revalidate();
         repaint();
     }
 
-    private boolean validateFields() {
+    // --- REEMPLAZO DE validateFields() por validateAllFields() ---
+    private boolean validateAllFields() {
+        boolean isValid = true;
+
         String firstName = txtFirstName.getText().trim();
         String lastName = txtLastName.getText().trim();
         String email = txtEmail.getText().trim();
+        String address = txtAddress.getText().trim();
         String gender = getSelectedGender();
         String nationality = getSelectedNationality();
         Date birthDate = dateChooserBirthDate.getDate();
 
-        if (firstName.isEmpty() || firstName.length() < 2) {
-            showError("Nombre obligatorio (Mín. 2 caracteres).");
-            return false;
+        // 1. VALIDACIÓN NOMBRE (Obligatorio, Mín. 2 caracteres)
+        if (firstName.isEmpty()) {
+            lblErrorFirst.setText("El nombre es obligatorio.");
+            isValid = false;
+        } else if (firstName.length() < 2) {
+            lblErrorFirst.setText("Mínimo 2 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorFirst.setText(" ");
         }
-        if (lastName.isEmpty() || lastName.length() < 2) {
-            showError("Apellido obligatorio (Mín. 2 caracteres).");
-            return false;
+
+        // 2. VALIDACIÓN APELLIDO (Obligatorio, Mín. 2 caracteres)
+        if (lastName.isEmpty()) {
+            lblErrorLast.setText("El apellido es obligatorio.");
+            isValid = false;
+        } else if (lastName.length() < 2) {
+            lblErrorLast.setText("Mínimo 2 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorLast.setText(" ");
         }
-        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
-            showError("Email inválido.");
-            return false;
+
+        // 3. VALIDACIÓN EMAIL (Obligatorio, Formato)
+        if (email.isEmpty()) {
+            lblErrorEmail.setText("El email es obligatorio.");
+            isValid = false;
+        } else if (!EMAIL_PATTERN.matcher(email).matches()) {
+            lblErrorEmail.setText("Email inválido.");
+            isValid = false;
+        } else {
+            lblErrorEmail.setText(" ");
         }
-        if (gender.isEmpty()) {
-            showError("El género es obligatorio.");
-            return false;
+
+        // 4. VALIDACIÓN DIRECCIÓN (Obligatoria, Mín. 5 caracteres)
+        if (address.isEmpty()) {
+            lblErrorAddress.setText("La dirección es obligatoria.");
+            isValid = false;
+        } else if (address.length() < 5) {
+            lblErrorAddress.setText("Mínimo 5 caracteres.");
+            isValid = false;
+        } else {
+            lblErrorAddress.setText(" ");
         }
-        if (nationality.isEmpty() || nationality.length() < 2) {
-            showError("Nacionalidad obligatoria (Mín. 2 caracteres).");
-            return false;
-        }
+
+        // 5. VALIDACIÓN FECHA NACIMIENTO (Obligatoria, No futura)
         if (birthDate == null) {
-            showError("La fecha de nacimiento es obligatoria.");
-            return false;
+            lblErrorBirthDate.setText("La fecha de nacimiento es obligatoria.");
+            isValid = false;
+        } else if (birthDate.after(new Date())) {
+            lblErrorBirthDate.setText("La fecha no puede ser futura.");
+            isValid = false;
+        } else {
+            lblErrorBirthDate.setText(" ");
         }
-        if (birthDate.after(new Date())) {
-            showError("La fecha no puede ser futura.");
-            return false;
+
+        // 6. VALIDACIÓN GÉNERO (Solo si se selecciona "Otro" y se deja vacío)
+        lblErrorGender.setText(" ");
+        if ("Otro".equals(cmbGender.getSelectedItem()) && txtCustomGender.getText().trim().isEmpty()) {
+            lblErrorGender.setText("El género es obligatorio.");
+            isValid = false;
         }
-        return true;
+
+        // 7. VALIDACIÓN NACIONALIDAD (Solo si se selecciona "Otro" y se deja vacío)
+        lblErrorNationality.setText(" ");
+        if ("Otro".equals(cmbNationality.getSelectedItem()) && txtCustomNationality.getText().trim().isEmpty()) {
+            lblErrorNationality.setText("Nacionalidad obligatoria.");
+            isValid = false;
+        }
+
+        // Actualizar el estado de los botones
+        btnAdd.setEnabled(isValid);
+        btnUpdate.setEnabled(isValid && selectedPlayerId != -1);
+
+        return isValid;
     }
+
+    // El método `validateFields()` original se convierte en obsoleto
+    private boolean validateFields() { return validateAllFields(); }
 
     private void handleSQLError(SQLException e) {
         String msg = e.getMessage();

@@ -1,0 +1,525 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"05fc8084-736d-43f9-b5c7-2184d133f7ef\" name=\"Changes\" comment=\"Tabla Matches y Ranking corregidos\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n    <option name=\"ROOT_SYNC\" value=\"SYNC\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;FeiWZ&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">{\r\n  &quot;selectedUrlAndAccountId&quot;: {\r\n    &quot;url&quot;: &quot;https://github.com/FeiWZ/gaming_leagues.git&quot;,\r\n    &quot;accountId&quot;: &quot;3987c8bc-3f29-4aa0-b9be-7c7c95b10f2f&quot;\r\n  }\r\n}</component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"DEPENDENCY_CHECKER_PROBLEMS_TAB\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 2\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"35N9BTASl3TgwqOSIF1ONOeq30k\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Application.ConexionBD.executor&quot;: &quot;Run&quot;,\r\n    &quot;Application.GameSwing.executor&quot;: &quot;Run&quot;,\r\n    &quot;Application.MenuPrincipal.executor&quot;: &quot;Run&quot;,\r\n    &quot;Application.PantallaInicio.executor&quot;: &quot;Run&quot;,\r\n    &quot;Application.VentanaPrincipal.executor&quot;: &quot;Run&quot;,\r\n    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/feife/Downloads/gaming_leagues&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\" selected=\"Application.PantallaInicio\">\r\n    <configuration name=\"ConexionBD\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"basedatos.ConexionBD\" />\r\n      <module name=\"Gaming_Leagues\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"basedatos.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"PantallaInicio\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"vistas.PantallaInicio\" />\r\n      <module name=\"Gaming_Leagues\" />\r\n      <extension name=\"coverage\">\r\n        <pattern>\r\n          <option name=\"PATTERN\" value=\"vistas.*\" />\r\n          <option name=\"ENABLED\" value=\"true\" />\r\n        </pattern>\r\n      </extension>\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.PantallaInicio\" />\r\n        <item itemvalue=\"Application.ConexionBD\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.23892.409\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"05fc8084-736d-43f9-b5c7-2184d133f7ef\" name=\"Changes\" comment=\"\" />\r\n      <created>1762939527040</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1762939527040</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Cambio en jdk\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1763681325759</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1763681325759</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Cambio en jdk\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1763875999017</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1763875999017</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1764233829685</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1764233829685</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Tabla Matches y Ranking corregidos\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1764275464666</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1764275464666</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"5\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Cambio en jdk\" />\r\n    <MESSAGE value=\"Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)\" />\r\n    <MESSAGE value=\"Tabla Matches y Ranking corregidos\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Tabla Matches y Ranking corregidos\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 8176b08ded2354e231e1c5b029b372a16e89c385)
++++ b/.idea/workspace.xml	(date 1764797109188)
+@@ -4,12 +4,9 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Tabla Matches y Ranking corregidos">
++    <list default="true" id="05fc8084-736d-43f9-b5c7-2184d133f7ef" name="Changes" comment="Fechas visibles">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/LeaguesPanel.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/MatchesPanel.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/PlayersPanel.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/vistas/TeamsPanel.java" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -153,7 +150,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1764275464666</updated>
+     </task>
+-    <option name="localTasksCounter" value="5" />
++    <task id="LOCAL-00005" summary="Fechas visibles">
++      <option name="closed" value="true" />
++      <created>1764794447792</created>
++      <option name="number" value="00005" />
++      <option name="presentableId" value="LOCAL-00005" />
++      <option name="project" value="LOCAL" />
++      <updated>1764794447794</updated>
++    </task>
++    <option name="localTasksCounter" value="6" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -171,6 +176,7 @@
+     <MESSAGE value="Cambio en jdk" />
+     <MESSAGE value="Tabla Matches actualizado, pero no funciona Rankings (dps lo arreglo)" />
+     <MESSAGE value="Tabla Matches y Ranking corregidos" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Tabla Matches y Ranking corregidos" />
++    <MESSAGE value="Fechas visibles" />
++    <option name="LAST_COMMIT_MESSAGE" value="Fechas visibles" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: src/main/java/vistas/PlayersPanel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package vistas;\r\n\r\nimport com.toedter.calendar.JCalendar;\r\nimport consultas.PlayerCRUD;\r\nimport tablas.Player;\r\nimport static vistas.DesignConstants.*;\r\n\r\nimport javax.swing.*;\r\nimport javax.swing.border.EmptyBorder;\r\nimport javax.swing.table.DefaultTableModel;\r\nimport javax.swing.table.TableCellRenderer;\r\nimport com.toedter.calendar.JDateChooser;\r\nimport com.toedter.calendar.JTextFieldDateEditor;\r\n\r\nimport java.awt.*;\r\nimport java.sql.Connection;\r\nimport java.sql.SQLException;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.regex.Pattern;\r\n\r\npublic class PlayersPanel extends JPanel {\r\n\r\n    private Connection connection;\r\n    private PlayerCRUD playerCRUD;\r\n\r\n    private final SimpleDateFormat SDF = new SimpleDateFormat(\"yyyy-MM-dd\");\r\n    private static final Pattern EMAIL_PATTERN = Pattern.compile(\"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,6}$\");\r\n\r\n    private JTable table;\r\n    private DefaultTableModel tableModel;\r\n    private JTextField txtFirstName, txtLastName, txtAddress, txtEmail;\r\n    private JComboBox<String> cmbGender, cmbNationality;\r\n    private JTextField txtCustomGender, txtCustomNationality;\r\n    private JDateChooser dateChooserBirthDate;\r\n    private JButton btnAdd, btnUpdate, btnDelete, btnClear;\r\n\r\n    private final String[] GENDERS = {\"M\", \"F\", \"Otro\"};\r\n    private final String[] COMMON_NATIONALITIES = {\"México\", \"Estados Unidos\", \"España\", \"Argentina\", \"Colombia\", \"Otro\"};\r\n    private int selectedPlayerId = -1;\r\n\r\n    private Font getBodyFont(int size) { return new Font(\"Roboto\", Font.PLAIN, size); }\r\n    private Font getTitleFont(int size) { return new Font(\"Roboto Slab\", Font.BOLD, size); }\r\n    private Font getBoldFont(int size) { return new Font(\"Roboto\", Font.BOLD, size); }\r\n    private static final int RADIUS_SM = 8;\r\n\r\n    private static Color darken(Color color, float factor) { return new Color(Math.max(0, (int)(color.getRed() * factor)), Math.max(0, (int)(color.getGreen() * factor)), Math.max(0, (int)(color.getBlue() * factor))); }\r\n    private static Color brighten(Color color, float factor) { return new Color(Math.min(255, (int)(color.getRed() * factor)), Math.min(255, (int)(color.getGreen() * factor)), Math.min(255, (int)(color.getBlue() * factor))); }\r\n\r\n\r\n    public PlayersPanel(Connection connection) {\r\n        this.connection = connection;\r\n        this.playerCRUD = new PlayerCRUD(connection);\r\n        SDF.setLenient(false);\r\n\r\n        txtFirstName = createStyledTextField();\r\n        txtLastName = createStyledTextField();\r\n        txtEmail = createStyledTextField();\r\n        txtAddress = createStyledTextField();\r\n        dateChooserBirthDate = createStyledDateChooser();\r\n        cmbGender = createStyledComboBox(GENDERS);\r\n        cmbNationality = createStyledComboBox(COMMON_NATIONALITIES);\r\n        txtCustomGender = createStyledTextField();\r\n        txtCustomGender.setVisible(false);\r\n        txtCustomNationality = createStyledTextField();\r\n        txtCustomNationality.setVisible(false);\r\n\r\n        initComponents();\r\n        loadPlayers();\r\n    }\r\n\r\n    private void initComponents() {\r\n        setLayout(new BorderLayout(SPACING_MD, SPACING_MD));\r\n        setBackground(BG_DARK_SECONDARY);\r\n        setBorder(new EmptyBorder(SPACING_MD, SPACING_MD, SPACING_MD, SPACING_MD));\r\n\r\n        JPanel formPanel = createFormPanel();\r\n        JPanel tablePanel = createTablePanel();\r\n\r\n        add(formPanel, BorderLayout.NORTH);\r\n        add(tablePanel, BorderLayout.CENTER);\r\n    }\r\n\r\n    private JPanel createFormPanel() {\r\n        JPanel panel = new JPanel(new BorderLayout());\r\n        panel.setBackground(BG_CARD);\r\n        panel.setBorder(BorderFactory.createCompoundBorder(\r\n                BorderFactory.createLineBorder(BORDER_LIGHT, 1),\r\n                new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)\r\n        ));\r\n\r\n        JPanel fieldsContainer = new JPanel(new GridBagLayout());\r\n        fieldsContainer.setBackground(BG_CARD);\r\n\r\n        GridBagConstraints gbc = new GridBagConstraints();\r\n        gbc.fill = GridBagConstraints.HORIZONTAL;\r\n        gbc.weightx = 1.0;\r\n\r\n        cmbGender.addActionListener(e -> {\r\n            boolean isOther = \"Otro\".equals(cmbGender.getSelectedItem());\r\n            txtCustomGender.setVisible(isOther);\r\n            if (isOther) txtCustomGender.requestFocus();\r\n            revalidate();\r\n            repaint();\r\n        });\r\n\r\n        cmbNationality.addActionListener(e -> {\r\n            boolean isOther = \"Otro\".equals(cmbNationality.getSelectedItem());\r\n            txtCustomNationality.setVisible(isOther);\r\n            if (isOther) txtCustomNationality.requestFocus();\r\n            revalidate();\r\n            repaint();\r\n        });\r\n\r\n\r\n        gbc.gridy = 0;\r\n        gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);\r\n\r\n        gbc.gridx = 0; fieldsContainer.add(createFieldPanel(\"Nombre:\", txtFirstName), gbc);\r\n        gbc.gridx = 1; fieldsContainer.add(createFieldPanel(\"Apellido:\", txtLastName), gbc);\r\n        gbc.gridx = 2; fieldsContainer.add(createFieldPanel(\"Email:\", txtEmail), gbc);\r\n\r\n        gbc.gridx = 3;\r\n        gbc.insets = new Insets(0, 0, SPACING_MD, 0);\r\n        fieldsContainer.add(createFieldPanel(\"Dirección:\", txtAddress), gbc);\r\n\r\n\r\n        gbc.gridy = 1;\r\n        gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);\r\n\r\n        gbc.gridx = 0; fieldsContainer.add(createFieldPanel(\"Fecha Nacimiento:\", dateChooserBirthDate), gbc);\r\n        gbc.gridx = 1; fieldsContainer.add(createComboFieldPanel(\"Género:\", cmbGender, txtCustomGender), gbc);\r\n        gbc.gridx = 2; fieldsContainer.add(createComboFieldPanel(\"Nacionalidad:\", cmbNationality, txtCustomNationality), gbc);\r\n\r\n        gbc.gridx = 3;\r\n        gbc.insets = new Insets(0, 0, SPACING_MD, 0);\r\n        fieldsContainer.add(new JPanel() {{ setBackground(BG_CARD); }}, gbc);\r\n\r\n\r\n        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, SPACING_MD, 0));\r\n        buttonsPanel.setBackground(BG_CARD);\r\n        buttonsPanel.setBorder(new EmptyBorder(SPACING_MD, 0, 0, 0));\r\n\r\n        btnAdd = createStyledButton(\"Agregar\", ACCENT_SUCCESS);\r\n        btnUpdate = createStyledButton(\"Actualizar\", ACCENT_WARNING);\r\n        btnDelete = createStyledButton(\"Eliminar\", ACCENT_DANGER);\r\n        btnClear = createStyledButton(\"Limpiar\", ACCENT_PRIMARY);\r\n\r\n        btnAdd.addActionListener(e -> addPlayer());\r\n        btnUpdate.addActionListener(e -> updatePlayer());\r\n        btnDelete.addActionListener(e -> deletePlayer());\r\n        btnClear.addActionListener(e -> clearFields());\r\n\r\n        buttonsPanel.add(btnAdd);\r\n        buttonsPanel.add(btnUpdate);\r\n        buttonsPanel.add(btnDelete);\r\n        buttonsPanel.add(btnClear);\r\n\r\n        panel.add(fieldsContainer, BorderLayout.NORTH);\r\n        panel.add(buttonsPanel, BorderLayout.SOUTH);\r\n\r\n        return panel;\r\n    }\r\n\r\n    private JPanel createFieldPanel(String labelText, JComponent component) {\r\n        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));\r\n        panel.setBackground(BG_CARD);\r\n\r\n        JLabel label = new JLabel(labelText);\r\n        label.setFont(getBoldFont(FONT_SIZE_SMALL));\r\n        label.setForeground(TEXT_SECONDARY);\r\n\r\n        panel.add(label, BorderLayout.NORTH);\r\n        panel.add(component, BorderLayout.CENTER);\r\n\r\n        return panel;\r\n    }\r\n\r\n    private JPanel createComboFieldPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt) {\r\n        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));\r\n        panel.setBackground(BG_CARD);\r\n\r\n        JLabel label = new JLabel(labelText);\r\n        label.setFont(getBoldFont(FONT_SIZE_SMALL));\r\n        label.setForeground(TEXT_SECONDARY);\r\n\r\n        JPanel inputGroup = new JPanel();\r\n        inputGroup.setLayout(new BoxLayout(inputGroup, BoxLayout.Y_AXIS));\r\n        inputGroup.setOpaque(false);\r\n\r\n        inputGroup.add(cmb);\r\n        inputGroup.add(Box.createVerticalStrut(SPACING_XS));\r\n        inputGroup.add(auxTxt);\r\n\r\n        auxTxt.setMaximumSize(new Dimension(Integer.MAX_VALUE, auxTxt.getPreferredSize().height));\r\n\r\n        panel.add(label, BorderLayout.NORTH);\r\n        panel.add(inputGroup, BorderLayout.CENTER);\r\n        return panel;\r\n    }\r\n\r\n    private JTextField createStyledTextField() {\r\n        JTextField textField = new JTextField();\r\n        textField.setFont(getBodyFont(FONT_SIZE_BODY));\r\n        textField.setForeground(TEXT_PRIMARY);\r\n        textField.setBackground(BG_INPUT);\r\n        textField.setCaretColor(ACCENT_PRIMARY);\r\n        textField.setBorder(BorderFactory.createCompoundBorder(\r\n                BorderFactory.createLineBorder(BORDER_LIGHT, 1),\r\n                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)\r\n        ));\r\n        return textField;\r\n    }\r\n\r\n    private JDateChooser createStyledDateChooser() {\r\n        JDateChooser dateChooser = new JDateChooser();\r\n        dateChooser.setDateFormatString(\"yyyy-MM-dd\");\r\n\r\n        // Configurar tamaño preferido\r\n        dateChooser.setPreferredSize(new Dimension(150, 35));\r\n        dateChooser.setMinimumSize(new Dimension(150, 35));\r\n\r\n        JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();\r\n\r\n        // Configurar fuente y tamaño\r\n        dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));\r\n\r\n        // FORZAR COLOR BLANCO\r\n        dateEditor.setForeground(Color.WHITE);\r\n\r\n        dateEditor.setBackground(BG_INPUT);\r\n        dateEditor.setCaretColor(ACCENT_PRIMARY);\r\n        dateEditor.setBorder(BorderFactory.createCompoundBorder(\r\n                BorderFactory.createLineBorder(BORDER_LIGHT, 1),\r\n                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)\r\n        ));\r\n\r\n        // Configurar tamaño del editor\r\n        Component editorComponent = dateChooser.getDateEditor().getUiComponent();\r\n        if (editorComponent instanceof JTextField) {\r\n            JTextField textField = (JTextField) editorComponent;\r\n            textField.setPreferredSize(new Dimension(150, 35));\r\n            textField.setMinimumSize(new Dimension(150, 35));\r\n        }\r\n\r\n        dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));\r\n\r\n        // Configurar el calendario\r\n        JCalendar calendar = dateChooser.getJCalendar();\r\n        calendar.setBackground(BG_INPUT);\r\n\r\n        // Configurar días del calendario\r\n        calendar.getDayChooser().getDayPanel().setBackground(BG_INPUT);\r\n        calendar.getDayChooser().setForeground(Color.WHITE);\r\n        calendar.getDayChooser().setBackground(BG_INPUT);\r\n        calendar.getDayChooser().setDecorationBackgroundColor(BG_INPUT);\r\n        calendar.getDayChooser().setDecorationBordersVisible(false);\r\n\r\n        // Forzar color blanco en el campo de texto\r\n        dateChooser.addPropertyChangeListener(\"date\", evt -> {\r\n            SwingUtilities.invokeLater(() -> {\r\n                dateEditor.setForeground(Color.WHITE);\r\n                if (editorComponent instanceof JTextField) {\r\n                    ((JTextField) editorComponent).setForeground(Color.WHITE);\r\n                }\r\n            });\r\n        });\r\n\r\n        // Listener adicional para asegurar color\r\n        dateEditor.addPropertyChangeListener(evt -> {\r\n            if (\"foreground\".equals(evt.getPropertyName())) {\r\n                SwingUtilities.invokeLater(() -> dateEditor.setForeground(Color.WHITE));\r\n            }\r\n        });\r\n\r\n        return dateChooser;\r\n    }\r\n\r\n    private JComboBox<String> createStyledComboBox(String[] items) {\r\n        JComboBox<String> cmb = new JComboBox<>(items);\r\n        cmb.setFont(getBodyFont(FONT_SIZE_BODY));\r\n        cmb.setForeground(BG_DARK_PRIMARY);\r\n        cmb.setBackground(BG_INPUT);\r\n\r\n        cmb.setRenderer(new DefaultListCellRenderer() {\r\n            @Override\r\n            public Component getListCellRendererComponent(JList<?> list, Object value, int index,\r\n                                                          boolean isSelected, boolean cellHasFocus) {\r\n                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);\r\n                label.setOpaque(true);\r\n                label.setFont(getBodyFont(FONT_SIZE_BODY));\r\n\r\n                if (isSelected) {\r\n                    label.setBackground(ACCENT_PRIMARY);\r\n                    label.setForeground(BG_DARK_PRIMARY);\r\n                } else {\r\n                    label.setBackground(Color.WHITE);\r\n                    label.setForeground(BG_DARK_PRIMARY);\r\n                }\r\n\r\n                list.setBackground(Color.WHITE);\r\n\r\n                label.setBorder(new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD));\r\n\r\n                return label;\r\n            }\r\n        });\r\n\r\n        cmb.setBorder(BorderFactory.createCompoundBorder(\r\n                BorderFactory.createLineBorder(BORDER_LIGHT, 1),\r\n                new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)\r\n        ));\r\n\r\n        return cmb;\r\n    }\r\n\r\n    private JPanel createTablePanel() {\r\n        JPanel panel = new JPanel(new BorderLayout());\r\n        panel.setBackground(BG_CARD);\r\n        panel.setBorder(BorderFactory.createCompoundBorder(\r\n                BorderFactory.createLineBorder(BORDER_LIGHT, 1),\r\n                new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)\r\n        ));\r\n\r\n        JLabel titleLabel = new JLabel(\"Lista de Jugadores\");\r\n        titleLabel.setFont(getTitleFont(FONT_SIZE_H2));\r\n        titleLabel.setForeground(TEXT_PRIMARY);\r\n        titleLabel.setBorder(new EmptyBorder(0, 0, SPACING_MD, 0));\r\n\r\n        String[] columns = {\"ID\", \"Nombre\", \"Apellido\", \"Género\", \"Dirección\", \"Nacionalidad\", \"Fecha Nac.\", \"Email\"};\r\n        tableModel = new DefaultTableModel(columns, 0) {\r\n            @Override\r\n            public boolean isCellEditable(int row, int column) { return false; }\r\n        };\r\n\r\n        table = new JTable(tableModel);\r\n        table.setFont(getBodyFont(FONT_SIZE_BODY - 1));\r\n        table.setForeground(TEXT_PRIMARY);\r\n        table.setBackground(BG_INPUT);\r\n        table.setRowHeight(32);\r\n        table.setGridColor(BORDER_LIGHT);\r\n        table.setSelectionBackground(ACCENT_PRIMARY);\r\n        table.setSelectionForeground(BG_DARK_PRIMARY);\r\n        table.setShowVerticalLines(true);\r\n\r\n        table.getTableHeader().setFont(getBoldFont(FONT_SIZE_BODY));\r\n        table.getTableHeader().setReorderingAllowed(false);\r\n        table.getTableHeader().setDefaultRenderer(new CustomTableHeaderRenderer(BG_DARK_PRIMARY, Color.WHITE));\r\n        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, ACCENT_PRIMARY));\r\n\r\n        table.getSelectionModel().addListSelectionListener(e -> {\r\n            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {\r\n                loadSelectedPlayer();\r\n            }\r\n        });\r\n\r\n        JScrollPane scrollPane = new JScrollPane(table);\r\n        scrollPane.setBorder(BorderFactory.createLineBorder(BORDER_LIGHT, 1));\r\n        scrollPane.getViewport().setBackground(BG_INPUT);\r\n\r\n        panel.add(titleLabel, BorderLayout.NORTH);\r\n        panel.add(scrollPane, BorderLayout.CENTER);\r\n\r\n        return panel;\r\n    }\r\n\r\n    private JButton createStyledButton(String text, Color bgColor) {\r\n        JButton button = new JButton(text) {\r\n            @Override\r\n            protected void paintComponent(Graphics g) {\r\n                Graphics2D g2d = (Graphics2D) g.create();\r\n                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);\r\n\r\n                if (getModel().isPressed()) {\r\n                    g2d.setColor(darken(bgColor, 0.8f));\r\n                } else if (getModel().isRollover()) {\r\n                    g2d.setColor(brighten(bgColor, 1.1f));\r\n                } else {\r\n                    g2d.setColor(bgColor);\r\n                }\r\n\r\n                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), RADIUS_SM, RADIUS_SM);\r\n\r\n                g2d.setColor(BG_DARK_PRIMARY);\r\n                g2d.setFont(getFont());\r\n                FontMetrics fm = g2d.getFontMetrics();\r\n                int x = (getWidth() - fm.stringWidth(getText())) / 2;\r\n                int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();\r\n                g2d.drawString(getText(), x, y);\r\n\r\n                g2d.dispose();\r\n            }\r\n        };\r\n\r\n        button.setFont(getBoldFont(FONT_SIZE_BODY));\r\n        button.setFocusPainted(false);\r\n        button.setBorderPainted(false);\r\n        button.setContentAreaFilled(false);\r\n        button.setPreferredSize(new Dimension(120, 38));\r\n        button.setCursor(new Cursor(Cursor.HAND_CURSOR));\r\n        return button;\r\n    }\r\n\r\n    private String getSelectedGender() {\r\n        String selected = (String) cmbGender.getSelectedItem();\r\n        return \"Otro\".equals(selected) ? txtCustomGender.getText().trim() : selected;\r\n    }\r\n\r\n    private String getSelectedNationality() {\r\n        String selected = (String) cmbNationality.getSelectedItem();\r\n        return \"Otro\".equals(selected) ? txtCustomNationality.getText().trim() : selected;\r\n    }\r\n\r\n    private void loadPlayers() {\r\n        tableModel.setRowCount(0);\r\n        try {\r\n            List<Player> players = playerCRUD.getAllPlayers();\r\n            for (Player player : players) {\r\n                Object[] row = {\r\n                        player.getPlayerId(),\r\n                        player.getFirstName(),\r\n                        player.getLastName(),\r\n                        player.getGender(),\r\n                        player.getAddress(),\r\n                        player.getNationality(),\r\n                        player.getBirthdate() != null ? SDF.format(player.getBirthdate()) : \"\",\r\n                        player.getEmail()\r\n                };\r\n                tableModel.addRow(row);\r\n            }\r\n        } catch (SQLException e) {\r\n            showError(\"Error al cargar jugadores: \" + e.getMessage());\r\n        }\r\n    }\r\n\r\n    private void loadSelectedPlayer() {\r\n        int selectedRow = table.getSelectedRow();\r\n        if (selectedRow == -1) {\r\n            selectedPlayerId = -1;\r\n            return;\r\n        }\r\n\r\n        Object idValue = tableModel.getValueAt(selectedRow, 0);\r\n        selectedPlayerId = (idValue instanceof Integer) ? (Integer) idValue :\r\n                (idValue != null ? Integer.parseInt(idValue.toString()) : -1);\r\n\r\n        txtFirstName.setText(tableModel.getValueAt(selectedRow, 1).toString());\r\n        txtLastName.setText(tableModel.getValueAt(selectedRow, 2).toString());\r\n        String currentGender = tableModel.getValueAt(selectedRow, 3).toString();\r\n        txtAddress.setText(tableModel.getValueAt(selectedRow, 4) != null ? tableModel.getValueAt(selectedRow, 4).toString() : \"\");\r\n        String currentNationality = tableModel.getValueAt(selectedRow, 5).toString();\r\n        txtEmail.setText(tableModel.getValueAt(selectedRow, 7).toString());\r\n\r\n        loadCustomValue(cmbGender, txtCustomGender, GENDERS, currentGender);\r\n        loadCustomValue(cmbNationality, txtCustomNationality, COMMON_NATIONALITIES, currentNationality);\r\n\r\n        try {\r\n            Date birthDate = SDF.parse(tableModel.getValueAt(selectedRow, 6).toString());\r\n            dateChooserBirthDate.setDate(birthDate);\r\n        } catch (Exception e) {\r\n            dateChooserBirthDate.setDate(null);\r\n        }\r\n    }\r\n\r\n    private void loadCustomValue(JComboBox<String> cmb, JTextField txt, String[] commonValues, String currentValue) {\r\n        boolean found = false;\r\n        for (String val : commonValues) {\r\n            if (val.equalsIgnoreCase(currentValue)) {\r\n                cmb.setSelectedItem(val);\r\n                txt.setText(\"\");\r\n                txt.setVisible(false);\r\n                found = true;\r\n                break;\r\n            }\r\n        }\r\n        if (!found) {\r\n            cmb.setSelectedItem(\"Otro\");\r\n            txt.setText(currentValue);\r\n            txt.setVisible(true);\r\n        }\r\n        revalidate();\r\n        repaint();\r\n    }\r\n\r\n    private void addPlayer() {\r\n        if (!validateFields()) return;\r\n\r\n        try {\r\n            Player player = new Player(\r\n                    0,\r\n                    txtFirstName.getText().trim(),\r\n                    txtLastName.getText().trim(),\r\n                    getSelectedGender(),\r\n                    txtAddress.getText().trim().isEmpty() ? null : txtAddress.getText().trim(),\r\n                    getSelectedNationality(),\r\n                    dateChooserBirthDate.getDate(),\r\n                    txtEmail.getText().trim()\r\n            );\r\n\r\n            if (playerCRUD.createPlayer(player)) {\r\n                showSuccess(\"¡Jugador agregado exitosamente!\");\r\n                clearFields();\r\n                loadPlayers();\r\n            } else {\r\n                showError(\"No se pudo agregar el jugador.\");\r\n            }\r\n        } catch (SQLException e) {\r\n            handleSQLError(e);\r\n        }\r\n    }\r\n\r\n    private void updatePlayer() {\r\n        if (selectedPlayerId == -1) {\r\n            showError(\"Selecciona un jugador de la tabla para actualizar.\");\r\n            return;\r\n        }\r\n        if (!validateFields()) return;\r\n\r\n        try {\r\n            Player player = new Player(\r\n                    selectedPlayerId,\r\n                    txtFirstName.getText().trim(),\r\n                    txtLastName.getText().trim(),\r\n                    getSelectedGender(),\r\n                    txtAddress.getText().trim().isEmpty() ? null : txtAddress.getText().trim(),\r\n                    getSelectedNationality(),\r\n                    dateChooserBirthDate.getDate(),\r\n                    txtEmail.getText().trim()\r\n            );\r\n\r\n            if (playerCRUD.updatePlayer(player)) {\r\n                showSuccess(\"¡Jugador actualizado exitosamente!\");\r\n                clearFields();\r\n                loadPlayers();\r\n            } else {\r\n                showError(\"No se pudo actualizar el jugador.\");\r\n            }\r\n        } catch (SQLException e) {\r\n            handleSQLError(e);\r\n        }\r\n    }\r\n\r\n    private void deletePlayer() {\r\n        if (selectedPlayerId == -1) {\r\n            showError(\"Selecciona un jugador de la tabla para eliminar.\");\r\n            return;\r\n        }\r\n\r\n        int confirm = JOptionPane.showConfirmDialog(this, \"¿Estás seguro de eliminar a este jugador?\",\r\n                \"Confirmar eliminación\", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);\r\n\r\n        if (confirm == JOptionPane.YES_OPTION) {\r\n            try {\r\n                if (playerCRUD.deletePlayer(selectedPlayerId)) {\r\n                    showSuccess(\"¡Jugador eliminado exitosamente!\");\r\n                    clearFields();\r\n                    loadPlayers();\r\n                } else {\r\n                    showError(\"No se pudo eliminar el jugador.\");\r\n                }\r\n            } catch (SQLException e) {\r\n                showError(\"Error al eliminar: \" + e.getMessage());\r\n            }\r\n        }\r\n    }\r\n\r\n    private void clearFields() {\r\n        selectedPlayerId = -1;\r\n        txtFirstName.setText(\"\");\r\n        txtLastName.setText(\"\");\r\n        txtAddress.setText(\"\");\r\n        txtEmail.setText(\"\");\r\n        cmbGender.setSelectedIndex(0);\r\n        txtCustomGender.setText(\"\");\r\n        txtCustomGender.setVisible(false);\r\n        cmbNationality.setSelectedIndex(0);\r\n        txtCustomNationality.setText(\"\");\r\n        txtCustomNationality.setVisible(false);\r\n        dateChooserBirthDate.setDate(null);\r\n        table.clearSelection();\r\n        revalidate();\r\n        repaint();\r\n    }\r\n\r\n    private boolean validateFields() {\r\n        String firstName = txtFirstName.getText().trim();\r\n        String lastName = txtLastName.getText().trim();\r\n        String email = txtEmail.getText().trim();\r\n        String gender = getSelectedGender();\r\n        String nationality = getSelectedNationality();\r\n        Date birthDate = dateChooserBirthDate.getDate();\r\n\r\n        if (firstName.isEmpty() || firstName.length() < 2) {\r\n            showError(\"Nombre obligatorio (Mín. 2 caracteres).\");\r\n            return false;\r\n        }\r\n        if (lastName.isEmpty() || lastName.length() < 2) {\r\n            showError(\"Apellido obligatorio (Mín. 2 caracteres).\");\r\n            return false;\r\n        }\r\n        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {\r\n            showError(\"Email inválido.\");\r\n            return false;\r\n        }\r\n        if (gender.isEmpty()) {\r\n            showError(\"El género es obligatorio.\");\r\n            return false;\r\n        }\r\n        if (nationality.isEmpty() || nationality.length() < 2) {\r\n            showError(\"Nacionalidad obligatoria (Mín. 2 caracteres).\");\r\n            return false;\r\n        }\r\n        if (birthDate == null) {\r\n            showError(\"La fecha de nacimiento es obligatoria.\");\r\n            return false;\r\n        }\r\n        if (birthDate.after(new Date())) {\r\n            showError(\"La fecha no puede ser futura.\");\r\n            return false;\r\n        }\r\n        return true;\r\n    }\r\n\r\n    private void handleSQLError(SQLException e) {\r\n        String msg = e.getMessage();\r\n        if (msg.contains(\"duplicate key\") && msg.contains(\"email\")) {\r\n            showError(\"El Email ya está registrado.\");\r\n        } else {\r\n            showError(\"Error: \" + msg);\r\n        }\r\n    }\r\n\r\n    private void showSuccess(String message) {\r\n        JOptionPane.showMessageDialog(this, message, \"Éxito\", JOptionPane.INFORMATION_MESSAGE);\r\n    }\r\n\r\n    private void showError(String message) {\r\n        JOptionPane.showMessageDialog(this, message, \"Error\", JOptionPane.ERROR_MESSAGE);\r\n    }\r\n\r\n    private class CustomTableHeaderRenderer extends JLabel implements TableCellRenderer {\r\n\r\n        private final Color backgroundColor;\r\n        private final Color foregroundColor;\r\n\r\n        public CustomTableHeaderRenderer(Color backgroundColor, Color foregroundColor) {\r\n            this.backgroundColor = backgroundColor;\r\n            this.foregroundColor = foregroundColor;\r\n            setOpaque(true);\r\n            setFont(getBoldFont(FONT_SIZE_BODY));\r\n            setHorizontalAlignment(CENTER);\r\n            setBorder(BorderFactory.createCompoundBorder(\r\n                    BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(255, 255, 255, 30)),\r\n                    new EmptyBorder(5, 5, 5, 5)\r\n            ));\r\n        }\r\n\r\n        @Override\r\n        public Component getTableCellRendererComponent(JTable table, Object value,\r\n                                                       boolean isSelected, boolean hasFocus, int row, int column) {\r\n\r\n            setBackground(backgroundColor);\r\n            setForeground(foregroundColor);\r\n            setText(value == null ? \"\" : value.toString());\r\n            return this;\r\n        }\r\n\r\n        private Font getBoldFont(int size) {\r\n            return PlayersPanel.this.getBoldFont(size);\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/vistas/PlayersPanel.java b/src/main/java/vistas/PlayersPanel.java
+--- a/src/main/java/vistas/PlayersPanel.java	(revision 8176b08ded2354e231e1c5b029b372a16e89c385)
++++ b/src/main/java/vistas/PlayersPanel.java	(date 1764797372553)
+@@ -1,12 +1,13 @@
+ package vistas;
+ 
+-import com.toedter.calendar.JCalendar;
+ import consultas.PlayerCRUD;
+ import tablas.Player;
+-import static vistas.DesignConstants.*;
++import static vistas.DesignConstants.*; // Asumimos que aquí está ACCENT_DANGER, SPACING_MD, etc.
+ 
+ import javax.swing.*;
+ import javax.swing.border.EmptyBorder;
++import javax.swing.event.DocumentEvent;
++import javax.swing.event.DocumentListener; // Importación necesaria
+ import javax.swing.table.DefaultTableModel;
+ import javax.swing.table.TableCellRenderer;
+ import com.toedter.calendar.JDateChooser;
+@@ -36,6 +37,12 @@
+     private JDateChooser dateChooserBirthDate;
+     private JButton btnAdd, btnUpdate, btnDelete, btnClear;
+ 
++    // --- DECLARACIÓN DE LABELS DE ERROR ---
++    private JLabel lblErrorFirst, lblErrorLast, lblErrorEmail, lblErrorAddress, lblErrorBirthDate;
++    private JLabel lblErrorGender, lblErrorNationality; // Para errores de "Otro" vacío
++
++    private DocumentListener validationListener;
++
+     private final String[] GENDERS = {"M", "F", "Otro"};
+     private final String[] COMMON_NATIONALITIES = {"México", "Estados Unidos", "España", "Argentina", "Colombia", "Otro"};
+     private int selectedPlayerId = -1;
+@@ -70,6 +77,42 @@
+         loadPlayers();
+     }
+ 
++    // --- NUEVO MÉTODO PARA CREAR LABEL DE ERROR (ROJO Y NEGRITAS) ---
++    private JLabel createErrorLabel() {
++        JLabel label = new JLabel(" ");
++        label.setForeground(ACCENT_DANGER);
++        label.setFont(getBoldFont(FONT_SIZE_SMALL));
++        return label;
++    }
++
++    // --- NUEVO MÉTODO PARA CONFIGURAR LA VALIDACIÓN AUTOMÁTICA ---
++    private void setupValidationListeners() {
++        validationListener = new DocumentListener() {
++            public void changedUpdate(DocumentEvent e) { validateAllFields(); }
++            public void removeUpdate(DocumentEvent e) { validateAllFields(); }
++            public void insertUpdate(DocumentEvent e) { validateAllFields(); }
++        };
++
++        // Escucha cambios en campos de texto principales y personalizados
++        txtFirstName.getDocument().addDocumentListener(validationListener);
++        txtLastName.getDocument().addDocumentListener(validationListener);
++        txtEmail.getDocument().addDocumentListener(validationListener);
++        txtAddress.getDocument().addDocumentListener(validationListener);
++        txtCustomGender.getDocument().addDocumentListener(validationListener);
++        txtCustomNationality.getDocument().addDocumentListener(validationListener);
++
++        // Escucha cambios en JComboBox
++        cmbGender.addActionListener(e -> validateAllFields());
++        cmbNationality.addActionListener(e -> validateAllFields());
++
++        // Escucha cambios en JDateChooser
++        dateChooserBirthDate.getDateEditor().addPropertyChangeListener(evt -> {
++            if ("date".equals(evt.getPropertyName())) {
++                validateAllFields();
++            }
++        });
++    }
++
+     private void initComponents() {
+         setLayout(new BorderLayout(SPACING_MD, SPACING_MD));
+         setBackground(BG_DARK_SECONDARY);
+@@ -80,6 +123,8 @@
+ 
+         add(formPanel, BorderLayout.NORTH);
+         add(tablePanel, BorderLayout.CENTER);
++
++        setupValidationListeners(); // Activa la validación
+     }
+ 
+     private JPanel createFormPanel() {
+@@ -90,6 +135,16 @@
+                 new EmptyBorder(SPACING_LG, SPACING_LG, SPACING_LG, SPACING_LG)
+         ));
+ 
++        // --- Inicialización de Labels de Error ---
++        lblErrorFirst = createErrorLabel();
++        lblErrorLast = createErrorLabel();
++        lblErrorEmail = createErrorLabel();
++        lblErrorAddress = createErrorLabel();
++        lblErrorBirthDate = createErrorLabel();
++        lblErrorGender = createErrorLabel();
++        lblErrorNationality = createErrorLabel();
++
++
+         JPanel fieldsContainer = new JPanel(new GridBagLayout());
+         fieldsContainer.setBackground(BG_CARD);
+ 
+@@ -103,6 +158,7 @@
+             if (isOther) txtCustomGender.requestFocus();
+             revalidate();
+             repaint();
++            validateAllFields(); // Validar al cambiar el combo
+         });
+ 
+         cmbNationality.addActionListener(e -> {
+@@ -111,27 +167,30 @@
+             if (isOther) txtCustomNationality.requestFocus();
+             revalidate();
+             repaint();
++            validateAllFields(); // Validar al cambiar el combo
+         });
+ 
+ 
+         gbc.gridy = 0;
+         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
+ 
+-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre:", txtFirstName), gbc);
+-        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Apellido:", txtLastName), gbc);
+-        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Email:", txtEmail), gbc);
++        // --- Integración de Labels de Error en createFieldPanel ---
++        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Nombre:", txtFirstName, lblErrorFirst), gbc);
++        gbc.gridx = 1; fieldsContainer.add(createFieldPanel("Apellido:", txtLastName, lblErrorLast), gbc);
++        gbc.gridx = 2; fieldsContainer.add(createFieldPanel("Email:", txtEmail, lblErrorEmail), gbc);
+ 
+         gbc.gridx = 3;
+         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
+-        fieldsContainer.add(createFieldPanel("Dirección:", txtAddress), gbc);
++        fieldsContainer.add(createFieldPanel("Dirección:", txtAddress, lblErrorAddress), gbc);
+ 
+ 
+         gbc.gridy = 1;
+         gbc.insets = new Insets(0, 0, SPACING_MD, SPACING_MD);
+ 
+-        gbc.gridx = 0; fieldsContainer.add(createFieldPanel("Fecha Nacimiento:", dateChooserBirthDate), gbc);
+-        gbc.gridx = 1; fieldsContainer.add(createComboFieldPanel("Género:", cmbGender, txtCustomGender), gbc);
+-        gbc.gridx = 2; fieldsContainer.add(createComboFieldPanel("Nacionalidad:", cmbNationality, txtCustomNationality), gbc);
++        // --- Integración de Labels de Error en Fecha y Combos ---
++        gbc.gridx = 0; fieldsContainer.add(createDatePanel("Fecha Nacimiento:", dateChooserBirthDate, lblErrorBirthDate), gbc);
++        gbc.gridx = 1; fieldsContainer.add(createComboFieldPanel("Género:", cmbGender, txtCustomGender, lblErrorGender), gbc);
++        gbc.gridx = 2; fieldsContainer.add(createComboFieldPanel("Nacionalidad:", cmbNationality, txtCustomNationality, lblErrorNationality), gbc);
+ 
+         gbc.gridx = 3;
+         gbc.insets = new Insets(0, 0, SPACING_MD, 0);
+@@ -160,10 +219,33 @@
+         panel.add(fieldsContainer, BorderLayout.NORTH);
+         panel.add(buttonsPanel, BorderLayout.SOUTH);
+ 
++        validateAllFields(); // Validación inicial
++
++        return panel;
++    }
++
++    // --- MÉTODO MODIFICADO: Acepta JComponent y JLabel de error ---
++    private JPanel createFieldPanel(String labelText, JComponent component, JLabel errorLabel) {
++        JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
++        panel.setBackground(BG_CARD);
++
++        JLabel label = new JLabel(labelText);
++        label.setFont(getBoldFont(FONT_SIZE_SMALL));
++        label.setForeground(TEXT_SECONDARY);
++
++        JPanel inputContainer = new JPanel(new BorderLayout());
++        inputContainer.setOpaque(false);
++        inputContainer.add(component, BorderLayout.CENTER);
++        inputContainer.add(errorLabel, BorderLayout.SOUTH); // Agrega el error AQUÍ
++
++        panel.add(label, BorderLayout.NORTH);
++        panel.add(inputContainer, BorderLayout.CENTER);
++
+         return panel;
+     }
+ 
+-    private JPanel createFieldPanel(String labelText, JComponent component) {
++    // --- NUEVO MÉTODO PARA JDateChooser con JLabel de error ---
++    private JPanel createDatePanel(String labelText, JDateChooser dateChooser, JLabel errorLabel) {
+         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+         panel.setBackground(BG_CARD);
+ 
+@@ -171,13 +253,55 @@
+         label.setFont(getBoldFont(FONT_SIZE_SMALL));
+         label.setForeground(TEXT_SECONDARY);
+ 
++        // CONFIGURAR EL JDateChooser AQUÍ
++        if (dateChooser != null) {
++            // Configurar tamaño
++            dateChooser.setPreferredSize(new Dimension(150, 35));
++            dateChooser.setMinimumSize(new Dimension(150, 35));
++
++            // Configurar el campo de texto interno
++            Component dateEditor = dateChooser.getDateEditor().getUiComponent();
++            if (dateEditor instanceof JTextField) {
++                JTextField dateField = (JTextField) dateEditor;
++
++                // Configurar tamaño del campo
++                dateField.setPreferredSize(new Dimension(150, 35));
++                dateField.setMinimumSize(new Dimension(150, 35));
++
++                // COLOR BLANCO
++                dateField.setForeground(Color.WHITE);
++
++                // Configurar otros estilos
++                dateField.setBackground(BG_INPUT);
++                dateField.setCaretColor(ACCENT_PRIMARY);
++                dateField.setBorder(BorderFactory.createCompoundBorder(
++                        BorderFactory.createLineBorder(BORDER_LIGHT, 1),
++                        new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
++                ));
++
++                // Forzar color blanco continuamente
++                dateChooser.getDateEditor().addPropertyChangeListener(evt -> {
++                    if ("date".equals(evt.getPropertyName())) {
++                        SwingUtilities.invokeLater(() -> dateField.setForeground(Color.WHITE));
++                    }
++                });
++            }
++        }
++
++        JPanel inputContainer = new JPanel(new BorderLayout());
++        inputContainer.setOpaque(false);
++        inputContainer.add(dateChooser, BorderLayout.CENTER);
++        inputContainer.add(errorLabel, BorderLayout.SOUTH); // Agrega el error AQUÍ
++
+         panel.add(label, BorderLayout.NORTH);
+-        panel.add(component, BorderLayout.CENTER);
++        panel.add(inputContainer, BorderLayout.CENTER);
+ 
+         return panel;
+     }
+ 
+-    private JPanel createComboFieldPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt) {
++
++    // --- MÉTODO MODIFICADO: Acepta JLabel de error para texto libre ---
++    private JPanel createComboFieldPanel(String labelText, JComboBox<String> cmb, JTextField auxTxt, JLabel errorLabel) {
+         JPanel panel = new JPanel(new BorderLayout(SPACING_XS, SPACING_XS));
+         panel.setBackground(BG_CARD);
+ 
+@@ -192,6 +316,7 @@
+         inputGroup.add(cmb);
+         inputGroup.add(Box.createVerticalStrut(SPACING_XS));
+         inputGroup.add(auxTxt);
++        inputGroup.add(errorLabel); // Agrega el error AQUI
+ 
+         auxTxt.setMaximumSize(new Dimension(Integer.MAX_VALUE, auxTxt.getPreferredSize().height));
+ 
+@@ -200,6 +325,9 @@
+         return panel;
+     }
+ 
++    // El método createFieldPanel(String labelText, JComponent component) original ya no se usa
++    // y ha sido reemplazado por createFieldPanel(String labelText, JComponent component, JLabel errorLabel)
++
+     private JTextField createStyledTextField() {
+         JTextField textField = new JTextField();
+         textField.setFont(getBodyFont(FONT_SIZE_BODY));
+@@ -217,18 +345,9 @@
+         JDateChooser dateChooser = new JDateChooser();
+         dateChooser.setDateFormatString("yyyy-MM-dd");
+ 
+-        // Configurar tamaño preferido
+-        dateChooser.setPreferredSize(new Dimension(150, 35));
+-        dateChooser.setMinimumSize(new Dimension(150, 35));
+-
+         JTextFieldDateEditor dateEditor = (JTextFieldDateEditor) dateChooser.getDateEditor();
+-
+-        // Configurar fuente y tamaño
+         dateEditor.setFont(getBodyFont(FONT_SIZE_BODY));
+-
+-        // FORZAR COLOR BLANCO
+-        dateEditor.setForeground(Color.WHITE);
+-
++        dateEditor.setForeground(TEXT_PRIMARY);
+         dateEditor.setBackground(BG_INPUT);
+         dateEditor.setCaretColor(ACCENT_PRIMARY);
+         dateEditor.setBorder(BorderFactory.createCompoundBorder(
+@@ -236,43 +355,8 @@
+                 new EmptyBorder(SPACING_SM, SPACING_MD, SPACING_SM, SPACING_MD)
+         ));
+ 
+-        // Configurar tamaño del editor
+-        Component editorComponent = dateChooser.getDateEditor().getUiComponent();
+-        if (editorComponent instanceof JTextField) {
+-            JTextField textField = (JTextField) editorComponent;
+-            textField.setPreferredSize(new Dimension(150, 35));
+-            textField.setMinimumSize(new Dimension(150, 35));
+-        }
+-
+         dateChooser.setBorder(new EmptyBorder(0, 0, 0, 0));
+-
+-        // Configurar el calendario
+-        JCalendar calendar = dateChooser.getJCalendar();
+-        calendar.setBackground(BG_INPUT);
+-
+-        // Configurar días del calendario
+-        calendar.getDayChooser().getDayPanel().setBackground(BG_INPUT);
+-        calendar.getDayChooser().setForeground(Color.WHITE);
+-        calendar.getDayChooser().setBackground(BG_INPUT);
+-        calendar.getDayChooser().setDecorationBackgroundColor(BG_INPUT);
+-        calendar.getDayChooser().setDecorationBordersVisible(false);
+-
+-        // Forzar color blanco en el campo de texto
+-        dateChooser.addPropertyChangeListener("date", evt -> {
+-            SwingUtilities.invokeLater(() -> {
+-                dateEditor.setForeground(Color.WHITE);
+-                if (editorComponent instanceof JTextField) {
+-                    ((JTextField) editorComponent).setForeground(Color.WHITE);
+-                }
+-            });
+-        });
+-
+-        // Listener adicional para asegurar color
+-        dateEditor.addPropertyChangeListener(evt -> {
+-            if ("foreground".equals(evt.getPropertyName())) {
+-                SwingUtilities.invokeLater(() -> dateEditor.setForeground(Color.WHITE));
+-            }
+-        });
++        dateChooser.getJCalendar().setBackground(BG_INPUT);
+ 
+         return dateChooser;
+     }
+@@ -461,6 +545,8 @@
+         } catch (Exception e) {
+             dateChooserBirthDate.setDate(null);
+         }
++
++        validateAllFields(); // Vuelve a validar para actualizar botones
+     }
+ 
+     private void loadCustomValue(JComboBox<String> cmb, JTextField txt, String[] commonValues, String currentValue) {
+@@ -579,48 +665,111 @@
+         txtCustomNationality.setVisible(false);
+         dateChooserBirthDate.setDate(null);
+         table.clearSelection();
++
++        // --- Limpiar Labels de Error ---
++        lblErrorFirst.setText(" ");
++        lblErrorLast.setText(" ");
++        lblErrorEmail.setText(" ");
++        lblErrorAddress.setText(" ");
++        lblErrorBirthDate.setText(" ");
++        lblErrorGender.setText(" ");
++        lblErrorNationality.setText(" ");
++
++        validateAllFields(); // Valida para resetear el estado de los botones
+         revalidate();
+         repaint();
+     }
+ 
+-    private boolean validateFields() {
++    // --- REEMPLAZO DE validateFields() por validateAllFields() ---
++    private boolean validateAllFields() {
++        boolean isValid = true;
++
+         String firstName = txtFirstName.getText().trim();
+         String lastName = txtLastName.getText().trim();
+         String email = txtEmail.getText().trim();
++        String address = txtAddress.getText().trim();
+         String gender = getSelectedGender();
+         String nationality = getSelectedNationality();
+         Date birthDate = dateChooserBirthDate.getDate();
+ 
+-        if (firstName.isEmpty() || firstName.length() < 2) {
+-            showError("Nombre obligatorio (Mín. 2 caracteres).");
+-            return false;
++        // 1. VALIDACIÓN NOMBRE (Obligatorio, Mín. 2 caracteres)
++        if (firstName.isEmpty()) {
++            lblErrorFirst.setText("El nombre es obligatorio.");
++            isValid = false;
++        } else if (firstName.length() < 2) {
++            lblErrorFirst.setText("Mínimo 2 caracteres.");
++            isValid = false;
++        } else {
++            lblErrorFirst.setText(" ");
+         }
+-        if (lastName.isEmpty() || lastName.length() < 2) {
+-            showError("Apellido obligatorio (Mín. 2 caracteres).");
+-            return false;
++
++        // 2. VALIDACIÓN APELLIDO (Obligatorio, Mín. 2 caracteres)
++        if (lastName.isEmpty()) {
++            lblErrorLast.setText("El apellido es obligatorio.");
++            isValid = false;
++        } else if (lastName.length() < 2) {
++            lblErrorLast.setText("Mínimo 2 caracteres.");
++            isValid = false;
++        } else {
++            lblErrorLast.setText(" ");
+         }
+-        if (email.isEmpty() || !EMAIL_PATTERN.matcher(email).matches()) {
+-            showError("Email inválido.");
+-            return false;
++
++        // 3. VALIDACIÓN EMAIL (Obligatorio, Formato)
++        if (email.isEmpty()) {
++            lblErrorEmail.setText("El email es obligatorio.");
++            isValid = false;
++        } else if (!EMAIL_PATTERN.matcher(email).matches()) {
++            lblErrorEmail.setText("Email inválido.");
++            isValid = false;
++        } else {
++            lblErrorEmail.setText(" ");
+         }
+-        if (gender.isEmpty()) {
+-            showError("El género es obligatorio.");
+-            return false;
++
++        // 4. VALIDACIÓN DIRECCIÓN (Obligatoria, Mín. 5 caracteres)
++        if (address.isEmpty()) {
++            lblErrorAddress.setText("La dirección es obligatoria.");
++            isValid = false;
++        } else if (address.length() < 5) {
++            lblErrorAddress.setText("Mínimo 5 caracteres.");
++            isValid = false;
++        } else {
++            lblErrorAddress.setText(" ");
+         }
+-        if (nationality.isEmpty() || nationality.length() < 2) {
+-            showError("Nacionalidad obligatoria (Mín. 2 caracteres).");
+-            return false;
+-        }
++
++        // 5. VALIDACIÓN FECHA NACIMIENTO (Obligatoria, No futura)
+         if (birthDate == null) {
+-            showError("La fecha de nacimiento es obligatoria.");
+-            return false;
++            lblErrorBirthDate.setText("La fecha de nacimiento es obligatoria.");
++            isValid = false;
++        } else if (birthDate.after(new Date())) {
++            lblErrorBirthDate.setText("La fecha no puede ser futura.");
++            isValid = false;
++        } else {
++            lblErrorBirthDate.setText(" ");
+         }
+-        if (birthDate.after(new Date())) {
+-            showError("La fecha no puede ser futura.");
+-            return false;
++
++        // 6. VALIDACIÓN GÉNERO (Solo si se selecciona "Otro" y se deja vacío)
++        lblErrorGender.setText(" ");
++        if ("Otro".equals(cmbGender.getSelectedItem()) && txtCustomGender.getText().trim().isEmpty()) {
++            lblErrorGender.setText("El género es obligatorio.");
++            isValid = false;
+         }
+-        return true;
++
++        // 7. VALIDACIÓN NACIONALIDAD (Solo si se selecciona "Otro" y se deja vacío)
++        lblErrorNationality.setText(" ");
++        if ("Otro".equals(cmbNationality.getSelectedItem()) && txtCustomNationality.getText().trim().isEmpty()) {
++            lblErrorNationality.setText("Nacionalidad obligatoria.");
++            isValid = false;
++        }
++
++        // Actualizar el estado de los botones
++        btnAdd.setEnabled(isValid);
++        btnUpdate.setEnabled(isValid && selectedPlayerId != -1);
++
++        return isValid;
+     }
++
++    // El método `validateFields()` original se convierte en obsoleto
++    private boolean validateFields() { return validateAllFields(); }
+ 
+     private void handleSQLError(SQLException e) {
+         String msg = e.getMessage();
