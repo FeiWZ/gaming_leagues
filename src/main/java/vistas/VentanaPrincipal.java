@@ -214,13 +214,12 @@ public class VentanaPrincipal extends JFrame {
 
         InformesPanel informesPanel = new InformesPanel(connection);
 
-        tabbedPane.addTab(" Games", gamesPanel);
-        tabbedPane.addTab(" Leagues", leaguesPanel);
-        tabbedPane.addTab(" Players", playersPanel);
-        tabbedPane.addTab(" Rankings", rankingsPanel);
-        tabbedPane.addTab(" Teams", teamsPanel);
-        tabbedPane.addTab(" Matches", matchesPanel);
-
+        tabbedPane.addTab(" Videojuegos", gamesPanel);
+        tabbedPane.addTab(" Ligas", leaguesPanel);
+        tabbedPane.addTab(" Jugadores", playersPanel);
+        tabbedPane.addTab(" Clasificaciones", rankingsPanel);
+        tabbedPane.addTab(" Equipos", teamsPanel);
+        tabbedPane.addTab(" Encuentros", matchesPanel);
         tabbedPane.addTab(" Informes", informesPanel);
 
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {

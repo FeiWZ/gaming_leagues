@@ -680,7 +680,7 @@ public class TeamsPanel extends JPanel {
         String role = txtRole.getText().trim();
 
         if (teamIdText.isEmpty() || teamNameText.isEmpty() || idCoachText.isEmpty() || createdByPlayerText.isEmpty() || playerNameText.isEmpty() || role.isEmpty()) {
-            String title = isUpdate ? "No se puede actualizar" : "No se puede agregar";
+            String title = isUpdate ? "Error" : "Error";
             showError("Por favor completa todos los campos obligatorios antes de " + (isUpdate ? "actualizar" : "agregar") + ".", title);
             return false;
         }
@@ -830,9 +830,9 @@ public class TeamsPanel extends JPanel {
 
         boolean isSelected = !txtTeamId.isEditable();
 
-        btnAdd.setEnabled(true);
-        btnUpdate.setEnabled(true);
-        btnDelete.setEnabled(true);
+        btnAdd.setEnabled(isValid);
+        btnUpdate.setEnabled(isValid && table.getSelectedRow() != -1);
+        btnDelete.setEnabled(table.getSelectedRow() != -1);
     }
 
     private boolean validateDateLogic() {
